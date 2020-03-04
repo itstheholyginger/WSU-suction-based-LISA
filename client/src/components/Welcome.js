@@ -16,7 +16,7 @@ class WelcomePage extends React.Component {
         <div className="app-desc">
           <AppDescription />
         </div>
-        
+
         <div className="button-container">
           <ButtonContainer />
         </div>
@@ -50,9 +50,9 @@ class AppDescription extends React.Component {
 class ButtonContainer extends React.Component {
   render() {
     return (
-      <div className="button-container">
-        <Button variant="success"></Button>
-        <Button variant="info"></Button>
+      <div className="">
+        <Button variant="success">New Data</Button>
+        <Button variant="info">Load Old Data by ID</Button>
       </div>
     );
   }

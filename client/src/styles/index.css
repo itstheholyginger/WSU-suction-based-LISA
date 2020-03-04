@@ -61,4 +61,17 @@ code {
   text-align: center;
   margin-top: 50px;
   padding: 30px;
+  margin-left: 20%;
+}
+
+.button-container {
+  border: 1px solid black;
+  display: block;
+  width: 350px;
+  height: 150px;
+  align-items: center;
+  padding: 40px;
+  float: right;
+  margin-right: 20%;
+  text-align: center;
 }
