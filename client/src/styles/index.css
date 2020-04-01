@@ -33,9 +33,10 @@ code {
   float: center; */
 }
 
-.welcome-banner {
+.header {
   display: block;
-  background-color: cornflowerblue;
+  background-color: black;
+  color: white;
   /* position: fixed; */
   top: 0;
   width: 100%;
@@ -74,4 +75,22 @@ code {
   float: right;
   margin-right: 20%;
   text-align: center;
+}
+
+.paddedPage {
+  padding: 30px;
+}
+
+.navbar {
+  height: 80px;
+}
+
+.navbar-brand {
+  padding-left: 20px;
+}
+
+.displayTable {
+  width: 90%;
+  padding-left: 10%;
+  /* padding-right: 10%; */
 }

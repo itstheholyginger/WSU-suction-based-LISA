@@ -1,8 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './styles/index.css';
 import App from './components/App';
-import "bootstrap/dist/css/bootstrap.min.css";
+import "./styles/App.css";
+import './styles/index.css';
+import "bootstrap/dist/css/bootstrap.min.css"
 
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<App />, document.getElementById('app'));
+if (module.hot) {
+    module.hot.accept();
+}
