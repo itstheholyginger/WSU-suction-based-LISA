@@ -64,6 +64,7 @@ class FSSat(FS):
 
     # ASK: It doesn't appear that we're using gamma_sat, saturated soil unit weight, in our formula.
     # What is wrong here?  Do we need it?
+    # H_wt and z are same value. 
     def calc_fs(self):
         first = (math.tan(self.phi) * self.z) / math.tan(self.slope)
         second = (2 * self.c + self.c_r)/(self.gamma * (self.H_wt - self.z) * math.sin(2 * self.slope))
