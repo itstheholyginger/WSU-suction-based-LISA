@@ -264,31 +264,29 @@ class Saturation extends React.Component {
 }
 
 // eslint-disable-next-line camelcase
-class H_wtVar extends React.Component {
-    render() {
-        return (
-            <div className="form-group">
-                <Form.Row style={{ width: '300px' }}>
-                    <Form.Group as={Col} controlID="formVal">
-                        <Form.Label><h6>H<sub>wt</sub></h6></Form.Label>
-                        <Form.Control
-                            plaintext
-                            readOnly
-                            value="Assuming 5"
-                        />
-                    </Form.Group>
-                </Form.Row>
-            </ div>
-        )
-    }
-}
+// class H_wtVar extends React.Component {
+//     render() {
+//         return (
+//             <div className="form-group">
+//                 <Form.Row style={{ width: '300px' }}>
+//                     <Form.Group as={Col} controlID="formVal">
+//                         <Form.Label><h6>H<sub>wt</sub></h6></Form.Label>
+//                         <Form.Control
+//                             plaintext
+//                             readOnly
+//                             value="Assuming 5"
+//                         />
+//                     </Form.Group>
+//                 </Form.Row>
+//             </ div>
+//         )
+//     }
+// }
 
 export {
     RandVar,
     ConstVar,
     NumRandVars,
     ZVar,
-    Saturation,
-    // eslint-disable-next-line camelcase
-    H_wtVar
+    Saturation
 }

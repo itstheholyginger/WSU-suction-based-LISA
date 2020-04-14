@@ -1,9 +1,11 @@
 from flask import Flask
 from flask_socketio import SocketIO, send
-import numpy
+import numpy as np
 import statistics
 from FS import FSSat, FSUnsat
 from Vars import NormalVariable, UniformVariable
+import math
+from decimal import Decimal
 
 # send => send messages to al clients in listen to server
 # create app using flask
@@ -24,33 +26,25 @@ FAILSTATE = 1
     ASK: was asked to compare FS with different steady flux rates. 
         should I ask the user for multiple fluxes?
 '''
-'''
-    ASK:  I was asked to assume a value of 5 for the distance between the ground surface to the water table.
-        Is this still the case?
-'''
+
 # when client emits event using message name this func will call and send that
 # message to every client listening on server
 @socketIo.on('submit')
 def handleSubmit(data):
-    print("received data: " + str(data))
-    # create a dict to store the values needed to return to frontend
+    # print("received data: " + str(data))
     to_return = {}
-    # collect general variables
+    # separate received data into their categories
     rand_vars = data["randVars"]
     num_vars = data["numVars"]
     sat = data["sat"]
-    # put const vars into dict. contains gamma, gamma_w, gamma_sat, slope, and flux
     const_vars = data['constVars']
-
-    # we received the max value of z and the step that should be taken from 0 to max. 
-    # need to fetch all the values in that range by given step
-    z_vals = get_z_vals(data["z"])
+    H_wt = data["z"]["max"]
+    z = data['z']
 
     # create a list of Random Variable objects. Variables are currently either Normal Dist or Uniform Dist
     # TODO: add bivariate distribution
     # calculate values based on distributions
     rand_var_objs = create_dists(rand_vars, num_vars)
-    print(rand_var_objs)
 
     # serialize rand_var_objs back into a dictionary to be used with the rest of the program and the frontend
     rand_vars = {}
@@ -58,8 +52,8 @@ def handleSubmit(data):
         rand_vars[item.name] = serialize_obj(item)
 
 
-    to_return['z'] = get_FS_data(rand_vars, const_vars['H_wt'], const_vars['gamma'], const_vars['gamma_w'], \
-         const_vars['slope'], const_vars['flux'], z_vals, num_vars, sat)
+    to_return['z'] = get_FS_data(rand_vars, H_wt, const_vars['gamma'], const_vars['gamma_w'], \
+         const_vars['slope'], const_vars['flux'], z, num_vars, sat)
     
     # remove randVar vals from dict. can delete if needed later
     rand_vars = clean_rand_vars(rand_vars, "vals")
@@ -68,7 +62,6 @@ def handleSubmit(data):
 
     to_return['randVars'] = rand_vars
 
-    # print("serialized data to return to frontend:\t ", to_return)
     send(to_return, broadcast=True)
     return None
 
@@ -78,8 +71,6 @@ def create_dists(data, num_vars):
     temp = None
     print("randVars: ", data)
     for (key, val) in data.items():
-        # print("key: ", key)
-        # print("val: ", val)
         if val["dist"] == "normal":
             temp = NormalVariable(key, val['mean'], val["stdev"], num_vars)
         if val["dist"] == "uniform":
@@ -92,19 +83,13 @@ def create_dists(data, num_vars):
 # z is given with a max value and steps. We need to return all the values between
 # 0 and max by the given step
 def get_z_vals(z):
-    print("z: ", z)
     top = z['max']
     step = z['step']
-    return  frange(0, top, step)
-
-
-# function from https://www.pythoncentral.io/pythons-range-function-explained/
-def frange(start, stop, step):
-    i = start
-    l = []
-    while i < stop+step:
-        l.append(i)
-        i += step
+    print("step:", step )
+    print("dec step: ", Decimal)
+    num_z_vals = math.floor(top / step) 
+    l = [round(x * step, 4) for x in range (0, num_z_vals)]
+    print(l)
     return l
 
 
@@ -118,7 +103,7 @@ def calc_FS_unsat(rand_vars, H_wt, gamma, slope, z, num_vars):
         phi = rand_vars['phi']['vals'][i]
         FS = FSUnsat(c, c_r, phi, gamma, H_wt, slope, z)
 
-        print(FS)
+        # print(FS)
         if FS.fs < FAILSTATE:
             failed += 1
 
@@ -141,18 +126,22 @@ def calc_FS_sat(rand_vars, H_wt, gamma, gamma_w, slope, q, z, num_vars):
         # print(FS)
         if FS.fs < FAILSTATE:
             failed += 1
-        print(failed)
         FS_list.append(FS.fs)
 
+    print("failed: ", failed)
     return FS_list, failed / num_vars
 
 
     # collect FS lists for each z value. will be used to compare in graphs
-def get_FS_data(rand_vars, H_wt, gamma, gamma_w, slope, q, z_vals, num_vars, sat):
+def get_FS_data(rand_vars, H_wt, gamma, gamma_w, slope, q, z, num_vars, sat):
     print("IN get_FS_data FUNC")
     res = {}
     probFail = 0.0
-    for z in z_vals:
+
+    # num_z_vals = math.floor(z['max'] / z['step'])
+    z_arr = get_z_vals(z)
+    # z_arr = np.arange(0, z['max'] + z['step'], z['step'])
+    for z in z_arr:
         print("CUR Z: ", z)
         # collect list of FS
         FS_list = []
@@ -164,16 +153,16 @@ def get_FS_data(rand_vars, H_wt, gamma, gamma_w, slope, q, z_vals, num_vars, sat
             print("soil is unsat")
             FS_list, probFail = calc_FS_unsat(rand_vars, H_wt, gamma, slope, z, num_vars)
     
-        print("\nFS_LIST:\t", FS_list)
+        # print("\nFS_LIST:\t", FS_list)
         print("Probability of failure: ", probFail)
         res[z] = {}
         res[z]['vals'] = FS_list
-        res[z]['low'] = min(FS_list)
-        res[z]['high'] = max(FS_list)
-        res[z]['mean'] = statistics.mean(FS_list)
-        res[z]['stdev'] = statistics.stdev(FS_list)
+        res[z]['low'] = round(min(FS_list), 2)
+        res[z]['high'] = round(max(FS_list), 2)
+        res[z]['mean'] = round(statistics.mean(FS_list), 2)
+        res[z]['stdev'] =round(statistics.stdev(FS_list), 2)
         res[z]['probFail'] = probFail
-        print(res[z])
+        # print(res[z])
 
     return res
 

@@ -3,7 +3,7 @@
 import React from 'react'
 import { Form, Button } from 'react-bootstrap'
 // eslint-disable-next-line camelcase
-import { RandVar, ConstVar, NumRandVars, ZVar, Saturation, H_wtVar } from './Vars.jsx'
+import { RandVar, ConstVar, NumRandVars, ZVar, Saturation } from './Vars.jsx'
 import PropTypes from 'prop-types'
 import Header from './Header'
 
@@ -81,7 +81,7 @@ class DataFormPage extends React.Component {
             {/* <div className="form-group">
               <ConstVar name="Distance from Ground to Water Table" />
             </div> */}
-            <H_wtVar />
+            {/* <H_wtVar /> */}
             <ZVar handleChange={this.props.handleZVarChange} />
 
           </div>

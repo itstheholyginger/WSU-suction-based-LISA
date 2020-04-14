@@ -80,8 +80,7 @@ class App extends React.Component {
           gamma_w: 0,
           // y_sat: 3,
           slope: 0,
-          flux: 0,
-          H_wt: 5
+          flux: 0
         },
         z: {
           max: 1,
@@ -184,8 +183,7 @@ class App extends React.Component {
             gamma_w: 2,
             // y_sat: 3,
             slope: 4,
-            flux: 3.4,
-            H_wt: 5
+            flux: 3.4
           },
           z: {
             max: 4,

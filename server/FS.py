@@ -1,5 +1,5 @@
 import math
-
+from decimal import Decimal
 '''
 These classes find the factor of safety for both saturated and unsaturated soil.
 
@@ -15,7 +15,7 @@ variables:
     gamma_w = water unit weight (const)
     gamma_sat = saturated soil unit weight (const)
     q = steady flux rate (m/s) [positive for infiltration and negative for evaporation] const arr
-    z = distance above water table (have max and step)
+    z = distance above water table (have max (H_wt) and step)
     '''
 
 # location of water table and slope is fixed
@@ -28,13 +28,14 @@ class FS:
         self.H_wt = H_wt
         self.gamma = gamma
         self.slope = slope
-        self.z = z
+        self.z = float(z)
 
 
 class FSUnsat(FS):
     def __init__(self, c, c_r, phi, gamma, slope, H_wt,  z):
         FS.__init__(self, c, c_r, phi, gamma, H_wt, slope,  z)
-        self.fs = self.calc_fs()
+        self.fs = round(self.calc_fs(), 3)
+        self.round_vals()
 
     def __str__(self):
         return "Factor of Safety of Unsaturated Soil\n\tc: {0} c_r: {1} phi: {2} gamma: {3} slope: {4} H_wt: {5} \
@@ -43,7 +44,11 @@ class FSUnsat(FS):
     def calc_fs(self):
         return (math.tan(self.phi)*self.z)/math.tan(self.slope) + \
             ((2*self.c + self.c_r)/(self.gamma * (self.H_wt - self.z) * math.sin(2 * self.slope)))
-
+    
+    def round_vals(self):
+        self.c = round(self.c, 1)
+        self.c_r = round(self.c_r, 1)
+        self.phi = round(self.phi, 1)
 
 
 class FSSat(FS):
@@ -54,7 +59,9 @@ class FSSat(FS):
         self.n = n
         self.q = q
         FS.__init__(self, c, c_r, phi, gamma, H_wt, slope, z)
-        self.fs = self.calc_fs()
+        self.fs = round(self.calc_fs(), 3)
+        self.round_vals()
+        
 
     def __str__(self):
         return "Factor of Safety of Saturated Soil\n\tc: {0} c_r: {1} phi: {2} k_s: {3} alpha: {4} n: {5} gamma: {6} \
@@ -62,9 +69,19 @@ class FSSat(FS):
                 self.c_r, self.phi, self.k_s, self.alpha, self.n,  self.gamma, self.gamma_w, self.slope,
                 self.H_wt, self.q,  self.z, self.fs)
 
-    # ASK: It doesn't appear that we're using gamma_sat, saturated soil unit weight, in our formula.
-    # What is wrong here?  Do we need it?
-    # H_wt and z are same value. 
+# def format_e
+
+
+
+    def round_vals(self):
+        self.k_s = '%.2E' % Decimal(self.k_s)
+        self.alpha = round(self.alpha, 3)
+        self.n = round(self.n, 3)
+        self.c = round(self.c, 1)
+        self.c_r = round(self.c_r, 1)
+        self.phi = round(self.phi, 1)
+        
+
     def calc_fs(self):
         first = (math.tan(self.phi) * self.z) / math.tan(self.slope)
         second = (2 * self.c + self.c_r)/(self.gamma * (self.H_wt - self.z) * math.sin(2 * self.slope))
@@ -84,7 +101,6 @@ class FSSat(FS):
         n = Van Genuchten's parameters from the best fit to SWRC 
         q = steady flux rate (m/s) [positive for infiltration and negative for evaporation]
     '''
-
     def suction_stress(self):
         if self.infiltration() <= 0:
             return -self.infiltration()

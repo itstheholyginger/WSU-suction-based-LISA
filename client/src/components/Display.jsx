@@ -3,6 +3,7 @@ import React from 'react'
 import PropType from 'prop-types'
 import { Table, Tabs, Tab } from 'react-bootstrap'
 import Header from './Header'
+import DisplayGraphs from './DisplayGraphs';
 
 // CREATE TAB. FIRST TO SEE RANDVAR DATA IN TABLE, SECOND TO SEE FS DATA IN TABLE
 // remember, we're doing it by z step.
@@ -33,9 +34,9 @@ class DisplayPage extends React.Component {
                                 data={this.props.data.z}
                             />
                         </Tab>
-                        <Tab eventKey="FS_graphs" title="Factor of Safety Visualization">
-                            <DisplayFSGraph
-                                data={this.props.data.z}
+                        <Tab eventKey="FS_graphs" title="Visualizations">
+                            <DisplayGraphs
+                                data={this.props.data}
                             />
                         </Tab>
                     </Tabs>
@@ -68,11 +69,11 @@ class DisplayRandVars extends React.Component {
                             </thead>
                             <tbody>
                             {/* sent data = {'c': {}, c_r: {}, ...} */}
-                                <RandVarRowDisplay data={this.props.data.c} label="C: Soil Cohesion" />
-                                <RandVarRowDisplay data={this.props.data.c_r} label="C_r: Root Cohesion" />
-                                <RandVarRowDisplay data={this.props.data.phi} label="phi: Effective Angle of Friction" />
-                                <RandVarRowDisplay data={this.props.data.k_s} label="k_s: Saturated Hydraulic Conductivity" />
-                                <RandVarRowDisplay data={this.props.data.a} label="Van Genuchten's a" />
+                                <RandVarRowDisplay data={this.props.data.c} label="C: Soil Cohesion (psf)" />
+                                <RandVarRowDisplay data={this.props.data.c_r} label="C_r: Root Cohesion (psf)" />
+                                <RandVarRowDisplay data={this.props.data.phi} label="phi: Effective Angle of Friction (degrees)" />
+                                <RandVarRowDisplay data={this.props.data.k_s} label="k_s: Saturated Hydraulic Conductivity m/s" />
+                                <RandVarRowDisplay data={this.props.data.a} label="Van Genuchten's a cm^-1" />
                                 <RandVarRowDisplay data={this.props.data.n} label="Van Genuchten's n" />
                             </tbody>
                         </Table>
@@ -166,16 +167,16 @@ class FSRowDisplay extends React.Component {
     }
 }
 
-class DisplayFSGraph extends React.Component {
-    static propTypes = {
-        data: PropType.object
-    }
+// class DisplayFSGraph extends React.Component {
+//     static propTypes = {
+//         data: PropType.object
+//     }
 
-    render () {
-        return (
-            <h3>make frequency graphs with FS data</h3>
-        )
-    }
-}
+//     render () {
+//         return (
+//             <h3>make frequency graphs with FS data</h3>
+//         )
+//     }
+// }
 
 export default DisplayPage
