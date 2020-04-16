@@ -34,7 +34,7 @@ class FS:
 class FSUnsat(FS):
     def __init__(self, c, c_r, phi, gamma, slope, H_wt,  z):
         FS.__init__(self, c, c_r, phi, gamma, H_wt, slope,  z)
-        self.fs = round(self.calc_fs(), 3)
+        self.fs = self.calc_fs()
         self.round_vals()
 
     def __str__(self):
@@ -42,8 +42,10 @@ class FSUnsat(FS):
             z: {6}\n\tfs: {7}".format(self.c, self.c_r, self.phi, self.gamma, self.slope, self.H_wt, self.z, self.fs)
 
     def calc_fs(self):
-        return (math.tan(self.phi)*self.z)/math.tan(self.slope) + \
+        fs = (math.tan(self.phi)*self.z)/math.tan(self.slope) + \
             ((2*self.c + self.c_r)/(self.gamma * (self.H_wt - self.z) * math.sin(2 * self.slope)))
+        print("fs = ", fs)
+        return fs
     
     def round_vals(self):
         self.c = round(self.c, 1)
@@ -59,7 +61,7 @@ class FSSat(FS):
         self.n = n
         self.q = q
         FS.__init__(self, c, c_r, phi, gamma, H_wt, slope, z)
-        self.fs = round(self.calc_fs(), 3)
+        self.fs = self.calc_fs()
         self.round_vals()
         
 
@@ -83,13 +85,22 @@ class FSSat(FS):
         
 
     def calc_fs(self):
-        first = (math.tan(self.phi) * self.z) / math.tan(self.slope)
-        second = (2 * self.c + self.c_r)/(self.gamma * (self.H_wt - self.z) * math.sin(2 * self.slope))
-        third = (self.S_e() / (self.gamma * (self.H_wt - self.z))) * \
-            (math.tan(self.slope) + (1/math.tan(self.slope))) * \
-                    math.tan(self.phi) * self.z
+        # if self.z > 0:
+        #     import pdb; pdb.set_trace()
 
-        return first + second - third
+        first = (math.tan(self.phi) * self.z) / math.tan(self.slope)
+        print("first= ", first)
+        second = (2 * self.c + self.c_r)/(self.gamma * (self.H_wt - self.z) * math.sin(2 * self.slope))
+        print("second = ", second)
+        ss = self.suction_stress()
+        third = (ss / (self.gamma * (self.H_wt - self.z))) 
+        last = (math.tan(self.slope) + (1/math.tan(self.slope))) * \
+                    math.tan(self.phi) * self.z
+        print("third = ", third)
+        print("last= ", last)
+        total = first + second - third*last
+        print("fs = ", total)
+        return total
 
 
     '''
@@ -102,20 +113,33 @@ class FSSat(FS):
         q = steady flux rate (m/s) [positive for infiltration and negative for evaporation]
     '''
     def suction_stress(self):
-        if self.infiltration() <= 0:
+        inf = self.infiltration()
+        if inf <= 0:
             return -self.infiltration()
         else:
+            print("\nsuction stress")
             first = 1/self.alpha
+            print("first = ",  first)
             second_top = math.log((1 + self.q / self.k_s) * pow(math.e, (-self.gamma_w * self.alpha * self.z)) - self.q / self.k_s)
-            second_bottom = pow((1 + pow((-second_top), self.n)), ((self.n - 1) / self.n))
-            return first * (second_top / second_bottom)
-            # return (1/self.alpha) * (math.log((1 + (self.q / self.k_s)) * math.e^(-self.gamma_w * self.alpha * self.z) - \
-            #     (self.q / self.k_s)) / (1 + (-math.log((1+(self.q / self.k_s)) * math.e^(self.gamma_w * self.alpha * self.z) - \
-            #         (self.q / self.k_s))) ^ self.n) ^ ((self.n - 1) / self.n))
+            print("secord_top = ", second_top)
+            second_bottom = pow((1 + pow((-second_top), self.n)), (self.n - 1) / self.n)
+            print("secord_bottom = ", second_bottom)
+            ss = first * (second_top / second_bottom)
+            print("ss = ", ss)
+        return ss
+
+
+    def S_e(self):
+        inner = 1 / (1 + pow((self.alpha * self.suction_stress()), self.n))
+        print("inner = ", inner)
+        se =  pow(inner, (1 - (1/self.n)))
+        print("se = ", se)
+        return se
+        # return (1/(1 + (self.alpha * self.suction_stress()) ^ self.n)) ^ (1-(1/self.n))
 
 
     def infiltration(self):
-        return (-1 / self.alpha) * math.log((1 + (self.q / self.k_s)))
+        return (-1 / self.alpha) * math.log((1 + (self.q / self.k_s)) + pow(math.e, self.gamma * self.alpha * self.z) - self.q / self.k_s )
 
     
     #  This function finds the effective degree of saturation (S_e)
@@ -127,7 +151,4 @@ class FSSat(FS):
     #  n = Van Genuchten's parameters from the best fit to SWRC 
     #  q = steady flux rate (m/s) [positive for infiltration and negative for evaporation]
     
-    def S_e(self):
-        inner = 1 / (1 + pow((self.alpha * self.suction_stress()), self.n))
-        return pow(inner, (1 - (1/self.n)))
-        # return (1/(1 + (self.alpha * self.suction_stress()) ^ self.n)) ^ (1-(1/self.n))
+ 

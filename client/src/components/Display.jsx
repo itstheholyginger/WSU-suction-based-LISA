@@ -3,7 +3,7 @@ import React from 'react'
 import PropType from 'prop-types'
 import { Table, Tabs, Tab } from 'react-bootstrap'
 import Header from './Header'
-import DisplayGraphs from './DisplayGraphs';
+import DisplayGraphs from './DisplayGraphs'
 
 // CREATE TAB. FIRST TO SEE RANDVAR DATA IN TABLE, SECOND TO SEE FS DATA IN TABLE
 // remember, we're doing it by z step.
@@ -21,7 +21,7 @@ class DisplayPage extends React.Component {
                     title="Display"
                 />
                 <div className="paddedPage">
-                    <Tabs defaultActiveKey="randVars" id="display-tabs">
+                    <Tabs defaultActiveKey="FS_graphs" id="display-tabs">
                         <Tab eventKey="randVars" title="Random Variables">
                             <DisplayRandVars
                             // data = {z: {}, randVars: {}}
@@ -72,8 +72,8 @@ class DisplayRandVars extends React.Component {
                                 <RandVarRowDisplay data={this.props.data.c} label="C: Soil Cohesion (psf)" />
                                 <RandVarRowDisplay data={this.props.data.c_r} label="C_r: Root Cohesion (psf)" />
                                 <RandVarRowDisplay data={this.props.data.phi} label="phi: Effective Angle of Friction (degrees)" />
-                                <RandVarRowDisplay data={this.props.data.k_s} label="k_s: Saturated Hydraulic Conductivity m/s" />
-                                <RandVarRowDisplay data={this.props.data.a} label="Van Genuchten's a cm^-1" />
+                                <RandVarRowDisplay data={this.props.data.k_s} label="k_s: Saturated Hydraulic Conductivity (m/s)" />
+                                <RandVarRowDisplay data={this.props.data.a} label="Van Genuchten's a (cm^-1)" />
                                 <RandVarRowDisplay data={this.props.data.n} label="Van Genuchten's n" />
                             </tbody>
                         </Table>

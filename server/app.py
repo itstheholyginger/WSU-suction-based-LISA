@@ -53,7 +53,7 @@ def handleSubmit(data):
 
 
     to_return['z'] = get_FS_data(rand_vars, H_wt, const_vars['gamma'], const_vars['gamma_w'], \
-         const_vars['slope'], const_vars['flux'], z, num_vars, sat)
+         const_vars['slope'], const_vars['q'], z, num_vars, sat)
     
     # remove randVar vals from dict. can delete if needed later
     rand_vars = clean_rand_vars(rand_vars, "vals")
@@ -62,6 +62,8 @@ def handleSubmit(data):
 
     to_return['randVars'] = rand_vars
 
+    print(" DATA WE ARE RETURNING:")
+    print(to_return)
     send(to_return, broadcast=True)
     return None
 
@@ -114,6 +116,8 @@ def calc_FS_unsat(rand_vars, H_wt, gamma, slope, z, num_vars):
 def calc_FS_sat(rand_vars, H_wt, gamma, gamma_w, slope, q, z, num_vars):
     FS_list = []
     failed = 0
+    print("rand vars: ")
+    print(rand_vars)
     for i in range(int(num_vars)):
         c = rand_vars['c']['vals'][i]
         c_r = rand_vars['c_r']['vals'][i]
@@ -156,7 +160,7 @@ def get_FS_data(rand_vars, H_wt, gamma, gamma_w, slope, q, z, num_vars, sat):
         # print("\nFS_LIST:\t", FS_list)
         print("Probability of failure: ", probFail)
         res[z] = {}
-        res[z]['vals'] = FS_list
+        res[z]['fs_vals'] = FS_list
         res[z]['low'] = round(min(FS_list), 2)
         res[z]['high'] = round(max(FS_list), 2)
         res[z]['mean'] = round(statistics.mean(FS_list), 2)
