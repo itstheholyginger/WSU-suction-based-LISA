@@ -52,7 +52,7 @@ class DisplayRandVars extends React.Component {
     }
 
     render() {
-        console.log('cur data = ', this.props.data)
+        // console.log('cur data = ', this.props.data)
         return (
             <>
                 <div className="paddedPage">
@@ -115,13 +115,13 @@ class DisplayFS extends React.Component {
         var sortedZ = []
 
         for (const key in this.props.data) {
-            console.log(key)
+            // console.log(key)
             sortedZ.push(key)
         }
         sortedZ.sort()
         for (var key in sortedZ) {
             var i = sortedZ[key]
-            console.log(i)
+            // console.log(i)
             list.push(<FSRowDisplay z={i} data={this.props.data[i]} />)
         }
 

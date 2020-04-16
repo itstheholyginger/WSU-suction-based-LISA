@@ -94,3 +94,17 @@ code {
   padding-left: 10%;
   /* padding-right: 10%; */
 }
+
+.freqHist {
+    padding: 10px;
+    width: 700px;
+    height: 500px;
+    border: 1px solid black
+}
+
+.dropdown {
+    width: 200px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+
+}
