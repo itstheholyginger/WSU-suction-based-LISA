@@ -104,9 +104,13 @@ class FSSat(FS):
 
 
     '''
+    Description:
         This is a general equation for the vertical profile of suction stress
         under steady infiltration or evaportation:
+        if suction stress <= 0, S-e = -suction stress
+        else if suction stress > 0, calculate new S_e
 
+    Variables
         k_s = saturated hydraulic conductivity (m/s)
         alpha = Van Genuchten's parameters from the best fit to SWRC 
         n = Van Genuchten's parameters from the best fit to SWRC 
@@ -138,13 +142,12 @@ class FSSat(FS):
         # return (1/(1 + (self.alpha * self.suction_stress()) ^ self.n)) ^ (1-(1/self.n))
 
 
-    def infiltration(self):
+    # we aren't using this function
+    def magic_suction(self):
         return (-1 / self.alpha) * math.log((1 + (self.q / self.k_s)) + pow(math.e, self.gamma * self.alpha * self.z) - self.q / self.k_s )
 
     
     #  This function finds the effective degree of saturation (S_e)
-    #  if suction stress <= 0, S-e = -suction stress
-    #  else if suction stress > 0, calculate new S_e
     #  variables: 
     #  k_s = saturated hydraulic conductivity (m/s)
     #  alpha = Van Genuchten's parameters from the best fit to SWRC 

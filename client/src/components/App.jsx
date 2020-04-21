@@ -25,9 +25,9 @@ class App extends React.Component {
         super(props)
         this.state = {
             // for real.
-            // mode: AppMode.DATAFORM,
+            mode: AppMode.DATAFORM,
             // for testing display
-            mode: AppMode.DISPLAY,
+            // mode: AppMode.DISPLAY,
             data: {
                 numVars: 1000,
                 sat: 'unsat',

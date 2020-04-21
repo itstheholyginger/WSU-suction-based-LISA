@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { Form, Col } from 'react-bootstrap'
 import PropTypes from 'prop-types'
 
-class RandVar extends React.Component {
+class RandVar extends Component {
     constructor(props) {
         super(props)
         this.state = {}
@@ -31,70 +31,170 @@ class RandVar extends React.Component {
     }
 
     render() {
+        var dist = this.props.data.dist;
         return (
             <div className="form-group">
                 <h6>{this.props.label}</h6>
                 <Form.Row className="randVarGroup">
                     <Form.Group as={Col} controlId="formDist">
                         <Form.Label> Distribution </Form.Label>
-                        <Form.Control as="select" className="input" onChange={this.handleDistChange}>
+                        <Form.Control as="select" className="input" selectedOption={dist} onChange={this.handleDistChange}>
                             <option value="normal" defaultValue >Normal</option>
                             <option value="uniform">Uniform</option>
                             <option value="bivariate"> Bivariate</option>
                         </Form.Control>
                     </Form.Group>
-                    {this.props.data.dist === 'uniform' ? (
-                        <>
-                            <Form.Group as={Col} className="input" controlId="formMin">
-                                <Form.Label>Min</Form.Label>
-                                <Form.Control
-                                    type="number"
-                                    min={0}
-                                    step={0.0001}
-                                    name="min"
-                                    onChange={this.handleChange}
-                                    placeholder="Enter minimum"
-                                />
-                            </Form.Group>
 
-                            <Form.Group as={Col} className="input" controlId="formMax">
-                                <Form.Label>Max</Form.Label>
-                                <Form.Control
-                                    type="number"
-                                    min={this.props.data.min}
-                                    step={0.0001}
-                                    name="max"
-                                    onChange={this.handleChange}
-                                    placeholder="Enter maximum"
-                                />
-                            </Form.Group>
-                        </>
-                    ) : (
-                            <>
-                                <Form.Group as={Col} controlId="formMean">
-                                    <Form.Label>Mean</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        name="mean"
-                                        onChange={this.handleChange}
-                                        placeholder="Enter mean"
-                                    />
-                                </Form.Group>
-
-                                <Form.Group as={Col} controlId="formStdDev">
-                                    <Form.Label>Standard Deviation</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Enter standard deviation"
-                                        name="stdev"
-                                        onChange={this.handleChange}
-                                    />
-                                </Form.Group>
-                            </>
-                        )}
+                    <RandVarDisplayer
+                        dist={dist}
+                        data={this.props.data}
+                        handleChange={this.props.handleChange}
+                    />
                 </Form.Row>
             </div>
 
+        )
+    }
+}
+
+class RandVarDisplayer extends Component {
+    static propTypes = {
+        handleChange: PropTypes.func,
+        data: PropTypes.object,
+        dist: PropTypes.string
+    };
+    render() {
+        const dist = this.props.dist;
+
+        switch (dist) {
+            case "uniform":
+                return (
+                    <UniformVar
+                        data={this.props.data}
+                        handleChange={this.props.handleChange}
+                    />
+                );
+                break;
+            case "normal":
+                return (
+                    <NormalVar
+                        data={this.props.data}
+                        handleChange={this.props.handleChange}
+                    />
+                );
+                break;
+            case "bivariate":
+                return (
+                    <Bivariate
+                        data={this.props.data}
+                        handleChange={this.props.handleChange}
+                    />
+                );
+        }
+    }
+}
+
+
+class NormalVar extends Component {
+    static propTypes = {
+        handleChange: PropTypes.func,
+        data: PropTypes.object
+    };
+
+    handleChange = e => {
+        this.props.handleChange(this.props.name, e.target.name, e.target.value)
+        console.log('in rand var change')
+    };
+
+    render() {
+        return (
+            <>
+                <Form.Group as={Col} controlId="formMean">
+                    <Form.Label>Mean</Form.Label>
+                    <Form.Control
+                        type="text"
+                        name="mean"
+                        onChange={this.handleChange}
+                        placeholder="Enter mean"
+                    />
+                </Form.Group>
+
+                <Form.Group as={Col} controlId="formStdDev">
+                    <Form.Label>Standard Deviation</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="Enter standard deviation"
+                        name="stdev"
+                        onChange={this.handleChange}
+                    />
+                </Form.Group>
+                <Form.Group as={Col} className="input" controlId="formMin">
+                    <Form.Label>Low</Form.Label>
+                    <Form.Control
+                        type="number"
+                        min={0}
+                        step={0.0001}
+                        name="low"
+                        onChange={this.handleChange}
+                        placeholder="Enter low"
+                    />
+                </Form.Group>
+
+                <Form.Group as={Col} className="input" controlId="formMax">
+                    <Form.Label>High</Form.Label>
+                    <Form.Control
+                        type="number"
+                        min={this.props.data.min}
+                        step={0.0001}
+                        name="high"
+                        onChange={this.handleChange}
+                        placeholder="Enter high"
+                    />
+                </Form.Group>
+
+            </>
+        )
+    }
+}
+
+class UniformVar extends Component {
+    static propTypes = {
+        handleChange: PropTypes.func,
+        data: PropTypes.object
+    };
+
+    handleChange = e => {
+        this.props.handleChange(this.props.name, e.target.name, e.target.value)
+        console.log('in rand var change')
+    };
+
+    render() {
+        return (
+            <>
+                <Form.Group as={Col} className="input" controlId="formMin">
+                    <Form.Label>Min</Form.Label>
+                    <Form.Control
+                        type="number"
+                        min={0}
+                        step={0.0001}
+                        name="min"
+                        onChange={this.handleChange}
+                        placeholder="Enter minimum"
+                    />
+                </Form.Group>
+
+                <Form.Group as={Col} className="input" controlId="formMax">
+                    <Form.Label>Max</Form.Label>
+                    <Form.Control
+                        type="number"
+                        min={this.props.data.min}
+                        step={0.0001}
+                        name="max"
+                        onChange={this.handleChange}
+                        placeholder="Enter maximum"
+                    />
+                </Form.Group>
+            </>
         )
     }
 }
@@ -140,7 +240,7 @@ class ConstVar extends React.Component {
     }
 }
 
-class ZVar extends React.Component {
+class ZVar extends Component {
     constructor(props) {
         super(props)
         this.state = {
