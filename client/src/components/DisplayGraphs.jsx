@@ -138,7 +138,7 @@ class FreqHistFOS extends Component {
         for (const key in freqObj) {
             datapoints.push({ x: Number(key), y: freqObj[key] })
         }
-        this.setState({datapoints: datapoints})
+        this.setState({ datapoints: datapoints })
         return datapoints
     }
 
@@ -150,7 +150,7 @@ class FreqHistFOS extends Component {
     render() {
         // const width = this.props.data[Number(this.props.z)].high
         // const dp = this.getData()
-        console.log("rendering child!")
+        console.log('rendering child!')
         return (
 
             < div className='freqHist' >
