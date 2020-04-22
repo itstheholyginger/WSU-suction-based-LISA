@@ -1,9 +1,9 @@
 from flask import Flask
-from flask_socketio import SocketIO, send
+from flask_socketio import SocketIO, send, emit
 import numpy as np
 import statistics
 from FS import FSSat, FSUnsat
-from Vars import NormalVariable, UniformVariable
+from Vars import NormalVariable, UniformVariable, BivariateVariable
 import math
 from decimal import Decimal
 
@@ -27,6 +27,9 @@ FAILSTATE = 1
         should I ask the user for multiple fluxes?
 '''
 
+def ack():
+    print("message was received by client!")
+
 # when client emits event using message name this func will call and send that
 # message to every client listening on server
 @socketIo.on('submit')
@@ -44,6 +47,13 @@ def handleSubmit(data):
     # create a list of Random Variable objects. Variables are currently either Normal Dist or Uniform Dist
     # TODO: add bivariate distribution
     # calculate values based on distributions
+    if sat == False:
+        rand_vars.pop('k_s', None)
+        rand_vars.pop('a', None)
+        rand_vars.pop('n', None)
+        const_vars.pop('gamme_w', None)
+        const_vars.pop('q', None)
+
     rand_var_objs = create_dists(rand_vars, num_vars)
 
     # serialize rand_var_objs back into a dictionary to be used with the rest of the program and the frontend
@@ -52,8 +62,7 @@ def handleSubmit(data):
         rand_vars[item.name] = serialize_obj(item)
 
 
-    to_return['z'] = get_FS_data(rand_vars, H_wt, const_vars['gamma'], const_vars['gamma_w'], \
-         const_vars['slope'], const_vars['q'], z, num_vars, sat)
+    to_return['z'] = get_FS_data(rand_vars, const_vars, z, H_wt, num_vars, sat)
     
     # remove randVar vals from dict. can delete if needed later
     rand_vars = clean_rand_vars(rand_vars, "vals")
@@ -62,9 +71,9 @@ def handleSubmit(data):
 
     to_return['randVars'] = rand_vars
 
-    print(" DATA WE ARE RETURNING:")
-    print(to_return)
-    send(to_return, broadcast=True)
+    print("sending data rn:")
+    # print(to_return)
+    send(to_return, broadcast=True, callback=ack)
     return None
 
 
@@ -73,10 +82,16 @@ def create_dists(data, num_vars):
     temp = None
     print("randVars: ", data)
     for (key, val) in data.items():
+        print("cur var: ", key)
+        print(val)
         if val["dist"] == "normal":
-            temp = NormalVariable(key, val['mean'], val["stdev"], num_vars)
-        if val["dist"] == "uniform":
-            temp = UniformVariable(key, val["min"], val["max"], num_vars)
+            temp = NormalVariable(key, val['mean'], val["stdev"], val['low'], val['high'], num_vars)
+        elif val["dist"] == "uniform":
+            temp = UniformVariable(key, val["low"], val["high"], num_vars)
+        elif val['dist'] == "bivariate":
+            means = [ float(val["mean1"]), float(val["mean2"]) ]
+            cov = [ [ float(val["covX1"]), float(val["covY1"]) ], [ float(val["covX2"]), float(val["covY2"]) ] ]
+            temp = BivariateVariable(key, means, cov, num_vars)
         rand_vars.append(temp)
         # print(temp)
     return rand_vars
@@ -137,7 +152,7 @@ def calc_FS_sat(rand_vars, H_wt, gamma, gamma_w, slope, q, z, num_vars):
 
 
     # collect FS lists for each z value. will be used to compare in graphs
-def get_FS_data(rand_vars, H_wt, gamma, gamma_w, slope, q, z, num_vars, sat):
+def get_FS_data(rand_vars, const_vars, z, H_wt, num_vars, sat):
     print("IN get_FS_data FUNC")
     res = {}
     probFail = 0.0
@@ -150,12 +165,12 @@ def get_FS_data(rand_vars, H_wt, gamma, gamma_w, slope, q, z, num_vars, sat):
         # collect list of FS
         FS_list = []
         print("Is the soil saturated?\t", sat)
-        if sat == "sat":
+        if sat == True:
             print("soil is sat")
-            FS_list, probFail = calc_FS_sat(rand_vars, H_wt, gamma, gamma_w, slope, q, z, num_vars)
-        elif sat == "unsat":
+            FS_list, probFail = calc_FS_sat(rand_vars, H_wt, const_vars['gamma'], const_vars['gamma_w'], const_vars['slope'], const_vars['q'], z, num_vars)
+        elif sat == False:
             print("soil is unsat")
-            FS_list, probFail = calc_FS_unsat(rand_vars, H_wt, gamma, slope, z, num_vars)
+            FS_list, probFail = calc_FS_unsat(rand_vars, H_wt, const_vars['gamma'], const_vars['slope'], z, num_vars)
     
         # print("\nFS_LIST:\t", FS_list)
         print("Probability of failure: ", probFail)
@@ -173,12 +188,16 @@ def get_FS_data(rand_vars, H_wt, gamma, gamma_w, slope, q, z, num_vars, sat):
 
 # doing this manually ig
 def clean_rand_vars(data, key):
-    data['c'].pop(key, None)
-    data['c_r'].pop(key, None)
-    data['phi'].pop(key, None)
-    data['k_s'].pop(key, None)
-    data['a'].pop(key, None)
-    data['n'].pop(key, None)
+    keys = ['c', 'c_r', 'phi', 'k_s', 'a', 'n']
+    for item in keys:
+        if item in data:
+            data[item].pop(key, None)
+    # data['c'].pop(key, None)
+    # data['c_r'].pop(key, None)
+    # data['phi'].pop(key, None)
+    # data['k_s'].pop(key, None)
+    # data['a'].pop(key, None)
+    # data['n'].pop(key, None)
     return data
 
 

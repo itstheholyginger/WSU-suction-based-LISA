@@ -1,13 +1,13 @@
 import React, { } from 'react'
-// import io from 'socket.io-client'
+import io from 'socket.io-client'
 import AppMode from '../AppMode'
 import WelcomePage from './Welcome.jsx'
 import DataFormPage from './DataForm.jsx'
 import DisplayPage from './Display.jsx'
 
-// const endPoint = 'http://localhost:5000'
+const endPoint = 'http://localhost:5000'
 
-// const socket = io.connect(`${endPoint}`)
+const socket = io.connect(`${endPoint}`)
 
 const modeTitle = {}
 
@@ -30,7 +30,7 @@ class App extends React.Component {
             // mode: AppMode.DISPLAY,
             data: {
                 numVars: 1000,
-                sat: 'unsat',
+                sat: true,
                 randVars: {
                     c: {
                         dist: 'normal',
@@ -133,36 +133,36 @@ class App extends React.Component {
             testing: {
                 data: {
                     numVars: 100,
-                    sat: 'sat',
+                    sat: false,
                     randVars: {
                         c: {
                             dist: 'normal',
-                            min: 0,
-                            max: 0,
-                            mean: 1.1,
+                            low: 1,
+                            high: 4,
+                            mean: 2,
                             stdev: 0.37,
                             unit: 'Kpa'
                         },
                         c_r: {
-                            dist: 'normal',
-                            min: 0,
-                            max: 0,
+                            dist: 'uniform',
+                            low: 4,
+                            high: 6,
                             mean: 6,
                             stdev: 1.2,
                             unit: 'Kpa'
                         },
                         phi: {
                             dist: 'normal',
-                            min: 0,
-                            max: 0,
+                            low: 0,
+                            high: 50,
                             mean: 36,
                             stdev: 1.67,
                             unit: 'deg'
                         },
                         k_s: {
                             dist: 'normal',
-                            min: 0.0,
-                            max: 0.0,
+                            low: 0.0,
+                            high: 10,
                             mean: 4.18e-07,
                             stdev: 0.0,
                             unit: 'm/s'
@@ -170,7 +170,7 @@ class App extends React.Component {
                         a: {
                             dist: 'normal',
                             min: 0,
-                            max: 0,
+                            max: 12,
                             mean: 0.38,
                             stdev: 0.02,
                             unit: '1/kPa'
@@ -276,32 +276,47 @@ class App extends React.Component {
                 }
             }
         }
+        // this.handleRandVarChange = this.handleRandVarChange.bind(this)
     }
 
     handleChangeMode = (newMode) => {
         this.setState({ mode: newMode })
     }
 
-    // componentDidMount = () => {
-    //     this.socket = io(endPoint)
-    //     this.socket.on('message', msg => {
-    //         console.log('received results: ', msg)
-    //         this.setState({
-    //             results: msg
-    //         })
-    //     })
-    // }
+    componentDidMount = () => {
+        // socket = io(this.endPoint)
+        this.socket = io(endPoint)
 
-    // componentWillUnmount = () => {
-    //     this.socket.disconnect()
-    // }
+        this.socket.on('submit', res => {
+            console.log('received results from backend: ', res)
+            this.setState({
+                results: res
+            })
+            this.handleChangeMode(AppMode.DISPLAY)
+        })
+        this.socket.on('message', msg => {
+            console.log('received results: ', msg)
+            this.setState({
+                results: msg,
+                mode: AppMode.DISPLAY
+            })
+        })
+    }
 
-    // onResultsChange = () => {
-    //     socket.on('submit', res => {
-    //         this.setState({ results: res })
-    //     })
-    //     console.log('got response')
-    // }
+    componentWillUnmount = () => {
+        this.socket.disconnect()
+    }
+
+    onResultsChange = () => {
+        socket.on('submit', res => {
+            console.log('recieved results from backend: ', res)
+            this.setState({
+                results: res,
+                mode: AppMode.DISPLAY
+            })
+        })
+        console.log('got response from backend!')
+    }
 
     handleRandVarChange = (varName, key, value) => {
         console.log(varName, key, value)
@@ -344,9 +359,9 @@ class App extends React.Component {
         this.setState(newData)
     }
 
-    handleSatChange = (key, val) => {
+    handleSatChange = (val) => {
         var newData = this.state.data
-        newData[key] = val
+        newData.sat = val
         this.setState(newData)
     }
 
@@ -355,7 +370,7 @@ class App extends React.Component {
             // socket.emit(data)
             console.log(this.state.testing.data)
             console.log('send to backend')
-            // socket.emit('submit', this.state.testing.data)
+            this.socket.emit('submit', this.state.testing.data)
             this.handleChangeMode(AppMode.DISPLAY)
         }
     }
@@ -363,15 +378,13 @@ class App extends React.Component {
     render() {
         return (
             <>
-                {/* <h1>LISA</h1>
-        <DataForm /> */}
                 {this.state.mode === AppMode.DATAFORM ? (
                     <>
                         <DataFormPage
                             mode={this.state.mode}
                             changeMode={this.handleChangeMode}
                             handleNumVarChange={this.handleNumVarChange}
-                            handleRandVarChange={this.handleRandVarChange}
+                            handleRVChange={this.handleRandVarChange}
                             handleDistChange={this.handleDistChange}
                             handleConstVarChange={this.handleConstVarChange}
                             handleZVarChange={this.handleZVarChange}
@@ -383,24 +396,12 @@ class App extends React.Component {
                 ) : (
                         <>
                             <DisplayPage
-                                data={this.state.testing.results}
+                                // data={this.state.testing.results}
+                                data={this.state.results}
                             />
                         </>
                     )
-
-                    /* <ModePage
-                      mode={this.state.mode}
-                      changeMode={this.handleChangeMode}
-                      handleNumVarChange={this.handleNumVarChange}
-                      handleRandVarChange={this.handleRandVarChange}
-                      handleDistChange={this.handleDistChange}
-                      handleConstVarChange={this.handleConstVarChange}
-                      handleZVarChange={this.handleZVarChange}
-                      data={this.state.data}
-                      onSubmit={this.onSubmit}
-                    />} */
                 }
-
             </>
         )
     }

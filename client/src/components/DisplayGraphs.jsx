@@ -120,6 +120,7 @@ class FreqHistFOS extends Component {
         console.log(this.props.z)
         // we need to make frequency array
         // for current Z, get fos counts
+        console.log('in getData()  current data= ', this.props.data)
         const valsArr = this.props.data[Number(this.props.z)].fs_vals
 
         console.log('vals array: ')

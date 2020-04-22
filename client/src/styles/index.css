@@ -14,24 +14,10 @@ code {
     monospace;
 }
 
-.myForm {
-  width: 80%;
-  /* float: center;
-  text-align: center; */
-  /* padding: 20px; */
-}
-
 .input {
   width: 300px;
-  /* text-align: center;
-  float: center; */
 }
 
-.randVarGroup {
-  width: 700px;
-  /* text-align: center;
-  float: center; */
-}
 
 .header {
   display: block;
@@ -81,6 +67,14 @@ code {
   padding: 30px;
 }
 
+.myForm {
+  border: 1px solid black;
+  /* margin-left: 100px; */
+  /* margin-right: 100px; */
+  padding: 30px;
+  width: 700px;
+}
+
 .navbar {
   height: 80px;
 }
@@ -107,4 +101,66 @@ code {
     padding-bottom: 20px;
     padding-top: 20px;
 
+}
+
+.formRandVarContainerRow {
+    width: 700px;
+    /* border: solid 1px */
+}
+.randVarContainer {
+    padding: 10px;
+    width: 100%;
+}
+
+.formLabel {
+width: 100%;
+padding-left: 10px;
+padding-top: 5px
+}
+
+.randVarInfo {
+  width: 100%;
+}
+
+.randVarInputs {
+    padding-left: 40px;
+}
+
+.formDistCol {
+    /* width: 250px; */
+}
+
+.randVarInputCol {
+    height: 100%;
+}
+
+.bivMean {
+    width: 40%;
+}
+
+#bivMean {
+    width: 120px;
+}
+
+.bivCov {
+    width: 60%;
+}
+#formDist {
+    width: 200px;
+    /* margin-right: 100px; */
+}
+
+#formInput {
+    width: 150px;
+}
+
+#formSat {
+    width: 200px;
+    margin-right: 70px;
+    margin-bottom: 30px;
+}
+
+#formNumVars {
+    width: 200px;
+    margin-bottom: 30px;
 }
