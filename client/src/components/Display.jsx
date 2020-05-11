@@ -15,34 +15,40 @@ class DisplayPage extends React.Component {
 
     render() {
         console.log("what's our data? here it is!", this.props.data)
-        return (
-            <>
-                <Header
-                    title="Display"
-                />
-                <div className="paddedPage">
-                    <Tabs defaultActiveKey="FS_graphs" id="display-tabs">
-                        <Tab eventKey="randVars" title="Random Variables">
-                            <DisplayRandVars
-                            // data = {z: {}, randVars: {}}
-                            // sent data = {'c': {}, c_r: {}, ...}
-                                data={this.props.data.randVars}
-                            />
-                        </Tab>
-                        <Tab eventKey="FS" title="Factor of Safety by Z">
-                            <DisplayFS
-                                data={this.props.data.z}
-                            />
-                        </Tab>
-                        <Tab eventKey="FS_graphs" title="Visualizations">
-                            <DisplayGraphs
-                                data={this.props.data}
-                            />
-                        </Tab>
-                    </Tabs>
-                </div>
-            </>
-        )
+
+        if (this.props.data !== null) {
+            return (
+                <>
+                    <Header
+                        title="Display"
+                    />
+                    <div className="paddedPage">
+                        <Tabs defaultActiveKey="FS_graphs" id="display-tabs">
+                            <Tab eventKey="randVars" title="Random Variables">
+                                <DisplayRandVars
+                                    // data = {z: {}, randVars: {}}
+                                    // sent data = {'c': {}, c_r: {}, ...}
+                                    data={this.props.data.randVars}
+                                />
+                            </Tab>
+                            <Tab eventKey="FS" title="Factor of Safety by Z">
+                                <DisplayFS
+                                    data={this.props.data.z}
+                                />
+                            </Tab>
+                            <Tab eventKey="FS_graphs" title="Visualizations">
+                                <DisplayGraphs
+                                    data={this.props.data}
+                                />
+                            </Tab>
+                        </Tabs>
+                    </div>
+                </>
+            )
+        } else {
+            return (<h2>No data received from backend</h2>)
+        }
+
     }
 }
 
@@ -68,7 +74,7 @@ class DisplayRandVars extends React.Component {
                                 </tr>
                             </thead>
                             <tbody>
-                            {/* sent data = {'c': {}, c_r: {}, ...} */}
+                                {/* sent data = {'c': {}, c_r: {}, ...} */}
                                 <RandVarRowDisplay data={this.props.data.c} label="C: Soil Cohesion (psf)" />
                                 <RandVarRowDisplay data={this.props.data.c_r} label="C_r: Root Cohesion (psf)" />
                                 <RandVarRowDisplay data={this.props.data.phi} label="phi: Effective Angle of Friction (degrees)" />
@@ -127,21 +133,21 @@ class DisplayFS extends React.Component {
 
         return (
             <div className="paddedPage displayTable">
-            <Table striped hover bordered size="sm">
-                <thead>
-                    <tr>
-                        <th>Z</th>
-                        <th>FS Min</th>
-                        <th>FS Max</th>
-                        <th>FS Mean</th>
-                        <th>FS Stdev</th>
-                        <th>Probability of Failure</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {list}
-                </tbody>
-            </Table>
+                <Table striped hover bordered size="sm">
+                    <thead>
+                        <tr>
+                            <th>Z</th>
+                            <th>FS Min</th>
+                            <th>FS Max</th>
+                            <th>FS Mean</th>
+                            <th>FS Stdev</th>
+                            <th>Probability of Failure</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {list}
+                    </tbody>
+                </Table>
             </div>
         )
     }
