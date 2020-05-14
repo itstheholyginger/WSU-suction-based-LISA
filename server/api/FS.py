@@ -52,7 +52,7 @@ class FSUnsat(FS):
         fs = (math.tan(math.radians(self.phi))*self.z)/math.tan(math.radians(self.slope)) + \
             ((2*self.c + self.c_r)/(self.gamma *
                                     (self.H_wt - self.z) * math.sin(math.radians(2 * self.slope))))
-        print("fs = ", fs)
+        # print("fs = ", fs)
         return fs
 
     def round_vals(self):
@@ -97,29 +97,29 @@ class FSSat(FS):
         #     import pdb; pdb.set_trace()
 
         first = (math.tan(math.radians(self.phi)) * self.z) / math.tan(math.radians(self.slope))
-        print("first= ", first)
+        # print("first= ", first)
 
         second = (2 * self.c + self.c_r)/(self.gamma *
                                           (self.H_wt - self.z) * math.sin(math.radians(2 * self.slope)))
-        print("second = ", second)
+        # print("second = ", second)
 
         ss = self.suction_stress()
         third = (ss / (self.gamma * (self.H_wt - self.z)))
-        print("third = ", third)
+        # print("third = ", third)
 
         if math.isnan(float(third)):
             import pdb; pdb.set_trace()
-            print("third is not a number")
+            # print("third is not a number")
             self.print_attrs()
 
         last = (math.tan(math.radians(self.slope)) + (1/math.tan(math.radians(self.slope)))) * math.tan(math.radians(self.phi)) * self.z
-        print("last= ", last)
+        # print("last= ", last)
         total = first + second - third*last
-        print("fs = ", total)
+        # print("fs = ", total)
         if total < 0:
             import pdb
             # pdb.set_trace()
-            print("fs shouldn't be negative returning 0")
+            # print("fs shouldn't be negative returning 0")
             return 0
         return total
 
@@ -138,26 +138,26 @@ class FSSat(FS):
     '''
 
     def suction_stress(self):
-        print("\nsuction stress")
+        # print("\nsuction stress")
         msuc = self.magic_suction()
         if msuc <= 0:
-            print("returning negative, og was ", msuc)
+            # print("returning negative, og was ", msuc)
             return -msuc
         else:
             temp = self.q / self.k_s
 
             first = 1/self.alpha
-            print("first = ",  first)
+            # print("first = ",  first)
 
             second_top = math.log((1 + temp) * math.exp(-self.gamma_w * self.alpha * self.z) - temp)
-            print("second_top = ", second_top)
+            # print("second_top = ", second_top)
 
             second_bottom = pow((1 + pow((-second_top), self.n)),
                                 (self.n - 1) / self.n)
-            print("second_bottom = ", second_bottom)
+            # print("second_bottom = ", second_bottom)
 
             ss = first * (second_top / second_bottom)
-            print("ss = ", ss)
+            # print("ss = ", ss)
         return ss
 
 

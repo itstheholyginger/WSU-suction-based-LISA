@@ -8,3 +8,4 @@
 # server
 /server/.vscode
 /server/venv/
+/server/api/__pycache__/

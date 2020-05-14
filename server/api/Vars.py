@@ -33,7 +33,7 @@ class NormalVariable():
         # vals = self.get_truncated_normal()
 
         # import pdb; pdb.set_trace()
-        print(self.name, self.low, self.high, self.mean, self.stdev)
+        # print(self.name, self.low, self.high, self.mean, self.stdev)
         stdev = self.stdev
         if stdev == 0:
             print(
@@ -43,7 +43,7 @@ class NormalVariable():
         a = (self.low - self.mean) / stdev
         b = (self.high - self.mean) / stdev
         vals = truncnorm.rvs(a, b, loc=self.mean, scale=self.stdev, size=self.num_vars)
-        print(vals)
+        # print(vals)
         if min(vals) < 0:
             import pdb; pdb.set_trace()
             print("something is wrong here")
@@ -88,11 +88,11 @@ class BivariateVariable():
 
     def calc_vals(self):
         # import pdb; pdb.set_trace()
-        print(self.means)
-        print(self.cov)
+        # print(self.means)
+        # print(self.cov)
         vals = np.random.default_rng().multivariate_normal(
             self.means, self.cov, size=self.num_vars)
-        print(vals)
+        # print(vals)
         return vals
 
 

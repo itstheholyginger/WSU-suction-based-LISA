@@ -71,7 +71,7 @@ class ZVar extends Component {
                 <h6>Z</h6>
                 <Form.Row>
                     <Form.Group as={Col} controlId="form-max">
-                        <Form.Label>Max</Form.Label>
+                        <Form.Label>Max (Distance from ground surface to water table</Form.Label>
                         <Form.Control
                             type="number"
                             min={0.0001}

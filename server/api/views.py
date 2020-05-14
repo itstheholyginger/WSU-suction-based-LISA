@@ -79,6 +79,8 @@ results = {
 @main.route('/add_data', methods=['POST'])
 def add_data():
     new_data = request.get_json()
+    # print("data recieved: ")
+    # print(new_data)
     # now = datetime.now().timestamp()
     data[1] = new_data
     res = handleSubmit(data[1])

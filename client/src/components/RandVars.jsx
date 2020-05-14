@@ -171,7 +171,7 @@ class NormalVar extends Component {
                         <Form.Label>High</Form.Label>
                         <Form.Control
                             type="number"
-                            min={this.props.data.min}
+                            min={this.props.data.low}
                             step={0.0001}
                             name="high"
                             onChange={this.handleChange}
@@ -201,26 +201,26 @@ class UniformVar extends Component {
         return (
             <>
                 <Form.Group as={Col} className="input" controlId="formInput">
-                    <Form.Label>Min</Form.Label>
+                    <Form.Label>Low</Form.Label>
                     <Form.Control
                         type="number"
                         min={0}
                         step={0.0001}
-                        name="min"
+                        name="low"
                         onChange={this.handleChange}
-                        placeholder="Enter minimum"
+                        placeholder="Enter low"
                     />
                 </Form.Group>
 
                 <Form.Group as={Col} className="input" controlId="formInput">
-                    <Form.Label>Max</Form.Label>
+                    <Form.Label>High</Form.Label>
                     <Form.Control
                         type="number"
-                        min={this.props.data.min}
+                        min={this.props.data.low}
                         step={0.0001}
-                        name="max"
+                        name="high"
                         onChange={this.handleChange}
-                        placeholder="Enter maximum"
+                        placeholder="Enter high"
                     />
                 </Form.Group>
             </>

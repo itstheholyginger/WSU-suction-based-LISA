@@ -21,10 +21,6 @@ FAILSTATE = 1
         should I ask the user for multiple fluxes?
 '''
 
-
-def ack():
-    print("message was received by client!")
-
 # when client emits event using message name this func will call and send that
 # message to every client listening on server
 
@@ -39,6 +35,7 @@ def handleSubmit(data):
     const_vars = data['constVars']
     H_wt = data["z"]["max"]
     z = data['z']
+    # print("my data: " + data)
 
     # create a list of Random Variable objects. Variables are currently either Normal Dist or Uniform Dist
     # TODO: add bivariate distribution
@@ -66,7 +63,7 @@ def handleSubmit(data):
 
     to_return['randVars'] = rand_vars
 
-    print("sending data rn:")
+    # print("sending data rn:")
     # print(to_return)
     return to_return
 
@@ -74,10 +71,10 @@ def handleSubmit(data):
 def create_dists(data, num_vars):
     rand_vars = []
     temp = None
-    print("randVars: ", data)
+    # print("randVars: ", data)
     for (key, val) in data.items():
-        print("cur var: ", key)
-        print(val)
+        # print("cur var: ", key)
+        # print(val)
         if val["dist"] == "normal":
             temp = NormalVariable(
                 key, val['mean'], val["stdev"], val['low'], val['high'], num_vars)
@@ -98,11 +95,11 @@ def create_dists(data, num_vars):
 def get_z_vals(z):
     top = z['max']
     step = z['step']
-    print("step:", step)
-    print("dec step: ", Decimal)
+    # print("step:", step)
+    # print("dec step: ", Decimal)
     num_z_vals = math.floor(top / step)
     l = [round(x * step, 4) for x in range(0, num_z_vals)]
-    print(l)
+    # print(l)
     return l
 
 
@@ -127,8 +124,8 @@ def calc_FS_unsat(rand_vars, H_wt, gamma, slope, z, num_vars):
 def calc_FS_sat(rand_vars, H_wt, gamma, gamma_w, slope, q, z, num_vars):
     FS_list = []
     failed = 0
-    print("rand vars: ")
-    print(rand_vars)
+    # print("rand vars: ")
+    # print(rand_vars)
     for i in range(int(num_vars)):
         c = rand_vars['c']['vals'][i]
         c_r = rand_vars['c_r']['vals'][i]
@@ -144,14 +141,14 @@ def calc_FS_sat(rand_vars, H_wt, gamma, gamma_w, slope, q, z, num_vars):
             failed += 1
         FS_list.append(FS.fs)
 
-    print("failed: ", failed)
+    # print("failed: ", failed)
     return FS_list, failed / num_vars
 
     # collect FS lists for each z value. will be used to compare in graphs
 
 
 def get_FS_data(rand_vars, const_vars, z, H_wt, num_vars, sat):
-    print("IN get_FS_data FUNC")
+    # print("IN get_FS_data FUNC")
     res = {}
     probFail = 0.0
 
@@ -159,21 +156,21 @@ def get_FS_data(rand_vars, const_vars, z, H_wt, num_vars, sat):
     z_arr = get_z_vals(z)
     # z_arr = np.arange(0, z['max'] + z['step'], z['step'])
     for z in z_arr:
-        print("CUR Z: ", z)
+        # print("CUR Z: ", z)
         # collect list of FS
         FS_list = []
-        print("Is the soil saturated?\t", sat)
+        # print("Is the soil saturated?\t", sat)
         if sat == True:
-            print("soil is sat")
+            # print("soil is sat")
             FS_list, probFail = calc_FS_sat(
                 rand_vars, H_wt, const_vars['gamma'], const_vars['gamma_w'], const_vars['slope'], const_vars['q'], z, num_vars)
         elif sat == False:
-            print("soil is unsat")
+            # print("soil is unsat")
             FS_list, probFail = calc_FS_unsat(
                 rand_vars, H_wt, const_vars['gamma'], const_vars['slope'], z, num_vars)
 
         # print("\nFS_LIST:\t", FS_list)
-        print("Probability of failure: ", probFail)
+        # print("Probability of failure: ", probFail)
         res[z] = {}
         res[z]['fs_vals'] = FS_list
         res[z]['low'] = round(min(FS_list), 2)
