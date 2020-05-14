@@ -6,7 +6,8 @@ import Select from 'react-select'
 
 class DisplayGraphs extends Component {
     static propTypes = {
-        data: PropTypes.object
+        data: PropTypes.object,
+        apiClient: PropTypes.object
     };
 
     render() {
@@ -23,6 +24,10 @@ class DisplayGraphs extends Component {
                     <Tab eventKey='scatterPlots' title='Scatter Plot Comparisons'>
                         <li>Scatter Plot of any pair of variables or of a variable and the factor of safety</li>
                     </Tab>
+                    <Tab eventKey="probFail/z" title="Probablity of Failure by Depth">
+
+                    </Tab>
+                    <Tab eventKey="ss/z" title="Suction Stress by Depth"></Tab>
                 </Tabs>
                 <ul>
                 </ul>
@@ -39,7 +44,7 @@ class FOSFrequency extends Component {
         super(props)
         this.state = {
             datapoints: [],
-            selected: 0.0
+            selected: '0.0'
         }
         this.handleChange = this.handleChange.bind(this)
     }
@@ -72,10 +77,10 @@ class FOSFrequency extends Component {
         // console.log(this.props.data)
         const { selectedOption } = this.state.selected
         const options = this.setOptions()
-        // console.log(options)
+        console.log(options)
 
-        // console.log('current z=')
-        console.log(this.state.selected)
+        console.log('current z=')
+        console.log('currently selected z = ', this.state.selected)
 
         return (
             <div >
@@ -100,7 +105,8 @@ class FreqHistFOS extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            datapoints: []
+            datapoints: [],
+            z: this.props.z
         }
         this.getData = this.getData.bind(this)
     }
@@ -110,17 +116,62 @@ class FreqHistFOS extends Component {
         z: PropTypes.string
     };
 
-    componentDidMount = () => {
-        // this.initComp(this.props.z)
-        this.getData()
+    // componentDidMount = () => {
+    //     // this.initComp(this.props.z)
+    //     this.getData()
+    // }
+
+    // componentDidUpdate = () => {
+    //     this.getData()
+    // }\
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (nextProps.z !== prevState.z) {
+            const z = nextProps.z
+            console.log('next z')
+            console.log(z)
+            // we need to make frequency array
+            // for current Z, get fos counts
+            console.log(
+                'in getData()  current data= ',
+                nextProps.data
+            )
+            const valsArr = nextProps.data[z].fs_vals
+
+            console.log('vals array: ')
+            console.log(valsArr)
+            const freqObj = {}
+            valsArr.forEach((x) => {
+                const rounded = x.toFixed(3)
+                if (!freqObj[rounded]) {
+                freqObj[rounded] = 1
+                } else {
+                freqObj[rounded] += 1
+                }
+            })
+
+            const datapoints = []
+            for (const key in freqObj) {
+                datapoints.push({ x: Number(key), y: freqObj[key] })
+            }
+            // this.setState({ datapoints: datapoints })
+            return ({ datapoints: datapoints })
+        } else return null
     }
+
+    // componentDidUpdate(prevProps, prevState) {
+    //     if (prevProps.z !== this.props.z) {
+
+    //     }
+    // }
 
     getData = () => {
         console.log('current z')
         console.log(this.props.z)
         // we need to make frequency array
         // for current Z, get fos counts
-        const valsArr = this.props.data[Number(this.props.z)].fs_vals
+        console.log('in getData()  current data= ', this.props.data)
+        const valsArr = this.props.data[this.props.z].fs_vals
 
         console.log('vals array: ')
         console.log(valsArr)
@@ -138,7 +189,7 @@ class FreqHistFOS extends Component {
         for (const key in freqObj) {
             datapoints.push({ x: Number(key), y: freqObj[key] })
         }
-        this.setState({datapoints: datapoints})
+        this.setState({ datapoints: datapoints })
         return datapoints
     }
 
@@ -150,7 +201,7 @@ class FreqHistFOS extends Component {
     render() {
         // const width = this.props.data[Number(this.props.z)].high
         // const dp = this.getData()
-        console.log("rendering child!")
+        console.log('rendering child!')
         return (
 
             < div className='freqHist' >

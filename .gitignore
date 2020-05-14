@@ -1,1 +1,11 @@
+# root
+/.vscode
+
+# client
 /client/node_modules/
+/client/.vscode
+
+# server
+/server/.vscode
+/server/venv/
+/server/api/__pycache__/
