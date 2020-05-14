@@ -9,8 +9,22 @@ import DisplayGraphs from './DisplayGraphs'
 // remember, we're doing it by z step.
 
 class DisplayPage extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            data: {}
+        }
+    }
     static propTypes = {
         data: PropType.object
+    }
+
+    componentDidMount = () => {
+        fetch('/display').then(response =>
+            response.json().then(data => {
+                console.log(data)
+                this.setState({data: data});
+            }) )
     }
 
     render() {

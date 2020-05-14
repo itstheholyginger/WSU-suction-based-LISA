@@ -1,56 +1,114 @@
 /* eslint-disable react/no-unescaped-entities */
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { Form, Button, Col } from 'react-bootstrap'
-// eslint-disable-next-line camelcase
 import RandVar from './RandVars'
 import { ConstVar, NumRandVars, ZVar, Saturation } from './OtherVars'
 import PropTypes from 'prop-types'
 import Header from './Header'
+import { data, results, testing } from '../resources/test_data'
 
-class DataFormPage extends Component {
-    static propTypes = {
-        onSubmit: PropTypes.func,
-        handleNumVarChange: PropTypes.func,
-        handleSatChange: PropTypes.func,
-        handleRVChange: PropTypes.func,
-        handleDistChange: PropTypes.func,
-        handleConstVarChange: PropTypes.func,
-        data: PropTypes.object,
-        handleZVarChange: PropTypes.func
-    }
     // Needed Random Variables:
     //    cohesion, ang_fric, k_s, a, n
     // Constant Variables:
     //    y_sat, y, y_w, slope, z, gnd_to_wt, c_r
     // also, ask user for fluxes
 
-    onSubmit = e => {
-        this.props.onSubmit()
+class DataFormPage extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            data: data
+        }
     }
 
-    // static propTypes = {
-    //     handleChange: PropTypes.func
-    // }
+    static propTypes = {
+        onSubmit: PropTypes.func,
+    }
+    
+    //  handling variable changes in data form
+    handleRandVarChange = (varName, key, value) => {
+        console.log(varName, key, value)
+        var newData = this.state.data
+        console.log('old data:\t', newData)
+        newData.randVars[varName][key] = value
+        console.log('var:\t', varName)
+        console.log('\tnew data:\t', newData)
+        this.setState({ newData })
+    }
+
+    handleDistChange = (varName, selected) => {
+        var newData = this.state.data
+        newData.randVars[varName] = {
+            dist: selected,
+            min: 0,
+            max: 0,
+            mean: 0,
+            stdev: 0
+        }
+        this.setState(newData)
+        console.log(varName, 'new dist is: ', selected)
+    }
+
+    handleConstVarChange = (varName, value) => {
+        var newData = this.state.data
+        newData.constVars[varName] = value
+        this.setState(newData)
+    }
+
+    handleNumVarChange = (number) => {
+        var newData = this.state.data
+        newData.numVars = number
+        this.setState(newData)
+    }
+
+    handleZVarChange = (key, val) => {
+        var newData = this.state.data
+        newData.z[key] = val
+        this.setState(newData)
+    }
+
+    handleSatChange = (val) => {
+        var newData = this.state.data
+        newData.sat = val
+        this.setState(newData)
+    }
+
+    onSubmit = async () => {
+        const response = await fetch('/add_data', {
+            method: "POST",
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(this.state.data)
+        })
+
+        if (response.ok) {
+            console.log("response worked!")
+        } else {
+            console.log("the post request failed for some reason.")
+        }
+
+    }
 
     render() {
-        const sat = this.props.data.sat
+        const sat = this.state.data.sat
         console.log('sat in dataform= ', sat)
 
         return (
-            <>
+            <Fragment>
                 <Header title="Data Form" />
                 <div className="paddedPage">
                     <div className="myForm">
                         <Form>
-                            {/* TODO: only show necessary vars for saturated/unsaturated */}
+
                             <Form.Row>
-                                <Saturation name="sat" label="Soil Saturation" handleChange={this.props.handleSatChange} />
-                                <NumRandVars handleChange={this.props.handleNumVarChange} />
+                                <Saturation name="sat" label="Soil Saturation" handleChange={this.handleSatChange} />
+                                <NumRandVars handleChange={this.handleNumVarChange} />
                             </Form.Row>
                             <Form.Row>
-                                <DataFormSelector sat={sat} data={this.props.data} handleRVChange={this.props.handleRVChange}
-                                    handleDistChange={this.props.handleDistChange} handleConstVarChange={this.props.handleConstVarChange}
-                                    handleZVarChange={this.props.handleZVarChange}
+                                <DataFormSelector sat={sat} data={this.props.data} handleRVChange={this.handleRVChange}
+                                    handleDistChange={this.handleDistChange} handleConstVarChange={this.handleConstVarChange}
+                                    handleZVarChange={this.handleZVarChange}
                                 />
                             </Form.Row>
 
@@ -58,7 +116,7 @@ class DataFormPage extends Component {
                         </Form>
                     </div>
                 </div>
-            </>
+            </Fragment>
         )
     }
 }
@@ -78,7 +136,7 @@ class DataFormSelector extends Component {
 
         if (sat === true) {
             return (
-                <>
+                <Fragment>
                     <Form.Group as={Col}>
 
                         <div className="rand-vars">
@@ -102,7 +160,6 @@ class DataFormSelector extends Component {
                             <RandVar data={this.props.data.randVars.n} name="n" label="n"
                                 handleChange={this.props.handleRVChange}
                                 handleDistChange={this.props.handleDistChange} />
-                            {/* </div> */}
                         </div>
                     </Form.Group>
 
@@ -118,11 +175,11 @@ class DataFormSelector extends Component {
                         </div>
                     </Form.Group>
 
-                </>
+                </Fragment>
             )
         } else {
             return (
-                <>
+                <Fragment>
                     <div className="rand-vars">
                         <RandVar data={this.props.data.randVars.c} name="c" label="C: Soil Cohesion"
                             handleChange={this.props.handleRVChange} handleDistChange={this.props.handleDistChange} />
@@ -142,7 +199,7 @@ class DataFormSelector extends Component {
                         <ZVar handleChange={this.props.handleZVarChange} />
 
                     </div>
-                </>
+                </Fragment>
             )
         }
     }
