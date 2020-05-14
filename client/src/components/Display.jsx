@@ -24,14 +24,14 @@ class DisplayPage extends Component {
   };
 
   componentDidMount = () => {
-        console.log('getting results...')
-        API.get('/display').then(res => {
-            console.log(res)
-            console.log(res.data)
-            const results = res.data.results[1]
-            console.log('setting results as state: ', results)
-            this.setState({ data: results })
-        })
+    console.log('getting results...')
+    API.get('/display').then(res => {
+        console.log(res)
+        console.log(res.data)
+        const results = res.data.results[1]
+        console.log('setting results as state: ', results)
+        this.setState({ data: results })
+    })
   };
 
   render() {

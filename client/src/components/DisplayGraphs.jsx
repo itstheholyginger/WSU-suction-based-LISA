@@ -106,9 +106,9 @@ class FreqHistFOS extends Component {
         super(props)
         this.state = {
             datapoints: [],
-            z: this.props.z
+            z: 0
         }
-        this.getData = this.getData.bind(this)
+        // this.getData = this.getData.bind(this)
     }
 
     static propTypes = {
@@ -123,9 +123,11 @@ class FreqHistFOS extends Component {
 
     // componentDidUpdate = () => {
     //     this.getData()
-    // }\
+    // }
 
     static getDerivedStateFromProps(nextProps, prevState) {
+        console.log('prex z: ', prevState.z)
+        console.log('next z: ', nextProps.z)
         if (nextProps.z !== prevState.z) {
             const z = nextProps.z
             console.log('next z')
@@ -133,7 +135,7 @@ class FreqHistFOS extends Component {
             // we need to make frequency array
             // for current Z, get fos counts
             console.log(
-                'in getData()  current data= ',
+                'in getDerivedStateFromProps()  current data= ',
                 nextProps.data
             )
             const valsArr = nextProps.data[z].fs_vals
@@ -159,44 +161,38 @@ class FreqHistFOS extends Component {
         } else return null
     }
 
-    // componentDidUpdate(prevProps, prevState) {
-    //     if (prevProps.z !== this.props.z) {
+    // getData = () => {
+    //     console.log('current z')
+    //     console.log(this.props.z)
+    //     // we need to make frequency array
+    //     // for current Z, get fos counts
+    //     console.log('in getData()  current data= ', this.props.data)
+    //     const valsArr = this.props.data[this.props.z].fs_vals
 
+    //     console.log('vals array: ')
+    //     console.log(valsArr)
+    //     const freqObj = {}
+    //     valsArr.forEach(x => {
+    //         const rounded = x.toFixed(3)
+    //         if (!freqObj[rounded]) {
+    //             freqObj[rounded] = 1
+    //         } else {
+    //             freqObj[rounded] += 1
+    //         }
+    //     })
+
+    //     const datapoints = []
+    //     for (const key in freqObj) {
+    //         datapoints.push({ x: Number(key), y: freqObj[key] })
     //     }
+    //     this.setState({ datapoints: datapoints })
+    //     return datapoints
     // }
 
-    getData = () => {
-        console.log('current z')
-        console.log(this.props.z)
-        // we need to make frequency array
-        // for current Z, get fos counts
-        console.log('in getData()  current data= ', this.props.data)
-        const valsArr = this.props.data[this.props.z].fs_vals
-
-        console.log('vals array: ')
-        console.log(valsArr)
-        const freqObj = {}
-        valsArr.forEach(x => {
-            const rounded = x.toFixed(3)
-            if (!freqObj[rounded]) {
-                freqObj[rounded] = 1
-            } else {
-                freqObj[rounded] += 1
-            }
-        })
-
-        const datapoints = []
-        for (const key in freqObj) {
-            datapoints.push({ x: Number(key), y: freqObj[key] })
-        }
-        this.setState({ datapoints: datapoints })
-        return datapoints
-    }
-
-    loadGraph = () => {
-        const dp = this.getData()
-        this.setState({ datapoints: dp })
-    }
+    // loadGraph = () => {
+    //     const dp = this.getData()
+    //     this.setState({ datapoints: dp })
+    // }
 
     render() {
         // const width = this.props.data[Number(this.props.z)].high
