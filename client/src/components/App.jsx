@@ -3,13 +3,14 @@ import AppMode from '../AppMode'
 import WelcomePage from './Welcome.jsx'
 import DataFormPage from './DataForm.jsx'
 import DisplayPage from './Display.jsx'
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  Redirect
-} from 'react-router-dom'
+// import API from './apiClient'
+// import {
+//     BrowserRouter as Router,
+//     Switch,
+//     Route,
+//     Link,
+//     Redirect
+// } from 'react-router-dom'
 
 const modeTitle = {}
 
@@ -23,46 +24,46 @@ modeToPage[AppMode.DATAFORM] = DataFormPage
 modeToPage[AppMode.DISPLAY] = DisplayPage
 
 class App extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      // for real.
-      mode: AppMode.DATAFORM,
-    // mode: AppMode.DISPLAY,
-      results: null
-      // datasets to use while testing
-      // testing: testing
+    constructor(props) {
+        super(props)
+        this.state = {
+            // for real.
+            mode: AppMode.DATAFORM
+            // mode: AppMode.DISPLAY
+            // results: null
+            // datasets to use while testing
+            // testing: testing
+        }
     }
-  }
 
-//   componentDidMount = () => {
-//     this.apiClient = new APIClient()
-//   };
+    handleChangeMode = newMode => {
+        this.setState({ mode: newMode })
+    };
 
-  handleChangeMode = (newMode) => {
-    this.setState({ mode: newMode })
-  };
+    // Called when "submit" button is called in backend
+    // onSubmit = async () => {
+    //   console.log('getting results...')
+    //   this.getResults().then( res =>
+    //     this.setState({results: res})
+    //   )
 
-  // Called when "submit" button is called in backend
-  onSubmit = () => {
-    console.log('submitting... in App.jsx')
-  };
+    //   this.handleChangeMode(AppMode.DISPLAY)
+    // };
 
-  render() {
-    const ModePage = modeToPage[this.state.mode]
-    return (
-      <Fragment>
-        <ModePage
-          mode={this.state.mode}
-          changeMode={this.handleChangeMode}
-          onSubmit={this.onSubmit}
-        />
-        {/* <DisplayPage
+    render() {
+        const ModePage = modeToPage[this.state.mode]
+        return (
+            <Fragment>
+                <ModePage
+                    mode={this.state.mode}
+                    changeMode={this.handleChangeMode}
+                    // onSubmit={this.onSubmit}
+                />
+                {/* <DisplayPage
                         // data={this.state.testing.results}
                         data={this.state.results}
                     /> */}
-        )
-        {/* <Switch>
+                {/* <Switch>
                     <Route path="/">
                         <DataFormPage
                             mode={this.state.mode}
@@ -75,9 +76,9 @@ class App extends Component {
 
                     </Route>
                 </Switch> */}
-      </Fragment>
-    )
-  }
+            </Fragment>
+        )
+    }
 }
 
 export default App

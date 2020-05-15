@@ -16,6 +16,7 @@ class NormalVariable():
         self.high = float(high)
         self.num_vars = int(num_vars)
         self.vals = self.calc_vals()
+        self.dist="Truncated Normal"
 
     def __str__(self):
         return "Random Variable {0} has a Normal Distribution. min: {1} max: {2} mean: {3} stdev: {4} \
@@ -60,6 +61,7 @@ class UniformVariable():
         self.vals = self.calc_vals()
         self.mean = self.vals.mean()
         self.stdev = statistics.stdev(self.vals)
+        self.dist="Uniform"
 
     def __str__(self):
         return "Random Variable {0} has a Uniform Distribution. min: {1} max: {2} mean: {3} stdev: {4} \
@@ -82,6 +84,7 @@ class BivariateVariable():
         self.stdev = statistics.stdev(self.vals)
         self.low = min(self.vals)
         self.high = max(self.vals)
+        self.dist = "Bivariate Normal"
 
     def split_cov(self, cov):
         return cov

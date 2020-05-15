@@ -35,6 +35,7 @@ def handleSubmit(data):
     const_vars = data['constVars']
     H_wt = data["z"]["max"]
     z = data['z']
+    to_return['sat'] = sat
     # print("my data: " + data)
 
     # create a list of Random Variable objects. Variables are currently either Normal Dist or Uniform Dist
@@ -44,7 +45,7 @@ def handleSubmit(data):
         rand_vars.pop('k_s', None)
         rand_vars.pop('a', None)
         rand_vars.pop('n', None)
-        const_vars.pop('gamme_w', None)
+        const_vars.pop('gamma_w', None)
         const_vars.pop('q', None)
 
     rand_var_objs = create_dists(rand_vars, num_vars)
@@ -52,12 +53,13 @@ def handleSubmit(data):
     # serialize rand_var_objs back into a dictionary to be used with the rest of the program and the frontend
     rand_vars = {}
     for item in rand_var_objs:
+        print("cur item being serialized: ", item.name)
         rand_vars[item.name] = serialize_obj(item)
 
     to_return['z'] = get_FS_data(rand_vars, const_vars, z, H_wt, num_vars, sat)
 
     # remove randVar vals from dict. can delete if needed later
-    rand_vars = clean_rand_vars(rand_vars, "vals")
+    # rand_vars = clean_rand_vars(rand_vars, "vals")
     rand_vars = clean_rand_vars(rand_vars, "name")
     rand_vars = clean_rand_vars(rand_vars, "num_vars")
 
@@ -95,8 +97,6 @@ def create_dists(data, num_vars):
 def get_z_vals(z):
     top = z['max']
     step = z['step']
-    # print("step:", step)
-    # print("dec step: ", Decimal)
     num_z_vals = math.floor(top / step)
     l = [round(x * step, 4) for x in range(0, num_z_vals)]
     # print(l)
@@ -200,5 +200,9 @@ def clean_rand_vars(data, key):
 
 # serialize the data in the python objects and return them as a dictionary, which can be sent to the frontend
 def serialize_obj(obj):
+    # import pdb; pdb.set_trace()
     data = vars(obj)
+    # print(data['vals'])
+    data['vals'] = data['vals'].tolist()
+    # print(data['vals'])
     return data

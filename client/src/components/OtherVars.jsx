@@ -68,10 +68,10 @@ class ZVar extends Component {
     render() {
         return (
             <div className="form-group">
-                <h6>Z</h6>
+                <h6>Z: Distance from ground surface to water table</h6>
                 <Form.Row>
                     <Form.Group as={Col} controlId="form-max">
-                        <Form.Label>Max (Distance from ground surface to water table</Form.Label>
+                        <Form.Label>Max</Form.Label>
                         <Form.Control
                             type="number"
                             min={0.0001}
@@ -80,7 +80,7 @@ class ZVar extends Component {
                             onChange={this.handleChange}
                         />
                     </Form.Group>
-                    <Form.Group as={Col} controlId="form-step">
+                    <Form.Group as={Col} controlId="form-step" >
                         <Form.Label>Step</Form.Label>
                         <Form.Control
                             type="number"

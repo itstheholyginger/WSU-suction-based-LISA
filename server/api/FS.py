@@ -18,8 +18,6 @@ variables:
     z = distance above water table (have max (H_wt) and step)
     '''
 
-# location of water table and slope is fixed
-
 
 class FS:
     def __init__(self, c, c_r, phi, gamma, H_wt, slope,  z):
@@ -33,9 +31,9 @@ class FS:
 
     def tan(self, num):
         return math.tan(num * (math.pi/180))
-    
+
     def sin(self, num):
-        return math.sin(num* (math.pi / 180))
+        return math.sin(num * (math.pi / 180))
 
 
 class FSUnsat(FS):
@@ -50,8 +48,8 @@ class FSUnsat(FS):
 
     def calc_fs(self):
         fs = (math.tan(math.radians(self.phi))*self.z)/math.tan(math.radians(self.slope)) + \
-            ((2*self.c + self.c_r)/(self.gamma *
-                                    (self.H_wt - self.z) * math.sin(math.radians(2 * self.slope))))
+            ((2*(self.c + self.c_r))/(self.gamma *
+                                      (self.H_wt - self.z) * math.sin(math.radians(2 * self.slope))))
         # print("fs = ", fs)
         return fs
 
@@ -96,11 +94,12 @@ class FSSat(FS):
         # if self.z > 0:
         #     import pdb; pdb.set_trace()
 
-        first = (math.tan(math.radians(self.phi)) * self.z) / math.tan(math.radians(self.slope))
+        first = (math.tan(math.radians(self.phi)) * self.z) / \
+            math.tan(math.radians(self.slope))
         # print("first= ", first)
 
-        second = (2 * self.c + self.c_r)/(self.gamma *
-                                          (self.H_wt - self.z) * math.sin(math.radians(2 * self.slope)))
+        second = (2 * (self.c + self.c_r))/(self.gamma *
+                                            (self.H_wt - self.z) * math.sin(math.radians(2 * self.slope)))
         # print("second = ", second)
 
         ss = self.suction_stress()
@@ -108,11 +107,13 @@ class FSSat(FS):
         # print("third = ", third)
 
         if math.isnan(float(third)):
-            import pdb; pdb.set_trace()
+            import pdb
+            pdb.set_trace()
             # print("third is not a number")
             self.print_attrs()
 
-        last = (math.tan(math.radians(self.slope)) + (1/math.tan(math.radians(self.slope)))) * math.tan(math.radians(self.phi)) * self.z
+        last = (math.tan(math.radians(self.slope)) + (1/math.tan(math.radians(self.slope)))
+                ) * math.tan(math.radians(self.phi)) * self.z
         # print("last= ", last)
         total = first + second - third*last
         # print("fs = ", total)
@@ -149,7 +150,8 @@ class FSSat(FS):
             first = 1/self.alpha
             # print("first = ",  first)
 
-            second_top = math.log((1 + temp) * math.exp(-self.gamma_w * self.alpha * self.z) - temp)
+            second_top = math.log(
+                (1 + temp) * math.exp(-self.gamma_w * self.alpha * self.z) - temp)
             # print("second_top = ", second_top)
 
             second_bottom = pow((1 + pow((-second_top), self.n)),
@@ -160,66 +162,5 @@ class FSSat(FS):
             # print("ss = ", ss)
         return ss
 
-
     def magic_suction(self):
         return (-1 / self.alpha) * math.log((1 + (self.q / self.k_s)) + math.exp(-self.gamma * self.alpha * self.z) - (self.q / self.k_s))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def calc_fs(self):
-    first = (math.tan(math.radians(self.phi)) * self.z) / math.tan(math.radians(self.slope))
-
-    second = (2 * self.c + self.c_r)/(self.gamma *
-                                        (self.H_wt - self.z) * math.sin(math.radians(2 * self.slope)))
-
-    ss = self.suction_stress()
-    third = (ss / (self.gamma * (self.H_wt - self.z)))
-
-    last = (math.tan(math.radians(self.slope)) + (1/math.tan(math.radians(self.slope)))) * math.tan(math.radians(self.phi)) * self.z
-
-    total = first + second - third*last
-
-    return total
-
-
-def suction_stress(self):
-    msuc = self.magic_suction()
-    if msuc <= 0:
-        print("returning negative, original was ", msuc)
-        return -msuc
-    else:
-        first = 1/self.alpha
-
-        second_top = math.log((1 + self.q / self.k_s) * pow(math.e,
-                                                            (-self.gamma_w * self.alpha * self.z)) - self.q / self.k_s)
-
-        second_bottom = pow((1 + pow((-second_top), self.n)),
-                            (self.n - 1) / self.n)
-
-        ss = first * (second_top / second_bottom)
-
-    return ss
-    
-
-def magic_suction(self):
-    return (-1 / self.alpha) * \
-        math.log((1 + (self.q / self.k_s)) + \
-            pow(math.e, self.gamma * self.alpha * self.z) - self.q / self.k_s)
