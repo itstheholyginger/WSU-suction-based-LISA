@@ -107,62 +107,62 @@ var testing = {
         randVars: {
             c: {
                 dist: 'normal',
-                low: 1,
+                low: 0,
                 high: 4,
-                mean: 2,
-                stdev: 0.37,
-                unit: 'Kpa'
+                mean: 1.529,
+                stdev: 1.457,
+                unit: 'kPa'
             },
             c_r: {
                 dist: 'uniform',
-                low: 4,
-                high: 6,
-                mean: 6,
-                stdev: 1.2,
-                unit: 'Kpa'
+                low: 0,
+                high: 0,
+                mean: 0,
+                stdev: 0,
+                unit: 'kPa'
             },
             phi: {
                 dist: 'normal',
-                low: 0,
-                high: 50,
-                mean: 36,
-                stdev: 1.67,
+                low: 27,
+                high: 40,
+                mean: 34.941,
+                stdev: 3.1,
                 unit: 'deg'
             },
             k_s: {
                 dist: 'normal',
                 low: 0.0,
                 high: 10,
-                mean: 4.18e-7,
+                mean: 1e-6,
                 stdev: 0.0,
                 unit: 'm/s'
             },
             a: {
                 dist: 'normal',
-                low: 0,
-                high: 12,
-                mean: 0.38,
-                stdev: 0.02,
+                low: 0.025,
+                high: 0.837,
+                mean: 0.434,
+                stdev: 0.228,
                 unit: '1/kPa'
             },
             n: {
-                dist: 'uniform',
-                low: 0.2,
-                high: 0.44,
-                mean: 0,
-                stdev: 0,
+                dist: 'normal',
+                low: 1.672,
+                high: 7.78,
+                mean: 3.918,
+                stdev: 1.505,
                 unit: ''
             }
         },
         constVars: {
-            gamma: 17,
+            gamma: 18,
             gamma_w: 9.81,
             slope: 45,
-            q: -2.778e-7
+            q: -2.5e-7
         },
         z: {
-            max: 1.5,
-            step: 0.05
+            max: 3,
+            step: 0.1
         }
     },
     results: {

@@ -29,35 +29,39 @@ class PFbyZ extends Component {
         const dp = this.state.datapoints
         console.log('current datapoints: ')
         console.log(dp)
-        return (
-            <div className="graph">
-                <h4>Probability of Failure by Depth</h4>
-                <V.VictoryChart
-                    domainPadding={20}
-                    theme={V.VictoryTheme.material}
-                >
-                    <V.VictoryBar data={dp} />
-                    <V.VictoryAxis
-                        label="Probability of Failure"
-                        style={{
-                            axisLabel: { padding: 30 }
-                        }}
-                    />
-                    <V.VictoryAxis
-                        dependentAxis
-                        label="Z: Depth (m)"
-                        tickCount={
-                            this.state.datapoints.length > 10
-                                ? this.state.datapoints.length / 2
-                                : this.state.datapoints.length
-                        }
-                        style={{
-                            axisLabel: { padding: 40 }
-                        }}
-                    />
-                </V.VictoryChart>
-            </div>
-        )
+        if (this.state.datapoints.length > 0) {
+            return (
+                <div className="graph">
+                    <h4>Probability of Failure by Depth</h4>
+                    <V.VictoryChart
+                        domainPadding={20}
+                        theme={V.VictoryTheme.material}
+                    >
+                        <V.VictoryBar data={dp} />
+                        <V.VictoryAxis
+                            label="Probability of Failure"
+                            style={{
+                                axisLabel: { padding: 30 }
+                            }}
+                        />
+                        <V.VictoryAxis
+                            dependentAxis
+                            label="Z: Depth (m)"
+                            tickCount={
+                                this.state.datapoints.length > 10
+                                    ? this.state.datapoints.length / 2
+                                    : this.state.datapoints.length
+                            }
+                            style={{
+                                axisLabel: { padding: 40 }
+                            }}
+                        />
+                    </V.VictoryChart>
+                </div>
+            )
+        } else {
+            return null
+        }
     }
 }
 
