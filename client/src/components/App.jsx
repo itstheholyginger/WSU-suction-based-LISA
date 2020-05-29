@@ -28,8 +28,8 @@ class App extends Component {
         super(props)
         this.state = {
             // for real.
-            mode: AppMode.DATAFORM
-            // mode: AppMode.DISPLAY
+            // mode: AppMode.DATAFORM
+            mode: AppMode.DISPLAY
             // results: null
             // datasets to use while testing
             // testing: testing
@@ -39,16 +39,6 @@ class App extends Component {
     handleChangeMode = newMode => {
         this.setState({ mode: newMode })
     };
-
-    // Called when "submit" button is called in backend
-    // onSubmit = async () => {
-    //   console.log('getting results...')
-    //   this.getResults().then( res =>
-    //     this.setState({results: res})
-    //   )
-
-    //   this.handleChangeMode(AppMode.DISPLAY)
-    // };
 
     render() {
         const ModePage = modeToPage[this.state.mode]

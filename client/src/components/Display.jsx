@@ -6,6 +6,8 @@ import Header from './Header'
 import DisplayGraphs from './DisplayGraphs'
 import API from './apiClient'
 import { testing } from '../resources/test_data'
+import RVTable from './tables/RVTable'
+import LABELS from '../resources/labels'
 
 // CREATE TAB. FIRST TO SEE RANDVAR DATA IN TABLE, SECOND TO SEE FS DATA IN TABLE
 // remember, we're doing it by z step.
@@ -38,22 +40,22 @@ class DisplayPage extends Component {
     //     this.getResults().then(res => {
     //         console.log(res)
     //         console.log(res.results)
-    //         const newData = res.results[1]
+    //         const newData = res.results
     //         this.setState({ data: newData })
     //     })
     // };
 
-    getResults = async () => {
-        try {
-            const res = await API.get('/display')
-            if (res.status === 200) {
-                console.log(res.status)
-            }
-            return res.data
-        } catch (err) {
-            console.log(err)
-        }
-    };
+    // getResults = async () => {
+    //     try {
+    //         const res = await API.get('/display')
+    //         if (res.status === 200) {
+    //             console.log(res.status)
+    //         }
+    //         return res.data
+    //     } catch (err) {
+    //         console.log(err)
+    //     }
+    // };
 
     render() {
         console.log("what's our data? here it is!", this.state.data)
@@ -63,10 +65,12 @@ class DisplayPage extends Component {
                 <Fragment>
                     <Header title="Display" />
                     <div className="paddedPage">
-                        <Tabs defaultActiveKey="FS_graphs" id="display-tabs">
+                        <Tabs defaultActiveKey="randVars" id="display-tabs">
                             <Tab eventKey="randVars" title="Random Variables">
-                                <DisplayRandVars
+                                <RVTable
                                     data={this.state.data.randVars}
+                                    sat={this.state.data.sat}
+                                    conf={this.state.data.conf}
                                 />
                             </Tab>
                             <Tab eventKey="FS" title="Factor of Safety by Z">
@@ -82,84 +86,6 @@ class DisplayPage extends Component {
         } else {
             return <h2>No data received from backend</h2>
         }
-    }
-}
-
-class DisplayRandVars extends React.Component {
-    static propTypes = {
-        data: PropType.object
-    };
-
-    render() {
-        console.log('cur data = ', this.props.data)
-        return (
-            <Fragment>
-                <div className="paddedPage">
-                    <div className="displayTable">
-                        <Table striped hover bordered size="sm">
-                            <thead>
-                                <tr>
-                                    <th>Random Variable</th>
-                                    <th>Low</th>
-                                    <th>High</th>
-                                    <th>Mean</th>
-                                    <th>Stdev</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {/* sent data = {'c': {}, c_r: {}, ...} */}
-                                <RandVarRowDisplay
-                                    data={this.props.data.c}
-                                    label="C: Soil Cohesion (psf)"
-                                />
-                                <RandVarRowDisplay
-                                    data={this.props.data.c_r}
-                                    label="C_r: Root Cohesion (psf)"
-                                />
-                                <RandVarRowDisplay
-                                    data={this.props.data.phi}
-                                    label="phi: Effective Angle of Friction (degrees)"
-                                />
-                                <RandVarRowDisplay
-                                    data={this.props.data.k_s}
-                                    label="k_s: Saturated Hydraulic Conductivity (m/s)"
-                                />
-                                <RandVarRowDisplay
-                                    data={this.props.data.a}
-                                    label="Van Genuchten's a (cm^-1)"
-                                />
-                                <RandVarRowDisplay
-                                    data={this.props.data.n}
-                                    label="Van Genuchten's n"
-                                />
-                            </tbody>
-                        </Table>
-                    </div>
-                </div>
-            </Fragment>
-        )
-    }
-}
-
-class RandVarRowDisplay extends React.Component {
-    static propTypes = {
-        data: PropType.object,
-        label: PropType.string,
-        name: PropType.string
-    };
-
-    render() {
-        return (
-            <tr>
-                <td>
-                    <b>{this.props.label}</b>
-                </td>
-                <td>{this.props.data.low}</td>
-                <td>{this.props.data.high}</td>
-                <td>{this.props.data.mean}</td>
-                <td>{this.props.data.stdev}</td>
-            </tr>
-        )
     }
 }
 
@@ -225,17 +151,5 @@ class FSRowDisplay extends React.Component {
         )
     }
 }
-
-// class DisplayFSGraph extends React.Component {
-//     static propTypes = {
-//         data: PropType.object
-//     }
-
-//     render () {
-//         return (
-//             <h3>make frequency graphs with FS data</h3>
-//         )
-//     }
-// }
 
 export default DisplayPage

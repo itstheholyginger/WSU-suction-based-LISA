@@ -1,44 +1,45 @@
 var data = {
     numVars: 1000,
+    conf: 'nondet',
     sat: true,
     randVars: {
         c: {
-            dist: 'normal',
+            dist: 'truncnormal',
             low: 0,
             high: 0,
             mean: 0,
             stdev: 0
         },
         c_r: {
-            dist: 'normal',
+            dist: 'truncnormal',
             low: 0,
             high: 0,
             mean: 0,
             stdev: 0
         },
         phi: {
-            dist: 'normal',
+            dist: 'truncnormal',
             low: 0,
             high: 0,
             mean: 0,
             stdev: 0
         },
         k_s: {
-            dist: 'normal',
+            dist: 'truncnormal',
             low: 0,
             high: 0,
             mean: 0,
             stdev: 0
         },
         a: {
-            dist: 'normal',
+            dist: 'truncnormal',
             low: 0,
             high: 0,
             mean: 0,
             stdev: 0
         },
         n: {
-            dist: 'normal',
+            dist: 'truncnormal',
             low: 0,
             high: 0,
             mean: 0,
@@ -48,7 +49,6 @@ var data = {
     constVars: {
         gamma: 0,
         gamma_w: 0,
-        // y_sat: 3,
         slope: 0,
         flux: 0
     },
@@ -104,9 +104,10 @@ var testing = {
     data: {
         numVars: 100,
         sat: true,
+        conf: 'undet',
         randVars: {
             c: {
-                dist: 'normal',
+                dist: 'truncnormal',
                 low: 1,
                 high: 4,
                 mean: 2,
@@ -122,7 +123,7 @@ var testing = {
                 unit: 'Kpa'
             },
             phi: {
-                dist: 'normal',
+                dist: 'truncnormal',
                 low: 0,
                 high: 50,
                 mean: 36,
@@ -130,7 +131,7 @@ var testing = {
                 unit: 'deg'
             },
             k_s: {
-                dist: 'normal',
+                dist: 'truncnormal',
                 low: 0.0,
                 high: 10,
                 mean: 4.18e-7,
@@ -138,7 +139,7 @@ var testing = {
                 unit: 'm/s'
             },
             a: {
-                dist: 'normal',
+                dist: 'truncnormal',
                 low: 0,
                 high: 12,
                 mean: 0.38,
@@ -166,6 +167,38 @@ var testing = {
         }
     },
     results: {
+        conf: 'det',
+        sat: false,
+        randVars: {
+            alpha: {
+                val: 0.46,
+                label: ''
+            },
+            c: 3,
+            c_r: 3,
+            k_s: 4.18e-7,
+            n: 0.34,
+            phi: 32
+        },
+        z: {
+            0.0: 1.095457587203445,
+            0.1: 1.1616299823622254,
+            0.2: 1.235914054813119,
+            0.3: 1.3142193846129107,
+            0.4: 1.3981467313517522,
+            0.5: 1.4914392120115902,
+            0.6: 1.5995303531557186,
+            0.7: 1.7300615312846213,
+            0.8: 1.8943911254712353,
+            0.9: 2.1108213345466944,
+            1.0: 2.4117398513524413,
+            1.1: 2.8614389299155913,
+            1.2: 3.6095011422279972,
+            1.3: 5.104246958737955,
+            1.4: 9.586723135594072
+        }
+    },
+    results_old: {
         randVars: {
             a: {
                 dist: 'Truncated Normal',

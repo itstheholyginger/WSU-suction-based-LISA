@@ -2,25 +2,27 @@
 import React, { Component, Fragment } from 'react'
 import { Form, Button } from 'react-bootstrap'
 import RandVar from './RandVars'
-import { ConstVar, NumRandVars, ZVar, Saturation } from './OtherVars'
+import { ConstVar, NumRandVars, ZVar, Saturation, Analysis } from './OtherVars'
 import PropTypes from 'prop-types'
 import Header from './Header'
-import { testing } from '../resources/test_data'
+// import { testing } from '../resources/test_data'
+import { data } from '../resources/test_data'
 import AppMode from '../AppMode'
 import API from './apiClient'
+import LABELS from '../resources/labels'
 
 // Needed Random Variables:
-//    cohesion, ang_fric, k_s, a, n
+//    c, c_r, phi, k_s, a, n
 // Constant Variables:
-//    y_sat, y, y_w, slope, z, gnd_to_wt, c_r
+//    gamme, gamma_w, slope, z_step, H_wt
 // also, ask user for fluxes
 
 class DataFormPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            //   data: data
-            data: testing.data
+            data: data
+            // data: testing.data
         }
     }
 
@@ -30,14 +32,28 @@ class DataFormPage extends Component {
         changeMode: PropTypes.func
     };
 
-    //  handling variable changes in data form
-    handleRVChange = (varName, key, value) => {
+    componentDidMount() {
+        if (this.state.data.conf === undefined) {
+            const newData = this.state.data
+            this.setState({ data: newData })
+        }
+    }
+
+    //  handling variable changes in data form when configuration
+    handleNondetChange = (varName, key, value) => {
         console.log(varName, key, value)
         var newData = this.state.data
         console.log('old data:\t', newData)
         newData.randVars[varName][key] = value
         console.log('var:\t', varName)
         console.log('\tnew data:\t', newData)
+        this.setState({ newData })
+    };
+
+    handleDetChange = (varName, val) => {
+        console.log('handling Deterministic Change')
+        var newData = this.state.data
+        newData.randVars[varName].detVal = val
         this.setState({ newData })
     };
 
@@ -78,25 +94,25 @@ class DataFormPage extends Component {
         this.setState(newData)
     };
 
+    handleAnalysisChange = val => {
+        var newData = this.state.data
+        newData.conf = val
+        this.setState(newData)
+    };
+
     onSubmit = e => {
         console.log(
             "submit has been clicked. attempting to post to '/add_data'"
         )
         console.log('data being sent: ', this.state.data)
-        // this.props.apiClient.addData(this.state.data)
         e.preventDefault()
         API.post('/add_data', this.state.data).then(res => {
             console.log(res)
             this.props.changeMode(AppMode.DISPLAY)
         })
-
-        // this.props.onSubmit()
     };
 
     render() {
-        const sat = this.state.data.sat
-        console.log('sat in dataform= ', sat)
-
         return (
             <Fragment>
                 <Header title="Data Form" />
@@ -105,9 +121,10 @@ class DataFormPage extends Component {
                         <Form>
                             <Form.Row>
                                 <Saturation
-                                    name="sat"
-                                    label="Soil Saturation"
                                     handleChange={this.handleSatChange}
+                                />
+                                <Analysis
+                                    handleChange={this.handleAnalysisChange}
                                 />
                                 <NumRandVars
                                     handleChange={this.handleNumVarChange}
@@ -115,9 +132,9 @@ class DataFormPage extends Component {
                             </Form.Row>
                             <Form.Row>
                                 <DataFormSelector
-                                    sat={sat}
                                     data={this.state.data}
-                                    handleRVChange={this.handleRVChange}
+                                    handleNondetChange={this.handleNondetChange}
+                                    handleDetChange={this.handleDetChange}
                                     handleDistChange={this.handleDistChange}
                                     handleConstVarChange={
                                         this.handleConstVarChange
@@ -140,66 +157,78 @@ class DataFormPage extends Component {
 
 class DataFormSelector extends Component {
     static propTypes = {
-        sat: PropTypes.bool,
-        data: PropTypes.object,
-        handleRVChange: PropTypes.func,
+        handleNondetChange: PropTypes.func,
+        handleDetChange: PropTypes.func,
         handleDistChange: PropTypes.func,
         handleConstVarChange: PropTypes.func,
         handleZVarChange: PropTypes.func
     };
 
     render() {
-        const sat = this.props.sat
-
-        if (sat === true) {
+        const sat = this.props.data.sat
+        const conf = this.props.data.conf
+        console.log('sat=', sat)
+        console.log('conf=', conf)
+        if (sat === false) {
             return (
                 <Fragment>
                     <div className="rand-vars">
                         <RandVar
                             data={this.props.data.randVars.c}
+                            conf={conf}
                             name="c"
-                            label="C: Soil Cohesion"
-                            handleChange={this.props.handleRVChange}
+                            label={LABELS.c}
+                            handleNondetChange={this.props.handleNondetChange}
+                            handleDetChange={this.props.handleDetChange}
                             handleDistChange={this.props.handleDistChange}
                         />
 
                         <RandVar
                             data={this.props.data.randVars.c_r}
+                            conf={conf}
                             name="c_r"
-                            label="C_r: Root Cohesion"
-                            handleChange={this.props.handleRVChange}
+                            label={LABELS.c_r}
+                            handleNondetChange={this.props.handleNondetChange}
+                            handleDetChange={this.props.handleDetChange}
                             handleDistChange={this.props.handleDistChange}
                         />
 
                         <RandVar
                             data={this.props.data.randVars.phi}
+                            conf={conf}
                             name="phi"
-                            label="phi: Effective Angle of Friction"
-                            handleChange={this.props.handleRVChange}
+                            label={LABELS.phi}
+                            handleNondetChange={this.props.handleNondetChange}
+                            handleDetChange={this.props.handleDetChange}
                             handleDistChange={this.props.handleDistChange}
                         />
 
                         <RandVar
                             data={this.props.data.randVars.k_s}
+                            conf={conf}
                             name="k_s"
-                            label="k_s: Saturated Hydraulic Conductivity"
-                            handleChange={this.props.handleRVChange}
+                            label={LABELS.k_s}
+                            handleNondetChange={this.props.handleNondetChange}
+                            handleDetChange={this.props.handleDetChange}
                             handleDistChange={this.props.handleDistChange}
                         />
 
-                        <h5> Van Genuchten's parameters</h5>
                         <RandVar
                             data={this.props.data.randVars.a}
+                            conf={conf}
                             name="a"
-                            label="a"
-                            handleChange={this.props.handleRVChange}
+                            label={LABELS.a}
+                            handleNondetChange={this.props.handleNondetChange}
+                            handleDetChange={this.props.handleDetChange}
                             handleDistChange={this.props.handleDistChange}
                         />
                         <RandVar
                             data={this.props.data.randVars.n}
+                            conf={conf}
                             name="n"
-                            label="n"
-                            handleChange={this.props.handleRVChange}
+                            label={LABELS.n}
+                            handleNondetChange={this.props.handleNondetChange}
+                            handleDetChange={this.props.handleDetChange}
                             handleDistChange={this.props.handleDistChange}
                         />
                     </div>
@@ -207,54 +236,69 @@ class DataFormSelector extends Component {
                     <div className="const-vars">
                         <ConstVar
                             name="gamma"
-                            label="gamma: Unit Weight of Soil"
+                            label={LABELS.gamma}
                             handleChange={this.props.handleConstVarChange}
                         />
                         <ConstVar
                             name="gamma_w"
-                            label="gamma_w: Unit Weight of Water"
+                            label={LABELS.gamma_w}
                             handleChange={this.props.handleConstVarChange}
                         />
                         <ConstVar
                             name="slope"
-                            label="Beta: Slope"
+                            label={LABELS.slope}
                             handleChange={this.props.handleConstVarChange}
                         />
                         <ConstVar
                             name="q"
-                            label="q: Infiltration"
+                            label={LABELS.q}
                             handleChange={this.props.handleConstVarChange}
                         />
-
-                        <ZVar handleChange={this.props.handleZVarChange} />
+                        <ConstVar
+                            name="H_wt"
+                            label={LABELS.H_wt}
+                            handleChange={this.props.handleConstVarChange}
+                        />
+                        <ConstVar
+                            name="z_step"
+                            label={LABELS.z_step}
+                            handleChange={this.props.handleConstVarChange}
+                        />
+                        {/* <ZVar handleChange={this.props.handleZVarChange} /> */}
                     </div>
                 </Fragment>
             )
-        } else {
+        } else if (sat === true) {
             return (
                 <Fragment>
                     <div className="rand-vars">
                         <RandVar
                             data={this.props.data.randVars.c}
+                            conf={conf}
                             name="c"
-                            label="C: Soil Cohesion"
-                            handleChange={this.props.handleRVChange}
+                            label={LABELS.c}
+                            handleNondetChange={this.props.handleNondetChange}
+                            handleDetChange={this.props.handleDetChange}
                             handleDistChange={this.props.handleDistChange}
                         />
 
                         <RandVar
                             data={this.props.data.randVars.c_r}
+                            conf={conf}
                             name="c_r"
-                            label="C_r: Root Cohesion"
-                            handleChange={this.props.handleRVChange}
+                            label={LABELS.c_r}
+                            handleNondetChange={this.props.handleNondetChange}
+                            handleDetChange={this.props.handleDetChange}
                             handleDistChange={this.props.handleDistChange}
                         />
 
                         <RandVar
                             data={this.props.data.randVars.phi}
+                            conf={conf}
                             name="phi"
-                            label="phi: Effective Angle of Friction"
-                            handleChange={this.props.handleRVChange}
+                            label={LABELS.phi}
+                            handleNondetChange={this.props.handleNondetChange}
+                            handleDetChange={this.props.handleDetChange}
                             handleDistChange={this.props.handleDistChange}
                         />
                     </div>
@@ -262,19 +306,35 @@ class DataFormSelector extends Component {
                     <div className="const-vars">
                         <ConstVar
                             name="gamma"
-                            label="gamma: Unit Weight of Soil"
+                            label={LABELS.gamma}
+                            handleChange={this.props.handleConstVarChange}
+                        />
+                        <ConstVar
+                            name="gamma_w"
+                            label={LABELS.gamma_w}
                             handleChange={this.props.handleConstVarChange}
                         />
                         <ConstVar
                             name="slope"
-                            label="Beta: Slope"
+                            label={LABELS.slope}
                             handleChange={this.props.handleConstVarChange}
                         />
-
-                        <ZVar handleChange={this.props.handleZVarChange} />
+                        <ConstVar
+                            name="H_wt"
+                            label={LABELS.H_wt}
+                            handleChange={this.props.handleConstVarChange}
+                        />
+                        <ConstVar
+                            name="z_step"
+                            label={LABELS.z_step}
+                            handleChange={this.props.handleConstVarChange}
+                        />
+                        {/* <ZVar handleChange={this.props.handleZVarChange} /> */}
                     </div>
                 </Fragment>
             )
+        } else {
+            return <h3>Error: invalid configuration</h3>
         }
     }
 }

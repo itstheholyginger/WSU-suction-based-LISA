@@ -27,4 +27,5 @@ def add_data():
 
 @main.route('/display')
 def display():
-    return jsonify({'results': results})
+    res = results[1]
+    return jsonify({'results': res})
