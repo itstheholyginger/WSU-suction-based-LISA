@@ -6,11 +6,7 @@ import Header from './Header'
 import DisplayGraphs from './DisplayGraphs'
 import API from './apiClient'
 import { testing } from '../resources/test_data'
-import RVTable from './tables/RVTable'
-import LABELS from '../resources/labels'
-
-// CREATE TAB. FIRST TO SEE RANDVAR DATA IN TABLE, SECOND TO SEE FS DATA IN TABLE
-// remember, we're doing it by z step.
+import * as Tables from './tables'
 
 class DisplayPage extends Component {
     constructor(props) {
@@ -65,18 +61,21 @@ class DisplayPage extends Component {
                 <Fragment>
                     <Header title="Display" />
                     <div className="paddedPage">
-                        <Tabs defaultActiveKey="randVars" id="display-tabs">
+                        <Tabs defaultActiveKey="graphs" id="display-tabs">
                             <Tab eventKey="randVars" title="Random Variables">
-                                <RVTable
+                                <Tables.RVTable
                                     data={this.state.data.randVars}
                                     sat={this.state.data.sat}
                                     conf={this.state.data.conf}
                                 />
                             </Tab>
                             <Tab eventKey="FS" title="Factor of Safety by Z">
-                                <DisplayFS data={this.state.data.z} />
+                                <Tables.FOSTable
+                                    data={this.state.data.z}
+                                    conf={this.state.data.conf}
+                                />
                             </Tab>
-                            <Tab eventKey="FS_graphs" title="Visualizations">
+                            <Tab eventKey="graphs" title="Visualizations">
                                 <DisplayGraphs data={this.state.data} />
                             </Tab>
                         </Tabs>
@@ -86,69 +85,6 @@ class DisplayPage extends Component {
         } else {
             return <h2>No data received from backend</h2>
         }
-    }
-}
-
-class DisplayFS extends React.Component {
-    static propTypes = {
-        data: PropType.object
-    };
-
-    render() {
-        var list = []
-        var sortedZ = []
-
-        for (const key in this.props.data) {
-            // console.log(key)
-            sortedZ.push(key)
-        }
-        sortedZ.sort()
-        for (var key in sortedZ) {
-            var i = sortedZ[key]
-            // console.log(i)
-            list.push(<FSRowDisplay key={i} z={i} data={this.props.data[i]} />)
-        }
-
-        return (
-            <div className="paddedPage displayTable">
-                <Table striped hover bordered size="sm">
-                    <thead>
-                        <tr>
-                            <th>Z</th>
-                            <th>FS Low</th>
-                            <th>FS High</th>
-                            <th>FS Mean</th>
-                            <th>FS Stdev</th>
-                            <th>Probability of Failure</th>
-                        </tr>
-                    </thead>
-                    <tbody>{list}</tbody>
-                </Table>
-            </div>
-        )
-    }
-}
-
-class FSRowDisplay extends React.Component {
-    static propTypes = {
-        data: PropType.object,
-        z: PropType.string
-    };
-
-    render() {
-        return (
-            <tr>
-                <td>
-                    {' '}
-                    <b>{this.props.z}</b>
-                </td>
-                <td>{this.props.data.low}</td>
-                <td>{this.props.data.high}</td>
-                <td>{this.props.data.mean}</td>
-                <td>{this.props.data.stdev}</td>
-                <td>{this.props.data.probFail}</td>
-            </tr>
-        )
     }
 }
 

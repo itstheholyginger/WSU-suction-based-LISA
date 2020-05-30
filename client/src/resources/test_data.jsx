@@ -170,15 +170,12 @@ var testing = {
         conf: 'det',
         sat: false,
         randVars: {
-            alpha: {
-                val: 0.46,
-                label: ''
-            },
             c: 3,
             c_r: 3,
+            phi: 32,
             k_s: 4.18e-7,
-            n: 0.34,
-            phi: 32
+            a: 0.46,
+            n: 0.34
         },
         z: {
             0.0: 1.095457587203445,

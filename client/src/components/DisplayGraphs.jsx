@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Tab, Tabs } from 'react-bootstrap'
-import FOSFrequency from './graphs/FOSFreq'
-import RVDistGraph from './graphs/RVDist'
-import PFbyZ from './graphs/PFbyZ'
+import * as Graphs from './graphs'
 
 class DisplayGraphs extends Component {
     static propTypes = {
@@ -14,33 +12,36 @@ class DisplayGraphs extends Component {
     render() {
         return (
             <div>
-                <Tabs defaultActiveKey="probFail/z" id="visualizations">
+                <Tabs defaultActiveKey="freqHistFos" id="visualizations">
                     <Tab
                         eventKey="freqHistFos"
                         title="Factor of Safety Frequency Histograms"
                     >
-                        <FOSFrequency data={this.props.data.z} />
+                        <Graphs.FOSFreq
+                            data={this.props.data.z}
+                            conf={this.props.data.conf}
+                        />
                     </Tab>
                     <Tab
                         eventKey="freqHistRV"
                         title="Random Variable Frequency Histograms"
                     >
-                        <RVDistGraph data={this.props.data.randVars} />
+                        <Graphs.RVDist
+                            data={this.props.data.randVars}
+                            conf={this.props.data.conf}
+                        />
                     </Tab>
 
                     <Tab
                         eventKey="probFail/z"
                         title="Probablity of Failure by Depth"
                     >
-                        <PFbyZ data={this.props.data.z} />
+                        <Graphs.PFbyZ
+                            data={this.props.data.z}
+                            conf={this.props.data.conf}
+                        />
                     </Tab>
                     <Tab eventKey="ss/z" title="Suction Stress by Depth"></Tab>
-                    <Tab eventKey="compare" title="RV Comparisons">
-                        <li>
-                            Scatter Plot of any pair of variables or of a
-                            variable and the factor of safety
-                        </li>
-                    </Tab>
                 </Tabs>
                 <ul></ul>
             </div>

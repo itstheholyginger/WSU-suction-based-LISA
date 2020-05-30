@@ -54,7 +54,7 @@ class RVTable extends Component {
                 list.push(
                     <RandVarRowDisplayDet
                         key={key}
-                        value={this.props.data[i]}
+                        value={this.props.data[key]}
                         label={LABELS[key]}
                     />
                 )
@@ -79,23 +79,38 @@ class RVTable extends Component {
             ? (vars = ['c', 'c_r', 'phi'])
             : (vars = ['c', 'c_r', 'phi', 'k_s', 'a', 'n'])
 
-        return (
-            <Fragment>
-                <div className="paddedPage">
-                    <div className="displayTable">
-                        <Table striped hover bordered size="sm">
-                            <thead>
-                                <tr>
-                                    <th>Random Variable</th>
-                                    <th>Value</th>
-                                </tr>
-                            </thead>
-                            <tbody>{this.getRows(vars, conf)}</tbody>
-                        </Table>
-                    </div>
-                </div>
-            </Fragment>
-        )
+        if (conf === 'det') {
+            return (
+                <Fragment>
+                    <Table striped hover bordered size="sm">
+                        <thead>
+                            <tr>
+                                <th>Random Variable</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>{this.getRows(vars, conf)}</tbody>
+                    </Table>
+                </Fragment>
+            )
+        } else if (conf === 'nondet') {
+            return (
+                <Fragment>
+                    <Table striped hover bordered size="sm">
+                        <thead>
+                            <tr>
+                                <th>Random Variable</th>
+                                <th>Low</th>
+                                <th>High</th>
+                                <th>Mean</th>
+                                <th>Stdev</th>
+                            </tr>
+                        </thead>
+                        <tbody>{this.getRows(vars, conf)}</tbody>
+                    </Table>
+                </Fragment>
+            )
+        }
     };
 
     render() {

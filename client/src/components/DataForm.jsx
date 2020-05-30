@@ -1,8 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import React, { Component, Fragment } from 'react'
 import { Form, Button } from 'react-bootstrap'
-import RandVar from './RandVars'
-import { ConstVar, NumRandVars, ZVar, Saturation, Analysis } from './OtherVars'
+import * as Vars from './variables'
 import PropTypes from 'prop-types'
 import Header from './Header'
 // import { testing } from '../resources/test_data'
@@ -120,13 +119,13 @@ class DataFormPage extends Component {
                     <div className="myForm">
                         <Form>
                             <Form.Row>
-                                <Saturation
+                                <Vars.Saturation
                                     handleChange={this.handleSatChange}
                                 />
-                                <Analysis
+                                <Vars.Analysis
                                     handleChange={this.handleAnalysisChange}
                                 />
-                                <NumRandVars
+                                <Vars.NumRandVars
                                     handleChange={this.handleNumVarChange}
                                 />
                             </Form.Row>
@@ -173,7 +172,7 @@ class DataFormSelector extends Component {
             return (
                 <Fragment>
                     <div className="rand-vars">
-                        <RandVar
+                        <Vars.RandVar
                             data={this.props.data.randVars.c}
                             conf={conf}
                             name="c"
@@ -183,7 +182,7 @@ class DataFormSelector extends Component {
                             handleDistChange={this.props.handleDistChange}
                         />
 
-                        <RandVar
+                        <Vars.RandVar
                             data={this.props.data.randVars.c_r}
                             conf={conf}
                             name="c_r"
@@ -193,7 +192,7 @@ class DataFormSelector extends Component {
                             handleDistChange={this.props.handleDistChange}
                         />
 
-                        <RandVar
+                        <Vars.RandVar
                             data={this.props.data.randVars.phi}
                             conf={conf}
                             name="phi"
@@ -203,7 +202,7 @@ class DataFormSelector extends Component {
                             handleDistChange={this.props.handleDistChange}
                         />
 
-                        <RandVar
+                        <Vars.RandVar
                             data={this.props.data.randVars.k_s}
                             conf={conf}
                             name="k_s"
@@ -213,7 +212,7 @@ class DataFormSelector extends Component {
                             handleDistChange={this.props.handleDistChange}
                         />
 
-                        <RandVar
+                        <Vars.RandVar
                             data={this.props.data.randVars.a}
                             conf={conf}
                             name="a"
@@ -222,7 +221,7 @@ class DataFormSelector extends Component {
                             handleDetChange={this.props.handleDetChange}
                             handleDistChange={this.props.handleDistChange}
                         />
-                        <RandVar
+                        <Vars.RandVar
                             data={this.props.data.randVars.n}
                             conf={conf}
                             name="n"
@@ -234,32 +233,32 @@ class DataFormSelector extends Component {
                     </div>
 
                     <div className="const-vars">
-                        <ConstVar
+                        <Vars.ConstVar
                             name="gamma"
                             label={LABELS.gamma}
                             handleChange={this.props.handleConstVarChange}
                         />
-                        <ConstVar
+                        <Vars.ConstVar
                             name="gamma_w"
                             label={LABELS.gamma_w}
                             handleChange={this.props.handleConstVarChange}
                         />
-                        <ConstVar
+                        <Vars.ConstVar
                             name="slope"
                             label={LABELS.slope}
                             handleChange={this.props.handleConstVarChange}
                         />
-                        <ConstVar
+                        <Vars.ConstVar
                             name="q"
                             label={LABELS.q}
                             handleChange={this.props.handleConstVarChange}
                         />
-                        <ConstVar
+                        <Vars.ConstVar
                             name="H_wt"
                             label={LABELS.H_wt}
                             handleChange={this.props.handleConstVarChange}
                         />
-                        <ConstVar
+                        <Vars.ConstVar
                             name="z_step"
                             label={LABELS.z_step}
                             handleChange={this.props.handleConstVarChange}
@@ -272,7 +271,7 @@ class DataFormSelector extends Component {
             return (
                 <Fragment>
                     <div className="rand-vars">
-                        <RandVar
+                        <Vars.RandVar
                             data={this.props.data.randVars.c}
                             conf={conf}
                             name="c"
@@ -282,7 +281,7 @@ class DataFormSelector extends Component {
                             handleDistChange={this.props.handleDistChange}
                         />
 
-                        <RandVar
+                        <Vars.RandVar
                             data={this.props.data.randVars.c_r}
                             conf={conf}
                             name="c_r"
@@ -292,7 +291,7 @@ class DataFormSelector extends Component {
                             handleDistChange={this.props.handleDistChange}
                         />
 
-                        <RandVar
+                        <Vars.RandVar
                             data={this.props.data.randVars.phi}
                             conf={conf}
                             name="phi"
@@ -304,27 +303,27 @@ class DataFormSelector extends Component {
                     </div>
 
                     <div className="const-vars">
-                        <ConstVar
+                        <Vars.ConstVar
                             name="gamma"
                             label={LABELS.gamma}
                             handleChange={this.props.handleConstVarChange}
                         />
-                        <ConstVar
+                        <Vars.ConstVar
                             name="gamma_w"
                             label={LABELS.gamma_w}
                             handleChange={this.props.handleConstVarChange}
                         />
-                        <ConstVar
+                        <Vars.ConstVar
                             name="slope"
                             label={LABELS.slope}
                             handleChange={this.props.handleConstVarChange}
                         />
-                        <ConstVar
+                        <Vars.ConstVar
                             name="H_wt"
                             label={LABELS.H_wt}
                             handleChange={this.props.handleConstVarChange}
                         />
-                        <ConstVar
+                        <Vars.ConstVar
                             name="z_step"
                             label={LABELS.z_step}
                             handleChange={this.props.handleConstVarChange}
