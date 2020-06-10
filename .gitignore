@@ -1,5 +1,6 @@
 # root
 /.vscode
+**.md
 
 # client
 /client/node_modules/

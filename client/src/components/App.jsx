@@ -40,16 +40,6 @@ class App extends Component {
         this.setState({ mode: newMode })
     };
 
-    // Called when "submit" button is called in backend
-    // onSubmit = async () => {
-    //   console.log('getting results...')
-    //   this.getResults().then( res =>
-    //     this.setState({results: res})
-    //   )
-
-    //   this.handleChangeMode(AppMode.DISPLAY)
-    // };
-
     render() {
         const ModePage = modeToPage[this.state.mode]
         return (

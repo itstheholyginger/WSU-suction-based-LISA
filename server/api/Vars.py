@@ -1,13 +1,14 @@
 import numpy as np
 import statistics
 import scipy.stats
-from scipy.stats import truncnorm
+from scipy.stats import truncnorm, lognorm
 import math
+import random
 
 # normal distribution is calculated with mean, standard deviation, and number of variables
 
 
-class NormalVariable():
+class TruncNormalVariable():
     def __init__(self, name, mean, stdev, low, high, num_vars):
         self.name = str(name)
         self.mean = float(mean)
@@ -15,40 +16,36 @@ class NormalVariable():
         self.low = float(low)
         self.high = float(high)
         self.num_vars = int(num_vars)
+        self.details()
         self.vals = self.calc_vals()
-        self.dist="Truncated Normal"
+        self.dist = "Truncated Normal"
 
     def __str__(self):
-        return "Random Variable {0} has a Normal Distribution. min: {1} max: {2} mean: {3} stdev: {4} \
-            ".format(self.name, self.low, self.high, self.mean, self.stdev)
+        return "Random Variable {0} has a Normal Distribution. min: {1} max: {2}\
+            mean: {3} stdev: {4}".format(self.name, self.low,
+                                         self.high, self.mean, self.stdev)
 
-    # def get_truncated_normal(self):
-    #     return scipy.stats.truncnorm(
-    #         (self.low - self.mean) / self.stdev,
-    #         (self.high - self.mean) / self.stdev,
-    #         loc=self.mean, scale=self.stdev
-    #         size=self.num_vars
-    #     )
+    def details(self):
+        print("Calculating Truncated Normal with these parameters: mean: {0}, \
+            stdev: {1}, min: {2}, max: {3}".format(self.mean, self.stdev,
+                                                   self.low, self.high))
 
     def calc_vals(self):
-        # vals = self.get_truncated_normal()
-
-        # import pdb; pdb.set_trace()
-        # print(self.name, self.low, self.high, self.mean, self.stdev)
         stdev = self.stdev
         if stdev == 0:
             print(
-                "Normal Distribution's stdev is 0, setting to 0.00001 instead to avoid divide by 0 error.")
+                "Normal Distribution's stdev is 0, setting to 0.00001" +
+                "instead to avoid divide by 0 error.")
             stdev = 0.00001
 
         a = (self.low - self.mean) / stdev
         b = (self.high - self.mean) / stdev
-        vals = truncnorm.rvs(a, b, loc=self.mean, scale=self.stdev, size=self.num_vars)
-        # print(vals)
+        vals = truncnorm.rvs(a, b, loc=self.mean,
+                             scale=self.stdev, size=self.num_vars)
         if min(vals) < 0:
-            import pdb; pdb.set_trace()
+            import pdb
+            pdb.set_trace()
             print("something is wrong here")
-        # vals.rvs(self.num_vars)
         return vals
 
 
@@ -61,17 +58,90 @@ class UniformVariable():
         self.vals = self.calc_vals()
         self.mean = self.vals.mean()
         self.stdev = statistics.stdev(self.vals)
-        self.dist="Uniform"
+        self.dist = "Uniform Distribution"
 
     def __str__(self):
         return "Random Variable {0} has a Uniform Distribution. min: {1} max: {2} mean: {3} stdev: {4} \
             ".format(self.name, self.low, self.high, self.mean, self.stdev)
+
+    def details(self):
+        print("Calculating Uniform with these parameters: min: {2}, max: {3}"
+              .format(self.low, self.high))
 
     def calc_vals(self):
         vals = np.zeros(self.num_vars)
         for i in range(self.num_vars):
             vals[i] = (scipy.stats.uniform(self.low, self.high).rvs())
         return vals
+
+
+class LognormalVariable():
+    def __init__(self, name, mean, stdev, num_vars):
+        self.name = str(name)
+        self.mean = float(mean)
+        self.stdev = float(stdev)
+        self.num_vars = int(num_vars)
+        self.vals = self.calc_vals()
+        self.mean = self.vals.mean()
+        self.stdev = statistics.stdev(self.vals)
+        self.low = min(self.vals)
+        self.high = max(self.vals)
+        self.dist = "Lognormal Distribution"
+
+    def calc_vals(self):
+        vals = np.random.lognormal(self.mean, self.stdev, size=self.num_vars)
+        # vals = lognorm(self.s, loc=0, scale=1).rvs(size=self.num_vars)
+        return vals
+
+
+class TruncatedLognormalVariable():
+    def __init__(self, name, mean, stdev, low, high, num_vars):
+        self.name = str(name)
+        self.mean = float(mean)
+        self.stdev = float(stdev)
+        self.low = low
+        self.high = high
+        self.num_vars = int(num_vars)
+        self.vals = self.calc_vals()
+        self.mean = self.vals.mean()
+        self.stdev = statistics.stdev(self.vals)
+        self.dist = "Truncated Lognormal Distribution"
+
+    def calc_vals(self):
+        # vals = lognorm(self.s, loc=0, scale=1).rvs(size=self.num_vars)
+        # for i in range(self.num_vars):
+        #     if self.low <= vals[i] <= self.high:
+        #         break
+        #     vals[i] = lognorm(self.s, loc=0, scale=1).rvs(size=1)
+        # return np.array(vals)
+        vals = np.random.lognormal(self.mean, self.stdev, size=self.num_vars)
+        for i in range(len(vals)):
+            while True:
+                if self.low <= vals[i] <= self.high:
+                    break
+                vals[i] = random.lognormvariate(self.mean, self.stdev)
+        return vals
+
+
+class ConstantVariable():
+    def __init__(self, name, val, num_vars):
+        self.name = str(name)
+        self.const_val = float(val)
+        self.details()
+        self.num_vars = int(num_vars)
+        self.vals = self.calc_vals()
+        self.low = val
+        self.high = val
+        self.mean = val
+        self.stdev = val
+        self.dist = "Constant"
+
+    def details(self):
+        print("Calculating Constant with these parameters: const_val: {0}"
+              .format(self.const_val))
+
+    def calc_vals(self):
+        return [self.const_val] * self.num_vars
 
 
 class BivariateVariable():
@@ -97,7 +167,3 @@ class BivariateVariable():
             self.means, self.cov, size=self.num_vars)
         # print(vals)
         return vals
-
-
-# def tan(num):
-#     return math.tan(num * (math.pi/180))

@@ -1,20 +1,21 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import * as V from 'victory'
-import Select from 'react-select'
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import * as V from 'victory';
+import Select from 'react-select';
 
-class FOSFrequency extends Component {
+class FOSFreq extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             datapoints: [],
-            selected: ''
-        }
-        this.handleChange = this.handleChange.bind(this)
+            selected: '',
+        };
+        this.handleChange = this.handleChange.bind(this);
     }
 
     static propTypes = {
-        data: PropTypes.object
+        data: PropTypes.object,
+        conf: PropTypes.string,
     };
 
     componentDidMount = () => {
@@ -22,29 +23,41 @@ class FOSFrequency extends Component {
     };
 
     setOptions = () => {
-        const options = []
+        // console.log('~~~~ FreqFrequency setOptions ~~~~');
+        const options = [];
+
+        // sort options
+
+        var sorted = [];
         for (const key in this.props.data) {
-            options.push({ value: key, label: key })
+            sorted.push(key);
         }
-        return options
+
+        sorted.sort();
+        sorted.forEach(e => {
+            options.push({ value: e, label: e });
+        });
+
+        return options;
     };
 
     handleChange = e => {
         // e.preventDefault()
         // console.log(e)
         this.setState({
-            selected: e.value
-        })
+            selected: e.value,
+        });
     };
 
     render() {
         // console.log(this.props.data)
-        const { selectedOption } = this.state.selected
-        const options = this.setOptions()
-        console.log(options)
+        console.log('~~~~ FOSFreq ~~~~');
+        // console.log('current configuration: ', this.props.conf);
+        const options = this.setOptions();
+        // console.log(options);
 
-        console.log('current z=')
-        console.log('currently selected z = ', this.state.selected)
+        // console.log('currently selected z = ', this.state.selected);
+        // console.log('current data in FOSFrequency: ', this.state.data);
 
         return (
             <div>
@@ -54,7 +67,6 @@ class FOSFrequency extends Component {
                         selectedOption={this.state.selected}
                         options={options}
                         onChange={this.handleChange}
-                        
                     />
                 </div>
                 {this.state.selected !== '' ? (
@@ -62,89 +74,115 @@ class FOSFrequency extends Component {
                         <FreqHistFOS
                             z={this.state.selected}
                             data={this.props.data}
+                            conf={this.props.conf}
                         />
                     </>
                 ) : (
                     <></>
                 )}
             </div>
-        )
+        );
     }
 }
 
 class FreqHistFOS extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             datapoints: [],
-            z: ''
-        }
+            z: '',
+        };
         // this.getData = this.getData.bind(this)
     }
 
     static propTypes = {
         data: PropTypes.object,
-        z: PropTypes.string
+        z: PropTypes.string,
     };
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        console.log('prex z: ', prevState.z)
-        console.log('next z: ', nextProps.z)
+        // console.log('~~~~FreqHistFOS getDerivedStateFromProps~~~~');
+        // console.log('next state: ', nextProps);
+        // console.log('prex z: ', prevState.z);
+        // console.log('next z: ', nextProps.z);
         if (nextProps.z !== prevState.z) {
-            const z = nextProps.z
-            console.log('next z')
-            console.log(z)
+            const z = nextProps.z;
             // we need to make frequency array
             // for current Z, get fos counts
-            console.log(
-                'in getDerivedStateFromProps()  current data= ',
-                nextProps.data
-            )
-            const valsArr = nextProps.data[z].fs_vals
+            // console.log(
+            //     'in getDerivedStateFromProps()  current data= ',
+            //     nextProps.data
+            // );
+            if (nextProps.conf === 'nondet') {
+                // console.log('non-deterministic');
+                const valsArr = nextProps.data[z].fs_vals;
 
-            console.log('vals array: ')
-            console.log(valsArr)
-            const freqObj = {}
-            valsArr.forEach(x => {
-                const rounded = x.toFixed(2)
-                if (!freqObj[rounded]) {
-                    freqObj[rounded] = 1
-                } else {
-                    freqObj[rounded] += 1
+                // console.log('vals array: ');
+                // console.log(valsArr);
+                const freqObj = {};
+                valsArr.forEach(x => {
+                    const rounded = x.toFixed(2);
+                    if (!freqObj[rounded]) {
+                        freqObj[rounded] = 1;
+                    } else {
+                        freqObj[rounded] += 1;
+                    }
+                });
+
+                const datapoints = [];
+                for (const key in freqObj) {
+                    datapoints.push({ x: Number(key), y: freqObj[key] });
                 }
-            })
+                // this.setState({ datapoints: datapoints })
+                return { datapoints: datapoints, z: nextProps.z };
+            } else if (nextProps.conf === 'det') {
+                // console.log('deterministic');
+                const val = nextProps.data[z].toFixed(2);
 
-            const datapoints = []
-            for (const key in freqObj) {
-                datapoints.push({ x: Number(key), y: freqObj[key] })
-            }
-            // this.setState({ datapoints: datapoints })
-            return { datapoints: datapoints, z: nextProps.z }
-        } else return null
+                // console.log('value = ', val);
+                const datapoint = [{ x: Number(z), y: val }];
+                // console.log('new datapoint: ', datapoint);
+                return { datapoints: datapoint, z: nextProps.z };
+            } else
+                console.log(
+                    'ERROR: incorrect configuration type: ',
+                    nextProps.conf
+                );
+        } else return null;
     }
 
     getCount = () => {
-        var max = 0
-        const dp = this.state.datapoints
+        var max = 0;
+        const dp = this.state.datapoints;
         dp.forEach(x => {
             if (x.y > max) {
-                console.log('new max: ', x.y)
-                max = x.y
+                console.log('new max: ', x.y);
+                max = x.y;
             }
-        })
-        return max
+        });
+
+        // example: max = 41
+        // want [5, 10, 15, 20, 25, 30, 35, 40]
+        const list = [];
+        for (var i = 0; i < max; i++) {
+            if (i % 5 === 0) {
+                list.push(i);
+            }
+        }
+        return list;
     };
 
     render() {
         // const width = this.props.data[Number(this.props.z)].high
         // const dp = this.getData()
-        console.log('rendering child!')
+        // console.log('rendering child!');
 
-        console.log(this.state.datapoints)
+        // console.log(this.state.datapoints);
+
         return (
             <div className="graph">
                 <V.VictoryChart
-                theme={V.VictoryTheme.material}
+                    theme={V.VictoryTheme.material}
                     domainPadding={20}
                     containerComponent={
                         <V.VictoryVoronoiContainer
@@ -155,22 +193,24 @@ class FreqHistFOS extends Component {
                     <V.VictoryBar data={this.state.datapoints} />
                     <V.VictoryAxis
                         label="Factor of Safety"
+                        tickValues={[0.5, 0.75, 1]}
+                        tickFormat={t => t}
                         style={{
-                            axisLabel: { padding: 30 }
+                            axisLabel: { padding: 30 },
                         }}
                     />
                     <V.VictoryAxis
                         dependentAxis
                         label="Frequency"
-                        tickCount={this.getCount()}
+                        tickCount={this.getCount().length}
                         style={{
-                            axisLabel: { padding: 40 }
+                            axisLabel: { padding: 40 },
                         }}
                     />
                 </V.VictoryChart>
             </div>
-        )
+        );
     }
 }
 
-export default FOSFrequency
+export default FOSFreq;

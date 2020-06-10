@@ -20,67 +20,55 @@ variables:
 
 
 class FS:
-    def __init__(self, c, c_r, phi, gamma, H_wt, slope,  z):
-        self.c = c
-        self.c_r = c_r
-        self.phi = phi
-        self.H_wt = H_wt
-        self.gamma = gamma
-        self.slope = slope
+    def __init__(self, c, c_r, phi, gamma, gamma_w, slope, H_wt, z):
+        self.c = float(c)
+        self.c_r = float(c_r)
+        self.phi = float(phi)
+        self.H_wt = float(H_wt)
+        self.gamma = float(gamma)
+        self.gamma_w = float(gamma_w)
+        self.slope = float(slope)
         self.z = float(z)
 
-    def tan(self, num):
-        return math.tan(num * (math.pi/180))
 
-    def sin(self, num):
-        return math.sin(num * (math.pi / 180))
+'''
+    New variables
+        k_s = saturated hydraulic conductivity (m/s)
+        alpha = Van Genuchten's parameters from the best fit to SWRC
+        n = Van Genuchten's parameters from the best fit to SWRC
+        q = steady flux rate (m/s) [positive for infiltration and negative for evaporation]
+'''
 
 
 class FSUnsat(FS):
-    def __init__(self, c, c_r, phi, gamma, slope, H_wt,  z):
-        FS.__init__(self, c, c_r, phi, gamma, H_wt, slope,  z)
+    def __init__(self, c, c_r, phi, k_s, alpha, n, gamma, gamma_w, slope, q, H_wt, z):
+        FS.__init__(self, c, c_r, phi, gamma, gamma_w, slope, H_wt, z)
+        self.k_s = float(k_s)
+        self.alpha = float(alpha)
+        self.n = float(n)
+        self.q = float(q)
+        self.ss = self.suction_stress()
         self.fs = self.calc_fs()
         self.round_vals()
 
     def __str__(self):
-        return "Factor of Safety of Unsaturated Soil\n\tc: {0} c_r: {1} phi: {2} gamma: {3} slope: {4} H_wt: {5} \
-            z: {6}\n\tfs: {7}".format(self.c, self.c_r, self.phi, self.gamma, self.slope, self.H_wt, self.z, self.fs)
+        return "Factor of Safety of Unsaturated Soil\n\tc: {0} c_r: {1} \
+            phi: {2} k_s: {3} alpha: {4} n: {5} gamma: {6} gamma_w: {7} \
+            slope: {8} q: {9} H_wt: {10} z: {11}\n\tfs: {12}"\
+            .format(self.c, self.c_r, self.phi, self.k_s, self.alpha, self.n,
+                    self.gamma, self.gamma_w, self.slope, self.q, self.H_wt,
+                    self.z, self.fs)
 
-    def calc_fs(self):
-        fs = (math.tan(math.radians(self.phi))*self.z)/math.tan(math.radians(self.slope)) + \
-            ((2*(self.c + self.c_r))/(self.gamma *
-                                      (self.H_wt - self.z) * math.sin(math.radians(2 * self.slope))))
-        # print("fs = ", fs)
-        return fs
+    def tan(self, deg):
+        rad = math.radians(deg)
+        return math.tan(rad)
 
-    def round_vals(self):
-        self.c = round(self.c, 1)
-        self.c_r = round(self.c_r, 1)
-        self.phi = round(self.phi, 1)
+    def cot(self, deg):
+        return 1/self.tan(deg)
 
-
-class FSSat(FS):
-    def __init__(self, c, c_r, phi, k_s, alpha, n,  gamma, gamma_w, slope, H_wt,  q, z):
-        self.k_s = k_s
-        self.alpha = alpha
-        self.gamma_w = gamma_w
-        self.n = n
-        self.q = q
-        FS.__init__(self, c, c_r, phi, gamma, H_wt, slope, z)
-        self.fs = self.calc_fs()
-        self.round_vals()
-
-    def __str__(self):
-        return "Factor of Safety of Saturated Soil\n\tc: {0} c_r: {1} phi: {2} k_s: {3} alpha: {4} n: {5} gamma: {6} \
-            gamma_w: {7} slope: {8} H_wt: {9} q:  {10} z: {11}\n\tfs: {12}".format(self.c,
-                                                                                   self.c_r, self.phi, self.k_s, self.alpha, self.n,  self.gamma, self.gamma_w, self.slope,
-                                                                                   self.H_wt, self.q,  self.z, self.fs)
-
-    def print_attrs(self):
-        print("FSSat Attrs:\n\tc: {0} c_r: {1} phi: {2} k_s: {3} alpha: {4} n: {5} gamma: {6} \
-            gamma_w: {7} slope: {8} H_wt: {9} q:  {10} z: {11}".format(self.c,
-                                                                       self.c_r, self.phi, self.k_s, self.alpha, self.n,  self.gamma, self.gamma_w, self.slope,
-                                                                       self.H_wt, self.q,  self.z))
+    def sin(self, deg):
+        rad = math.radians(deg)
+        return math.sin(rad)
 
     def round_vals(self):
         self.k_s = '%.2E' % Decimal(self.k_s)
@@ -90,77 +78,120 @@ class FSSat(FS):
         self.c_r = round(self.c_r, 1)
         self.phi = round(self.phi, 1)
 
+    # Calculate the factor of safety value for unsaturated soil
+
     def calc_fs(self):
-        # if self.z > 0:
-        #     import pdb; pdb.set_trace()
+        # print("Calculating the fs of unsaturated soil")
+        H_ss = self.H_wt - self.z
+        first = self.tan(self.phi) / self.tan(self.slope)
 
-        first = (math.tan(math.radians(self.phi)) * self.z) / \
+        second = (2 * (self.c + self.c_r)) /\
+            (self.gamma * H_ss * self.sin(2 * self.slope))
+
+        # print(self.ss)
+
+        third = (self.ss / (self.gamma * H_ss))
+
+        last = (self.tan(self.slope) + self.cot(self.slope)) * \
+            self.tan(self.phi)
+
+        fs = first + second - third * last
+        return fs
+
+    ''' Description:
+            This is a general equation for the vertical profile of suction stress
+            under steady infiltration or evaportation:
+            if magic_suction <= 0, suction_stress = -magic_suction
+            else if suction stress > 0, calculate new magin_suction
+    '''
+
+    def suction_stress(self):
+        msuc = self.matric_suction()
+        if msuc <= 0:
+            return -msuc
+        else:
+            try:
+                temp = self.q / self.k_s
+                first = 1/self.alpha
+                second_top = math.log(
+                    (1 + temp) * math.exp(-self.gamma_w * self.alpha * self.z) - temp)
+
+                second_bottom = pow((1 + pow((-second_top), self.n)),
+                                    (self.n - 1) / self.n)
+                ss = first * (second_top / second_bottom)
+            except ValueError as e:
+                # print(e)
+                ss = 0
+        return ss
+
+    def matric_suction(self):
+        # import pdb
+        # pdb.set_trace()
+        temp = self.q / self.k_s
+        ms = 0
+        try:
+            first = (-1 / self.alpha)
+
+            inside_first = (1+temp)
+
+            inside_second = math.exp(-self.gamma * self.alpha * self.z)
+
+            inside = inside_first * inside_second - temp
+
+            second = math.log(inside)
+
+            ms = first * second
+            # ms = (-1 / self.alpha) *\
+            #     math.log((1 + temp) * math.exp(-self.gamma *
+            #                                    self.alpha * self.z) - temp)
+        except ValueError as e:
+            # import pdb
+            # pdb.set_trace()
+            print(e)
+            ms = 0
+        return ms
+
+
+class FSSat(FS):
+    def __init__(self, c, c_r, phi, gamma, gamma_w, slope, H_wt, z):
+        FS.__init__(self, c, c_r, phi, gamma, gamma_w, slope, H_wt, z)
+
+        self.fs = self.calc_fs()
+        self.round_vals()
+
+    def __str__(self):
+        return "Factor of Safety of Saturated Soil\n\tc: {0} c_r: {1} phi: {2}\
+            gamma: {3} gamma_w: {4} slope: {5} H_wt: {6} z: {7}\
+                \n\tfs: {8}".format(self.c, self.c_r, self.phi, self.gamma,
+                                    self.gamma_w, self.slope, self.H_wt, self.z, self.fs)
+
+    # maybe do this here and not in the frontend?
+    def round_vals(self):
+        self.c = round(self.c, 1)
+        self.c_r = round(self.c_r, 1)
+        self.phi = round(self.phi, 1)
+
+    def calc_fs(self):
+        H_ss = self.H_wt - self.z
+        first = math.tan(math.radians(self.phi)) / \
             math.tan(math.radians(self.slope))
-        # print("first= ", first)
 
-        second = (2 * (self.c + self.c_r))/(self.gamma *
-                                            (self.H_wt - self.z) * math.sin(math.radians(2 * self.slope)))
-        # print("second = ", second)
+        second = (2 * (self.c + self.c_r)) /\
+            (self.gamma * H_ss * math.sin(math.radians(2 * self.slope)))
 
-        ss = self.suction_stress()
-        third = (ss / (self.gamma * (self.H_wt - self.z)))
-        # print("third = ", third)
+        third = (self.gamma_w * H_ss) /\
+            (self.gamma * H_ss * math.sin(math.radians(2 * self.slope))) *\
+            math.tan(math.radians(self.phi))
 
         if math.isnan(float(third)):
             import pdb
             pdb.set_trace()
-            # print("third is not a number")
-            self.print_attrs()
+            print("third is not a number")
 
-        last = (math.tan(math.radians(self.slope)) + (1/math.tan(math.radians(self.slope)))
-                ) * math.tan(math.radians(self.phi)) * self.z
-        # print("last= ", last)
-        total = first + second - third*last
-        # print("fs = ", total)
-        if total < 0:
+        fs = first + second - third
+        if fs < 0:
             import pdb
-            # pdb.set_trace()
-            # print("fs shouldn't be negative returning 0")
+            pdb.set_trace()
+            print("fs shouldn't be negative returning 0")
             return 0
-        return total
-
-    '''
-    Description:
-        This is a general equation for the vertical profile of suction stress
-        under steady infiltration or evaportation:
-        if magic_suction <= 0, suction_stress = -magic_suction
-        else if suction stress > 0, calculate new magin_suction
-
-    Variables
-        k_s = saturated hydraulic conductivity (m/s)
-        alpha = Van Genuchten's parameters from the best fit to SWRC
-        n = Van Genuchten's parameters from the best fit to SWRC
-        q = steady flux rate (m/s) [positive for infiltration and negative for evaporation]
-    '''
-
-    def suction_stress(self):
-        # print("\nsuction stress")
-        msuc = self.magic_suction()
-        if msuc <= 0:
-            # print("returning negative, og was ", msuc)
-            return -msuc
-        else:
-            temp = self.q / self.k_s
-
-            first = 1/self.alpha
-            # print("first = ",  first)
-
-            second_top = math.log(
-                (1 + temp) * math.exp(-self.gamma_w * self.alpha * self.z) - temp)
-            # print("second_top = ", second_top)
-
-            second_bottom = pow((1 + pow((-second_top), self.n)),
-                                (self.n - 1) / self.n)
-            # print("second_bottom = ", second_bottom)
-
-            ss = first * (second_top / second_bottom)
-            # print("ss = ", ss)
-        return ss
-
-    def magic_suction(self):
-        return (-1 / self.alpha) * math.log((1 + (self.q / self.k_s)) + math.exp(-self.gamma * self.alpha * self.z) - (self.q / self.k_s))
+        return fs
