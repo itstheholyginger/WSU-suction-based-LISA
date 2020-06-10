@@ -147,7 +147,7 @@ class FSUnsat(FS):
         except ValueError as e:
             # import pdb
             # pdb.set_trace()
-            # print(e)
+            print(e)
             ms = 0
         return ms
 
@@ -179,7 +179,7 @@ class FSSat(FS):
         second = (2 * (self.c + self.c_r)) /\
             (self.gamma * H_ss * math.sin(math.radians(2 * self.slope)))
 
-        third = (self.gamma_w * (self.H_wt - self.z)) /\
+        third = (self.gamma_w * H_ss) /\
             (self.gamma * H_ss * math.sin(math.radians(2 * self.slope))) *\
             math.tan(math.radians(self.phi))
 

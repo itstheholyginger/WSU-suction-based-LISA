@@ -10,10 +10,10 @@ import AppMode from '../AppMode';
 import API from './apiClient';
 import LABELS from '../resources/labels';
 
-// Needed Random Variables:
+//  Random Variables:
 //    c, c_r, phi, k_s, a, n
 // Constant Variables:
-//    gamme, gamma_w, slope, z_step, H_wt
+//    gamma, gamma_w, slope, z_step, H_wt
 // also, ask user for fluxes
 
 class DataFormPage extends Component {

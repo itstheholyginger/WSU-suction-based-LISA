@@ -13,6 +13,7 @@ class PFbyZ extends Component {
     static propTypes = {
         data: PropTypes.object,
         conf: PropTypes.string,
+        H_wt: PropTypes.number
     };
 
     detGetDatapoints = () => {
@@ -64,24 +65,32 @@ class PFbyZ extends Component {
                             />
                         }
                     >
-                        <V.VictoryScatter data={dp} />
+                        <V.VictoryLine
+                            style={{
+                                data: { stroke: "#c43a31" },
+                                parent: { border: "1px solid #ccc" }
+                            }}
+                            data={dp} />
                         <V.VictoryAxis
                             label="Probability of Failure"
                             style={{
                                 axisLabel: { padding: 30 },
                             }}
+                            orientation="top"
                         />
                         <V.VictoryAxis
                             dependentAxis
                             label="Z: Soil Depth from Surface (m)"
                             tickCount={
-                                this.state.datapoints.length > 10
-                                    ? this.state.datapoints.length / 2
-                                    : this.state.datapoints.length
+                                this.props.H_wt * 2
+                                // this.state.datapoints.length > 10
+                                //     ? this.state.datapoints.length / 2
+                                //     : this.state.datapoints.length
                             }
                             style={{
                                 axisLabel: { padding: 40 },
                             }}
+                            invertAxis={true}
                         />
                     </V.VictoryChart>
                 </div>

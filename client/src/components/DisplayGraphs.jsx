@@ -13,7 +13,7 @@ class DisplayGraphs extends Component {
         console.log('~~~~! DisplayGraphs data: ', this.props.data);
         return (
             <div>
-                <Tabs defaultActiveKey="ss/z" id="visualizations">
+                <Tabs defaultActiveKey="probFail/z" id="visualizations">
                     <Tab
                         eventKey="freqHistFos"
                         title="Factor of Safety Frequency Histograms"
@@ -40,6 +40,7 @@ class DisplayGraphs extends Component {
                         <Graphs.PFbyZ
                             data={this.props.data.z}
                             conf={this.props.data.conf}
+                            H_wt={this.props.data.H_wt}
                         />
                     </Tab>
                     <Tab eventKey="ss/z" title="Suction Stress by Depth">

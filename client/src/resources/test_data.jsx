@@ -103,7 +103,7 @@ var results = {
 var testing = {
     data: {
         numVars: 1000,
-        sat: true,
+        sat: false,
         conf: 'nondet',
         randVars: {
             c: {
@@ -122,11 +122,11 @@ var testing = {
                 const_val: 0,
             },
             phi: {
-                dist: 'truncnormal',
-                low: 27,
+                dist: 'trunclognormal',
+                low: 20,
                 high: 40,
-                mean: 34.941,
-                stdev: 3.1,
+                mean: 3.4941,
+                stdev: 1.33,
             },
             k_s: {
                 dist: 'constant',
@@ -140,8 +140,9 @@ var testing = {
                 dist: 'truncnormal',
                 low: 0.025,
                 high: 0.837,
-                mean: 0.3434,
+                mean: 0.434,
                 stdev: 0.228,
+                s: 0.228
             },
             n: {
                 dist: 'truncnormal',
@@ -155,9 +156,9 @@ var testing = {
             gamma: 18,
             gamma_w: 9.81,
             slope: 45,
-            q: -2.5e-7,
+            q: -2.5e-07,
             H_wt: 5,
-            z_step: 0.1,
+            z_step: 0.1
         },
     },
     results: {

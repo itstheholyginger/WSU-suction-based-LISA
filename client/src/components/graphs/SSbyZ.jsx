@@ -75,11 +75,6 @@ class SSbyZ extends Component {
                     <V.VictoryChart
                         domainPadding={20}
                         theme={V.VictoryTheme.material}
-                        containerComponent={
-                            <V.VictoryVoronoiContainer
-                                labels={({ datum }) => `${datum.x} ${datum.y}`}
-                            />
-                        }
                     >
                         <V.VictoryScatter data={dp} />
                         <V.VictoryAxis
@@ -87,6 +82,7 @@ class SSbyZ extends Component {
                             style={{
                                 axisLabel: { padding: 30 },
                             }}
+                            orientation="top"
                         />
                         <V.VictoryAxis
                             dependentAxis
@@ -96,6 +92,7 @@ class SSbyZ extends Component {
                             style={{
                                 axisLabel: { padding: 40 },
                             }}
+                            invertAxis="true"
                         />
                     </V.VictoryChart>
                 </div>

@@ -3,6 +3,7 @@ import statistics
 import scipy.stats
 from scipy.stats import truncnorm, lognorm
 import math
+import random
 
 # normal distribution is calculated with mean, standard deviation, and number of variables
 
@@ -75,10 +76,10 @@ class UniformVariable():
 
 
 class LognormalVariable():
-    def __init__(self, name, s, num_vars):
+    def __init__(self, name, mean, stdev, num_vars):
         self.name = str(name)
-        self.s = float(s)
-        self.details()
+        self.mean = float(mean)
+        self.stdev = float(stdev)
         self.num_vars = int(num_vars)
         self.vals = self.calc_vals()
         self.mean = self.vals.mean()
@@ -87,12 +88,38 @@ class LognormalVariable():
         self.high = max(self.vals)
         self.dist = "Lognormal Distribution"
 
-    def details(self):
-        print("Calculating Lognormal with these parameters: s: {0}"
-              .format(self.s))
+    def calc_vals(self):
+        vals = np.random.lognormal(self.mean, self.stdev, size=self.num_vars)
+        # vals = lognorm(self.s, loc=0, scale=1).rvs(size=self.num_vars)
+        return vals
+
+
+class TruncatedLognormalVariable():
+    def __init__(self, name, mean, stdev, low, high, num_vars):
+        self.name = str(name)
+        self.mean = float(mean)
+        self.stdev = float(stdev)
+        self.low = low
+        self.high = high
+        self.num_vars = int(num_vars)
+        self.vals = self.calc_vals()
+        self.mean = self.vals.mean()
+        self.stdev = statistics.stdev(self.vals)
+        self.dist = "Truncated Lognormal Distribution"
 
     def calc_vals(self):
-        vals = lognorm(self.s, loc=0, scale=1).rvs(size=self.num_vars)
+        # vals = lognorm(self.s, loc=0, scale=1).rvs(size=self.num_vars)
+        # for i in range(self.num_vars):
+        #     if self.low <= vals[i] <= self.high:
+        #         break
+        #     vals[i] = lognorm(self.s, loc=0, scale=1).rvs(size=1)
+        # return np.array(vals)
+        vals = np.random.lognormal(self.mean, self.stdev, size=self.num_vars)
+        for i in range(len(vals)):
+            while True:
+                if self.low <= vals[i] <= self.high:
+                    break
+                vals[i] = random.lognormvariate(self.mean, self.stdev)
         return vals
 
 
@@ -115,16 +142,6 @@ class ConstantVariable():
 
     def calc_vals(self):
         return [self.const_val] * self.num_vars
-
-
-
-
-
-
-
-
-
-
 
 
 class BivariateVariable():

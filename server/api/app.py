@@ -5,7 +5,7 @@ import numpy as np
 import statistics
 from .FS import FSSat, FSUnsat
 from .Vars import TruncNormalVariable, UniformVariable,  \
-    LognormalVariable, ConstantVariable
+    LognormalVariable, ConstantVariable, TruncatedLognormalVariable
 
 # use debug=true we do not need to start server manually when we change code
 FAILSTATE = 1
@@ -88,7 +88,6 @@ def calc_det(rand_vars, const_vars, H_wt, z_step, sat, conf):
     c = rand_vars['c']['val']
     c_r = rand_vars['c_r']['val']
     gamma = const_vars['gamma']
-    phi = rand_vars['phi']['val']
     gamma_w = const_vars['gamma_w']
     slope = const_vars['slope']
 
@@ -97,13 +96,19 @@ def calc_det(rand_vars, const_vars, H_wt, z_step, sat, conf):
     rvs = {}
     rvs['c'] = c
     rvs['c_r'] = c_r
-    rvs['phi'] = phi
+    rvs['phi'] = const_vars['phi_0']
 
     if sat is True:
         print("Soil is saturated")
+        phi_0 = const_vars['phi_0']
+        delta_phi = const_vars['delta_phi']
+        z_w = const_vars['z_w']
         for z in z_arr:
+            H_ss = H_wt - z
+            phi = phi_0 + (delta_phi / (1 + z_w / H_ss))
+
             FS = FSSat(c, c_r, phi, gamma, gamma_w, slope, H_wt, z)
-            z_data[H_wt - z]['fs'] = FS.fs
+            z_data[z]['fs_vals'] = FS.fs
     elif sat is False:
         print("Soil is unsaturated")
         k_s = rand_vars['k_s']['val']
@@ -113,13 +118,24 @@ def calc_det(rand_vars, const_vars, H_wt, z_step, sat, conf):
         rvs['k_s'] = k_s
         rvs['alpha'] = alpha
         rvs['n'] = n
+
+        phi_0 = const_vars['phi_0']
+        delta_phi = const_vars['delta_phi']
+        z_w = const_vars['z_w']
         for z in z_arr:
+            H_ss = H_wt - z
+            phi = phi_0 + (delta_phi / (1 + z_w / H_ss))
             print("z = {}".format(z))
             FS = FSUnsat(c, c_r, phi, k_s, alpha, n,
                          gamma, gamma_w, slope, q, H_wt, z)
             print(FS)
-            z_data[H_wt - z] = FS.fs
-            z_data[H_wt - z]['ss'] = FS.ss
+            H_ss = H_wt - z
+            print("z: {0}, H_ss: {1}".format(z, H_ss))
+            z_data[z]['fs_vals'] = FS.fs
+            z_data[z]['ss_vals'] = FS.ss
+
+            # z_data[z] = FS.fs
+            # z_data[z]['ss'] = FS.ss
 
     to_return['z'] = z_data
     to_return['randVars'] = rvs
@@ -174,12 +190,18 @@ def create_dists(data, num_vars):
             new_var = UniformVariable(key, val["low"], val["high"], num_vars)
 
         elif val['dist'] == "lognormal":
-            print("calc log norm")
-            new_var = LognormalVariable(key, val['s'], num_vars)
+            print("calc lognorm")
+            new_var = LognormalVariable(
+                key, val['mean'], val['stdev'], num_vars)
 
         elif val['dist'] == 'constant':
             print("calc const var")
             new_var = ConstantVariable(key, val['const_val'], num_vars)
+
+        elif val['dist'] == "trunclognormal":
+            print("calc trunc lognormal")
+            new_var = TruncatedLognormalVariable(
+                key, val['mean'], val['stdev'], val['low'], val['high'], num_vars)
 
         rand_vars.append(new_var)
 
@@ -207,16 +229,26 @@ def get_FS_data(rand_vars, const_vars, H_wt, z_step, num_vars, sat):
                 rand_vars, const_vars['gamma'], const_vars['gamma_w'],
                 const_vars['slope'], H_wt, z, num_vars)
 
-        H_ss = round(H_wt - z, 2)
+        # H_ss = round(H_wt - z, 2)
         # H_ss = H_wt - z
-        res[H_ss] = {}
-        res[H_ss]['ss_vals'] = SS_list
-        res[H_ss]['fs_vals'] = FS_list
-        res[H_ss]['low'] = round(min(FS_list), 2)
-        res[H_ss]['high'] = round(max(FS_list), 2)
-        res[H_ss]['mean'] = round(statistics.mean(FS_list), 2)
-        res[H_ss]['stdev'] = round(statistics.stdev(FS_list), 2)
-        res[H_ss]['probFail'] = probFail
+        # res[H_ss] = {}
+        # res[H_ss]['ss_vals'] = SS_list
+        # res[H_ss]['fs_vals'] = FS_list
+        # res[H_ss]['low'] = round(min(FS_list), 2)
+        # res[H_ss]['high'] = round(max(FS_list), 2)
+        # res[H_ss]['mean'] = round(statistics.mean(FS_list), 2)
+        # res[H_ss]['stdev'] = round(statistics.stdev(FS_list), 2)
+        # res[H_ss]['probFail'] = probFail
+
+        res[z] = {}
+        res[z]['ss_vals'] = SS_list
+        res[z]['fs_vals'] = FS_list
+        res[z]['low'] = round(min(FS_list), 2)
+        res[z]['high'] = round(max(FS_list), 2)
+        res[z]['mean'] = round(statistics.mean(FS_list), 2)
+        res[z]['stdev'] = round(statistics.stdev(FS_list), 2)
+        res[z]['probFail'] = probFail
+
     return res
 
 
@@ -231,6 +263,7 @@ def calc_FS_sat(rand_vars, gamma, gamma_w, slope, H_wt, z, num_vars):
         FS = FSSat(c, c_r, phi, gamma, gamma_w, slope, H_wt, z)
 
         if FS.fs >= FAILSTATE:
+            # if FS.fs < FAILSTATE:
             failed += 1
 
         FS_list.append(FS.fs)
@@ -254,6 +287,7 @@ def calc_FS_unsat(rand_vars, gamma, gamma_w, slope, q, H_wt, z, num_vars):
         FS = FSUnsat(c, c_r, phi, k_s, alpha, n,  gamma,
                      gamma_w, slope, q, H_wt, z)
         if FS.fs >= FAILSTATE:
+            # if FS.fs < FAILSTATE:
             failed += 1
 
         SS_list.append(FS.ss)
