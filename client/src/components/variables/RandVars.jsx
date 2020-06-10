@@ -155,14 +155,6 @@ class NondetRandVarDisplayer extends Component {
                         handleChange={this.props.handleChange}
                     />
                 )
-            case 'bivariate':
-                return (
-                    <BivariateVar
-                        name={this.props.name}
-                        data={this.props.data}
-                        handleChange={this.props.handleChange}
-                    />
-                )
             default:
                 return (
                     <p>
@@ -199,7 +191,7 @@ class TruncNormalVar extends Component {
                         <Form.Control
                             type="number"
                             min={0}
-                            step={0.00000001}
+                            step={0.0000000001}
                             name="mean"
                             onChange={this.handleChange.bind(this)}
                             placeholder="Enter mean"
@@ -211,7 +203,7 @@ class TruncNormalVar extends Component {
                         <Form.Control
                             type="number"
                             min={0}
-                            step={0.00000001}
+                            step={0.0000000001}
                             placeholder="Enter standard deviation"
                             name="stdev"
                             onChange={this.handleChange}
@@ -229,7 +221,7 @@ class TruncNormalVar extends Component {
                         <Form.Control
                             type="number"
                             min={0}
-                            step={0.00000001}
+                            step={0.0000000001}
                             name="low"
                             onChange={this.handleChange}
                             placeholder="Enter low"
@@ -245,7 +237,7 @@ class TruncNormalVar extends Component {
                         <Form.Control
                             type="number"
                             min={this.props.data.low}
-                            step={0.00000001}
+                            step={0.0000000001}
                             name="high"
                             onChange={this.handleChange}
                             placeholder="Enter high"
@@ -277,7 +269,7 @@ class UniformVar extends Component {
                     <Form.Control
                         type="number"
                         min={0}
-                        step={0.00000001}
+                        step={0.0000000001}
                         name="low"
                         onChange={this.handleChange}
                         placeholder="Enter low"
@@ -289,7 +281,7 @@ class UniformVar extends Component {
                     <Form.Control
                         type="number"
                         min={this.props.data.low}
-                        step={0.0001}
+                        step={0.000000001}
                         name="high"
                         onChange={this.handleChange}
                         placeholder="Enter high"
@@ -320,7 +312,7 @@ class LognormalVar extends Component {
                     <Form.Control
                         type="number"
                         min={0}
-                        step={0.00000001}
+                        step={0.0000000001}
                         name="s"
                         onChange={this.handleChange}
                         placeholder="Enter S Value"
@@ -351,7 +343,7 @@ class ConstantVar extends Component {
                     <Form.Control
                         type="number"
                         min={0 }
-                        step={0.00000001}
+                        step={0.0000000001}
                         name="const_val"
                         onChange={this.handleChange}
                         placeholder="Enter constant value"
@@ -362,112 +354,5 @@ class ConstantVar extends Component {
     }
 }
 
-class BivariateVar extends Component {
-    static propTypes = {
-        handleChange: PropTypes.func,
-        data: PropTypes.object,
-        name: PropTypes.string
-    };
-
-    handleChange = e => {
-        console.log('in bivariate rand var change')
-        this.props.handleChange(this.props.name, e.target.name, e.target.value)
-    };
-
-    render() {
-        return (
-            <>
-                <Form.Row>
-                    <div className="randVarInputCol bivMean">
-                        <Form.Group as={Col} controlId="bivMean">
-                            <Form.Label>Mean</Form.Label>
-                            <Form.Control
-                                type="number"
-                                min={0}
-                                step={0.0000001}
-                                name="mean1"
-                                onChange={this.handleChange}
-                                placeholder="Enter mean"
-                            />
-                        </Form.Group>
-                    </div>
-                    <div className="randVarInputCol bivCov">
-                        <Form.Group as={Col} controlId="">
-                            <Form.Label>Covariance</Form.Label>
-                            <Form.Row>
-                                <Form.Group as={Col} controlId="formCov">
-                                    <Form.Control
-                                        type="number"
-                                        min={0}
-                                        step={0.0000001}
-                                        name="covX1"
-                                        onChange={this.handleChange}
-                                        placeholder="Enter X"
-                                    />
-                                </Form.Group>
-
-                                <Form.Group as={Col} controlId="formCov">
-                                    <Form.Control
-                                        type="number"
-                                        min={0}
-                                        step={0.0000001}
-                                        name="covY1"
-                                        onChange={this.handleChange}
-                                        placeholder="Enter Y"
-                                    />
-                                </Form.Group>
-                            </Form.Row>
-                        </Form.Group>
-                    </div>
-                </Form.Row>
-
-                <Form.Row>
-                    <div className="randVarInputCol bivMean">
-                        <Form.Group as={Col} controlId="bivMean">
-                            <Form.Label>Mean</Form.Label>
-                            <Form.Control
-                                type="number"
-                                min={0}
-                                step={0.0000001}
-                                name="mean2"
-                                onChange={this.handleChange}
-                                placeholder="Enter mean"
-                            />
-                        </Form.Group>
-                    </div>
-
-                    <div className="randVarInputCol bivCov">
-                        <Form.Group as={Col} controlId="">
-                            <Form.Label>Covariance</Form.Label>
-                            <Form.Row>
-                                <Form.Group as={Col} controlId="formCov">
-                                    <Form.Control
-                                        type="number"
-                                        min={0}
-                                        step={0.0000001}
-                                        name="covX2"
-                                        onChange={this.handleChange}
-                                        placeholder="Enter X"
-                                    />
-                                </Form.Group>
-
-                                <Form.Group as={Col} controlId="formCov">
-                                    <Form.Control
-                                        type="number"
-                                        min={0}
-                                        step={0.0000001}
-                                        name="covY2"
-                                        onChange={this.handleChange}
-                                        placeholder="Enter Y"
-                                    />
-                                </Form.Group>
-                            </Form.Row>
-                        </Form.Group>
-                    </div>
-                </Form.Row>
-            </>
-        )
-    }
-}
 
 export default RandVar

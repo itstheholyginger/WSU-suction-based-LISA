@@ -1,24 +1,24 @@
-import React, { Component } from 'react'
-import { Form, Col } from 'react-bootstrap'
-import PropTypes from 'prop-types'
+import React, { Component } from 'react';
+import { Form, Col } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 
 class ConstVar extends React.Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
-            value: 0
-        }
+            value: 0,
+        };
     }
 
     static propTypes = {
         handleChange: PropTypes.func,
         name: PropTypes.string,
-        label: PropTypes.string
+        label: PropTypes.string,
     };
 
     handleChange = e => {
-        this.props.handleChange(this.props.name, e.target.value)
-        console.log('in const var change')
+        this.props.handleChange(this.props.name, e.target.value);
+        console.log('in const var change');
     };
 
     render() {
@@ -34,88 +34,35 @@ class ConstVar extends React.Component {
                             type="number"
                             min={-100}
                             // ASK: currently using step value of 0.0001, should it be higher or lower?
-                            step={0.000000001}
+                            step={0.0000000001}
                             placeholder="Enter value"
                             onChange={this.handleChange}
                         />
                     </Form.Group>
                 </Form.Row>
             </div>
-        )
-    }
-}
-
-class ZVar extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            name: 'z',
-            label: 'Distance Above Water Table (z)',
-            max: 0,
-            step: 0.5
-        }
-    }
-
-    static propTypes = {
-        handleChange: PropTypes.func
-    };
-
-    handleChange = e => {
-        var key = e.target.name
-        var value = e.target.value
-        this.props.handleChange(key, value)
-        console.log('in z var change')
-    };
-
-    render() {
-        return (
-            <div className="form-group">
-                <h6>Z: Distance from ground surface to water table</h6>
-                <Form.Row>
-                    <Form.Group as={Col} controlId="form-max">
-                        <Form.Label>Max</Form.Label>
-                        <Form.Control
-                            type="number"
-                            min={0.0001}
-                            step={0.0001}
-                            placeholder="Max Z value"
-                            onChange={this.handleChange}
-                        />
-                    </Form.Group>
-                    <Form.Group as={Col} controlId="form-step">
-                        <Form.Label>Step</Form.Label>
-                        <Form.Control
-                            type="number"
-                            min={0.00001}
-                            step={0.00001}
-                            placeholder="Z step value"
-                            onChange={this.handleChange}
-                        />
-                    </Form.Group>
-                </Form.Row>
-            </div>
-        )
+        );
     }
 }
 
 class NumRandVars extends React.Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             name: 'numVars',
             label: 'Number of Random Variables',
-            value: 0
-        }
+            value: 0,
+        };
     }
 
     static propTypes = {
-        handleChange: PropTypes.func
+        handleChange: PropTypes.func,
     };
 
     handleChange = e => {
-        var val = e.target.value
-        this.props.handleChange(val)
-        console.log('in numvar change')
+        var val = e.target.value;
+        this.props.handleChange(val);
+        console.log('in numvar change');
     };
 
     render() {
@@ -131,22 +78,22 @@ class NumRandVars extends React.Component {
                     />
                 </Form.Group>
             </div>
-        )
+        );
     }
 }
 
 class Saturation extends React.Component {
     static propTypes = {
-        handleChange: PropTypes.func
+        handleChange: PropTypes.func,
     };
 
     handleChange = selectedOption => {
-        var selected = selectedOption.target.value
-        console.log('selected option: ', selected)
+        var selected = selectedOption.target.value;
+        console.log('selected option: ', selected);
         if (selected === 'true') {
-            this.props.handleChange(true)
+            this.props.handleChange(true);
         } else if (selected === 'false') {
-            this.props.handleChange(false)
+            this.props.handleChange(false);
         }
     };
 
@@ -167,19 +114,19 @@ class Saturation extends React.Component {
                     </Form.Control>
                 </Form.Group>
             </div>
-        )
+        );
     }
 }
 
 class Analysis extends Component {
     static propTypes = {
-        handleChange: PropTypes.func
+        handleChange: PropTypes.func,
     };
 
     handleChange = selectedOption => {
-        var selected = selectedOption.target.value
-        console.log('selected option: ', selected)
-        this.props.handleChange(selected)
+        var selected = selectedOption.target.value;
+        console.log('selected option: ', selected);
+        this.props.handleChange(selected);
     };
 
     render() {
@@ -199,8 +146,8 @@ class Analysis extends Component {
                     </Form.Control>
                 </Form.Group>
             </div>
-        )
+        );
     }
 }
 
-export { ConstVar, NumRandVars, ZVar, Saturation, Analysis }
+export { ConstVar, NumRandVars, Saturation, Analysis };

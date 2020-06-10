@@ -1,19 +1,20 @@
 /* eslint-disable react/no-unescaped-entities */
 import React, { Component, Fragment } from 'react'
 import PropType from 'prop-types'
-import { Table, Tabs, Tab } from 'react-bootstrap'
+import {Tabs, Tab } from 'react-bootstrap'
 import Header from './Header'
 import DisplayGraphs from './DisplayGraphs'
 import API from './apiClient'
-import { testing } from '../resources/test_data'
+// import { testing } from '../resources/test_data'
 import * as Tables from './tables'
 
 class DisplayPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            // data: null
-            data: testing.results
+            data: null
+            // data: testing.results
+            // data: testing.results_old
         }
     }
 
@@ -32,26 +33,26 @@ class DisplayPage extends Component {
     //   })
     // };
 
-    // componentDidMount = () => {
-    //     this.getResults().then(res => {
-    //         console.log(res)
-    //         console.log(res.results)
-    //         const newData = res.results
-    //         this.setState({ data: newData })
-    //     })
-    // };
+    componentDidMount = () => {
+        this.getResults().then(res => {
+            // console.log(res)
+            // console.log(res.results)
+            const newData = res.results
+            this.setState({ data: newData })
+        })
+    };
 
-    // getResults = async () => {
-    //     try {
-    //         const res = await API.get('/display')
-    //         if (res.status === 200) {
-    //             console.log(res.status)
-    //         }
-    //         return res.data
-    //     } catch (err) {
-    //         console.log(err)
-    //     }
-    // };
+    getResults = async () => {
+        try {
+            const res = await API.get('/display')
+            if (res.status === 200) {
+                console.log(res.status)
+            }
+            return res.data
+        } catch (err) {
+            console.log(err)
+        }
+    };
 
     render() {
         console.log("what's our data? here it is!", this.state.data)

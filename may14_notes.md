@@ -15,6 +15,9 @@
 - add log-normal distribution
 
 
+
+
+
 # To Fix
 - is backend working on first connextion? Is display collecting the current data or the previous data?
 
@@ -24,6 +27,9 @@
 ## Display
 - remove rv comp tab
 - replace Z with distance from surface (H_wt - z_i)
+
+
+
 
 
 # My thoughts

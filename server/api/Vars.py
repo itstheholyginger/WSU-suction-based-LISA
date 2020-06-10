@@ -33,7 +33,7 @@ class TruncNormalVariable():
         stdev = self.stdev
         if stdev == 0:
             print(
-                "Normal Distribution's stdev is 0, setting to 0.00001" +\
+                "Normal Distribution's stdev is 0, setting to 0.00001" +
                 "instead to avoid divide by 0 error.")
             stdev = 0.00001
 
@@ -57,7 +57,7 @@ class UniformVariable():
         self.vals = self.calc_vals()
         self.mean = self.vals.mean()
         self.stdev = statistics.stdev(self.vals)
-        self.dist = "Uniform"
+        self.dist = "Uniform Distribution"
 
     def __str__(self):
         return "Random Variable {0} has a Uniform Distribution. min: {1} max: {2} mean: {3} stdev: {4} \
@@ -71,31 +71,6 @@ class UniformVariable():
         vals = np.zeros(self.num_vars)
         for i in range(self.num_vars):
             vals[i] = (scipy.stats.uniform(self.low, self.high).rvs())
-        return vals
-
-
-class BivariateVariable():
-    def __init__(self, name, means, cov, num_vars):
-        self.name = str(name)
-        self.means = means
-        self.cov = cov
-        self.num_vars = num_vars
-        self.vals = self.calc_vals()
-        self.stdev = statistics.stdev(self.vals)
-        self.low = min(self.vals)
-        self.high = max(self.vals)
-        self.dist = "Bivariate Normal"
-
-    def split_cov(self, cov):
-        return cov
-
-    def calc_vals(self):
-        # import pdb; pdb.set_trace()
-        # print(self.means)
-        # print(self.cov)
-        vals = np.random.default_rng().multivariate_normal(
-            self.means, self.cov, size=self.num_vars)
-        # print(vals)
         return vals
 
 
@@ -128,8 +103,8 @@ class ConstantVariable():
         self.details()
         self.num_vars = int(num_vars)
         self.vals = self.calc_vals()
-        self.min = val
-        self.max = val
+        self.low = val
+        self.high = val
         self.mean = val
         self.stdev = val
         self.dist = "Constant"
@@ -140,3 +115,38 @@ class ConstantVariable():
 
     def calc_vals(self):
         return [self.const_val] * self.num_vars
+
+
+
+
+
+
+
+
+
+
+
+
+class BivariateVariable():
+    def __init__(self, name, means, cov, num_vars):
+        self.name = str(name)
+        self.means = means
+        self.cov = cov
+        self.num_vars = num_vars
+        self.vals = self.calc_vals()
+        self.stdev = statistics.stdev(self.vals)
+        self.low = min(self.vals)
+        self.high = max(self.vals)
+        self.dist = "Bivariate Normal"
+
+    def split_cov(self, cov):
+        return cov
+
+    def calc_vals(self):
+        # import pdb; pdb.set_trace()
+        # print(self.means)
+        # print(self.cov)
+        vals = np.random.default_rng().multivariate_normal(
+            self.means, self.cov, size=self.num_vars)
+        # print(vals)
+        return vals

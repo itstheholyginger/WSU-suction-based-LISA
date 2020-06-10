@@ -47,6 +47,7 @@ class FSUnsat(FS):
         self.alpha = float(alpha)
         self.n = float(n)
         self.q = float(q)
+        self.ss = self.suction_stress()
         self.fs = self.calc_fs()
         self.round_vals()
 
@@ -80,15 +81,16 @@ class FSUnsat(FS):
     # Calculate the factor of safety value for unsaturated soil
 
     def calc_fs(self):
-        print("Calculating the fs of unsaturated soil")
+        # print("Calculating the fs of unsaturated soil")
         H_ss = self.H_wt - self.z
         first = self.tan(self.phi) / self.tan(self.slope)
 
         second = (2 * (self.c + self.c_r)) /\
             (self.gamma * H_ss * self.sin(2 * self.slope))
 
-        ss = self.suction_stress()
-        third = (ss / (self.gamma * H_ss))
+        # print(self.ss)
+
+        third = (self.ss / (self.gamma * H_ss))
 
         last = (self.tan(self.slope) + self.cot(self.slope)) * \
             self.tan(self.phi)
@@ -108,14 +110,18 @@ class FSUnsat(FS):
         if msuc <= 0:
             return -msuc
         else:
-            temp = self.q / self.k_s
-            first = 1/self.alpha
-            second_top = math.log(
-                (1 + temp) * math.exp(-self.gamma_w * self.alpha * self.z) - temp)
+            try:
+                temp = self.q / self.k_s
+                first = 1/self.alpha
+                second_top = math.log(
+                    (1 + temp) * math.exp(-self.gamma_w * self.alpha * self.z) - temp)
 
-            second_bottom = pow((1 + pow((-second_top), self.n)),
-                                (self.n - 1) / self.n)
-            ss = first * (second_top / second_bottom)
+                second_bottom = pow((1 + pow((-second_top), self.n)),
+                                    (self.n - 1) / self.n)
+                ss = first * (second_top / second_bottom)
+            except ValueError as e:
+                # print(e)
+                ss = 0
         return ss
 
     def matric_suction(self):
@@ -124,14 +130,25 @@ class FSUnsat(FS):
         temp = self.q / self.k_s
         ms = 0
         try:
-            ms = (-1 / self.alpha) *\
-                math.log((1 + temp) * math.exp(-self.gamma *
-                                               self.alpha * self.z) - temp)
-        except ValueError as e:
-            import pdb
-            pdb.set_trace()
-            print(e)
+            first = (-1 / self.alpha)
 
+            inside_first = (1+temp)
+
+            inside_second = math.exp(-self.gamma * self.alpha * self.z)
+
+            inside = inside_first * inside_second - temp
+
+            second = math.log(inside)
+
+            ms = first * second
+            # ms = (-1 / self.alpha) *\
+            #     math.log((1 + temp) * math.exp(-self.gamma *
+            #                                    self.alpha * self.z) - temp)
+        except ValueError as e:
+            # import pdb
+            # pdb.set_trace()
+            # print(e)
+            ms = 0
         return ms
 
 

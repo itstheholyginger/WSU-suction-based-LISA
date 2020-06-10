@@ -47,7 +47,7 @@ class FOSTable extends Component {
         const conf = this.props.conf
         console.log('in FOSTable. conf = ', conf)
 
-        if (conf == 'nondet') {
+        if (conf === 'nondet') {
             return (
                 <div className="paddedPage displayTable">
                     <Table striped hover bordered size="sm">
@@ -73,6 +73,7 @@ class FOSTable extends Component {
                             <tr>
                                 <th>Z</th>
                                 <th>Value</th>
+                                <th>Probability of Failure</th>
                             </tr>
                         </thead>
                         <tbody>{this.getRows(conf)}</tbody>
@@ -116,6 +117,7 @@ class FSRowDisplay extends React.Component {
                         <b>{this.props.z}</b>
                     </td>
                     <td>{this.props.val}</td>
+            <td>{this.props.val < 1 ? 0 : 1}</td>
                 </tr>
             )
         } else {

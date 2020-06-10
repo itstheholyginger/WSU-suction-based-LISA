@@ -28,8 +28,8 @@ class App extends Component {
         super(props)
         this.state = {
             // for real.
-            // mode: AppMode.DATAFORM
-            mode: AppMode.DISPLAY
+            mode: AppMode.DATAFORM
+            // mode: AppMode.DISPLAY
             // results: null
             // datasets to use while testing
             // testing: testing

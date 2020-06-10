@@ -2,7 +2,7 @@ const LABELS = {
     c: 'C: Soil Cohesion (kPa)',
     c_r: 'C_r: Root cohesion (kPa)',
     phi: 'phi: Effective Angle of Friction (deg)',
-    k_s: 'k_s: Saturated Hydraulic Conductivity (m/s',
+    k_s: 'k_s: Saturated Hydraulic Conductivity (m/s)',
     a: "Van Genuchten's parameter a (1/kPa)",
     n: "Van Genuchten's parameter n",
     gamma: 'gamma: Soil Weight (kN/m3)',

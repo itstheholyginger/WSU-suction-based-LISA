@@ -1,4 +1,4 @@
 import RandVar from './RandVars'
-import {ConstVar, NumRandVars, ZVar, Saturation, Analysis} from './OtherVars'
+import {ConstVar, NumRandVars, Saturation, Analysis} from './OtherVars'
 
-export {RandVar, ConstVar, NumRandVars, ZVar, Saturation, Analysis}
+export {RandVar, ConstVar, NumRandVars, Saturation, Analysis}

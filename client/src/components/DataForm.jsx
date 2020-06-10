@@ -1,14 +1,14 @@
 /* eslint-disable react/no-unescaped-entities */
-import React, { Component, Fragment } from 'react'
-import { Form, Button } from 'react-bootstrap'
-import * as Vars from './variables'
-import PropTypes from 'prop-types'
-import Header from './Header'
-// import { testing } from '../resources/test_data'
-import { data } from '../resources/test_data'
-import AppMode from '../AppMode'
-import API from './apiClient'
-import LABELS from '../resources/labels'
+import React, { Component, Fragment } from 'react';
+import { Form, Button } from 'react-bootstrap';
+import * as Vars from './variables';
+import PropTypes from 'prop-types';
+import Header from './Header';
+import { testing } from '../resources/test_data';
+// import { data } from '../resources/test_data';
+import AppMode from '../AppMode';
+import API from './apiClient';
+import LABELS from '../resources/labels';
 
 // Needed Random Variables:
 //    c, c_r, phi, k_s, a, n
@@ -18,97 +18,116 @@ import LABELS from '../resources/labels'
 
 class DataFormPage extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
-            data: data
-            // data: testing.data
-        }
+            // data: data,
+            data: testing.data,
+        };
     }
 
     static propTypes = {
         onSubmit: PropTypes.func,
         apiClient: PropTypes.object,
-        changeMode: PropTypes.func
+        changeMode: PropTypes.func,
     };
 
     componentDidMount() {
         if (this.state.data.conf === undefined) {
-            const newData = this.state.data
-            this.setState({ data: newData })
+            const newData = this.state.data;
+            this.setState({ data: newData });
         }
     }
 
     //  handling variable changes in data form when configuration
     handleNondetChange = (varName, key, value) => {
-        console.log(varName, key, value)
-        var newData = this.state.data
-        console.log('old data:\t', newData)
-        newData.randVars[varName][key] = value
-        console.log('var:\t', varName)
-        console.log('\tnew data:\t', newData)
-        this.setState({ newData })
+        // console.log(varName, key, value);
+        var newData = this.state.data;
+        // console.log('old data:\t', newData);
+        newData.randVars[varName][key] = value;
+        // console.log('var:\t', varName);
+        // console.log('\tnew data:\t', newData);
+        this.setState({ newData });
     };
 
     handleDetChange = (varName, val) => {
-        console.log('handling Deterministic Change')
-        var newData = this.state.data
-        newData.randVars[varName].detVal = val
-        this.setState({ newData })
+        // console.log('handling Deterministic Change');
+        var newData = this.state.data;
+        newData.randVars[varName].detVal = val;
+        this.setState({ newData });
     };
 
     handleDistChange = (varName, selected) => {
-        var newData = this.state.data
+        var newData = this.state.data;
         newData.randVars[varName] = {
             dist: selected,
             low: 0,
             high: 0,
             mean: 0,
-            stdev: 0
-        }
-        this.setState(newData)
-        console.log(varName, 'new dist is: ', selected)
+            stdev: 0,
+        };
+        this.setState(newData);
+        // console.log(varName, 'new dist is: ', selected);
     };
 
     handleConstVarChange = (varName, value) => {
-        var newData = this.state.data
-        newData.constVars[varName] = value
-        this.setState(newData)
+        var newData = this.state.data;
+        newData.constVars[varName] = value;
+        this.setState(newData);
     };
 
     handleNumVarChange = number => {
-        var newData = this.state.data
-        newData.numVars = number
-        this.setState(newData)
+        var newData = this.state.data;
+        newData.numVars = number;
+        this.setState(newData);
     };
 
     handleZVarChange = (key, val) => {
-        var newData = this.state.data
-        newData.z[key] = val
-        this.setState(newData)
+        var newData = this.state.data;
+        newData.z[key] = val;
+        this.setState(newData);
     };
 
     handleSatChange = val => {
-        var newData = this.state.data
-        newData.sat = val
-        this.setState(newData)
+        var newData = this.state.data;
+        newData.sat = val;
+        this.setState(newData);
     };
 
     handleAnalysisChange = val => {
-        var newData = this.state.data
-        newData.conf = val
-        this.setState(newData)
+        var newData = this.state.data;
+        newData.conf = val;
+        this.setState(newData);
+    };
+
+    handleFluxChange = (key, val) => {
+        var newData = this.state.data;
+        newData.constVars.flux[key] = val;
+
+        this.setState(newData);
+    };
+    handleFluxAdd = () => {
+        var newData = this.state.data;
+        newData.constVars.flux.append(0);
+        this.setState(newData);
+    };
+    handleFluxRemove = index => {
+        var newData = this.state.data;
+        if (index > -1) {
+            newData.constVars.flux.splice(index, 1);
+        }
+        this.setState(newData);
     };
 
     onSubmit = e => {
         console.log(
             "submit has been clicked. attempting to post to '/add_data'"
-        )
-        console.log('data being sent: ', this.state.data)
-        e.preventDefault()
+        );
+        console.log('data being sent: ', this.state.data);
+        e.preventDefault();
         API.post('/add_data', this.state.data).then(res => {
-            console.log(res)
-            this.props.changeMode(AppMode.DISPLAY)
-        })
+            console.log(res);
+            this.props.changeMode(AppMode.DISPLAY);
+        });
     };
 
     render() {
@@ -118,7 +137,7 @@ class DataFormPage extends Component {
                 <div className="paddedPage">
                     <div className="myForm">
                         <Form>
-                            <Form.Row>
+                            {/* <Form.Row>
                                 <Vars.Saturation
                                     handleChange={this.handleSatChange}
                                 />
@@ -138,9 +157,12 @@ class DataFormPage extends Component {
                                     handleConstVarChange={
                                         this.handleConstVarChange
                                     }
+                                    handleFluxChange={this.handleFluxChange}
+                                    handleFluxRemove={this.handleFluxRemove}
+                                    handleFluxAdd={this.handleFluxAdd}
                                     handleZVarChange={this.handleZVarChange}
                                 />
-                            </Form.Row>
+                            </Form.Row> */}
 
                             <Button variant="primary" onClick={this.onSubmit}>
                                 {' '}
@@ -150,7 +172,7 @@ class DataFormPage extends Component {
                     </div>
                 </div>
             </Fragment>
-        )
+        );
     }
 }
 
@@ -160,14 +182,16 @@ class DataFormSelector extends Component {
         handleDetChange: PropTypes.func,
         handleDistChange: PropTypes.func,
         handleConstVarChange: PropTypes.func,
-        handleZVarChange: PropTypes.func
+        handleZVarChange: PropTypes.func,
+        handleFluxChange: PropTypes.func,
+        handleFluxRemove: PropTypes.func,
     };
 
     render() {
-        const sat = this.props.data.sat
-        const conf = this.props.data.conf
-        console.log('sat=', sat)
-        console.log('conf=', conf)
+        const sat = this.props.data.sat;
+        const conf = this.props.data.conf;
+        console.log('sat=', sat);
+        console.log('conf=', conf);
         if (sat === false) {
             return (
                 <Fragment>
@@ -253,6 +277,13 @@ class DataFormSelector extends Component {
                             label={LABELS.q}
                             handleChange={this.props.handleConstVarChange}
                         />
+                        {/* <Vars.FluxVar
+                            name="flux"
+                            label={LABELS.q}
+                            handleRemove={this.handleFluxRemove}
+                            handleChange={this.handleFluxChange}
+                            handleAdd={this.handleAdd}
+                        /> */}
                         <Vars.ConstVar
                             name="H_wt"
                             label={LABELS.H_wt}
@@ -266,7 +297,7 @@ class DataFormSelector extends Component {
                         {/* <ZVar handleChange={this.props.handleZVarChange} /> */}
                     </div>
                 </Fragment>
-            )
+            );
         } else if (sat === true) {
             return (
                 <Fragment>
@@ -331,11 +362,11 @@ class DataFormSelector extends Component {
                         {/* <ZVar handleChange={this.props.handleZVarChange} /> */}
                     </div>
                 </Fragment>
-            )
+            );
         } else {
-            return <h3>Error: invalid configuration</h3>
+            return <h3>Error: invalid configuration</h3>;
         }
     }
 }
 
-export default DataFormPage
+export default DataFormPage;
