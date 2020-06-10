@@ -127,6 +127,7 @@ var testing = {
                 high: 40,
                 mean: 3.4941,
                 stdev: 1.33,
+
             },
             k_s: {
                 dist: 'constant',
@@ -160,6 +161,7 @@ var testing = {
             H_wt: 5,
             z_step: 0.1
         },
+
     },
     results: {
         conf: 'det',
