@@ -55,6 +55,7 @@ class RandVar extends Component {
                                         Truncated Normal
                                     </option>
                                     <option value="lognormal">Lognormal</option>
+                                    <option value="trunclognormal">Truncated Lognormal</option>
                                     <option value="uniform">Uniform</option>
                                     <option value="constant">Constant</option>
                                 </Form.Control>
@@ -142,9 +143,17 @@ class NondetRandVarDisplayer extends Component {
             case 'lognormal':
                 return (
                     <LognormalVar
-                    name={this.props.name}
-                    data={this.props.data}
-                    handleChange={this.props.handleChange}
+                        name={this.props.name}
+                        data={this.props.data}
+                        handleChange={this.props.handleChange}
+                    />
+                )
+            case 'trunclognormal':
+                return (
+                    <TruncLognormalVar
+                        name={this.props.name}
+                        data={this.props.data}
+                        handleChange={this.props.handleChange}
                     />
                 )
             case 'constant':
@@ -308,16 +317,111 @@ class LognormalVar extends Component {
         return (
             <Fragment>
                 <Form.Group as={Col} className="input" controlId="formInput">
-                    <Form.Label>S</Form.Label>
+                    <Form.Label>Logmean</Form.Label>
                     <Form.Control
                         type="number"
                         min={0}
                         step={0.0000000001}
-                        name="s"
+                        name="logmean"
                         onChange={this.handleChange}
-                        placeholder="Enter S Value"
+                        placeholder="Enter logmean"
                     />
+                    <Form.Group as={Col} className="input" controlId="formInput">
+                        <Form.Label>Logstdev</Form.Label>
+                        <Form.Control
+                            type="number"
+                            min={0}
+                            step={0.0000000001}
+                            name="logstdev"
+                            onChange={this.handleChange}
+                            placeholder="Enter logstdev"
+                        />
+                    </Form.Group>
                 </Form.Group>
+            </Fragment>
+        )
+    }
+}
+
+class TruncLognormalVar extends Component {
+    constructor(props) {
+        super(props)
+        this.handleChange = this.handleChange.bind(this)
+    }
+
+    static propTypes = {
+        handleChange: PropTypes.func,
+        data: PropTypes.object,
+        name: PropTypes.string
+    };
+
+    handleChange = e => {
+        console.log('in trunc lognormal rand var change')
+        this.props.handleChange(this.props.name, e.target.name, e.target.value)
+    };
+
+    render() {
+        return (
+            <Fragment>
+                <Form.Row>
+                    <Form.Group as={Col} controlId="formInput">
+                        <Form.Label>Logmean</Form.Label>
+                        <Form.Control
+                            type="number"
+                            min={0}
+                            step={0.0000000001}
+                            name="logmean"
+                            onChange={this.handleChange.bind(this)}
+                            placeholder="Enter logmean"
+                        />
+                    </Form.Group>
+
+                    <Form.Group as={Col} controlId="formInput">
+                        <Form.Label>Logstdev</Form.Label>
+                        <Form.Control
+                            type="number"
+                            min={0}
+                            step={0.0000000001}
+                            placeholder="Enter logstdev"
+                            name="logstdev"
+                            onChange={this.handleChange}
+                        />
+                    </Form.Group>
+                </Form.Row>
+
+                <Form.Row>
+                    <Form.Group
+                        as={Col}
+                        className="input"
+                        controlId="formInput"
+                    >
+                        <Form.Label>Low</Form.Label>
+                        <Form.Control
+                            type="number"
+                            min={0}
+                            step={0.0000000001}
+                            name="low"
+                            onChange={this.handleChange}
+                            placeholder="Enter low"
+                        />
+                    </Form.Group>
+
+                    <Form.Group
+                        as={Col}
+                        className="input"
+                        controlId="formInput"
+                    >
+                        <Form.Label>High</Form.Label>
+                        <Form.Control
+                            type="number"
+                            min={this.props.data.low}
+                            step={0.0000000001}
+                            name="high"
+                            onChange={this.handleChange}
+                            placeholder="Enter high"
+                        />
+                    </Form.Group>
+                </Form.Row>
             </Fragment>
         )
     }
@@ -335,14 +439,14 @@ class ConstantVar extends Component {
         this.props.handleChange(this.props.name, e.target.name, e.target.value)
     };
 
-    render () {
+    render() {
         return (
             <Fragment>
                 <Form.Group as={Col} className="input" controlId="formInput">
                     <Form.Label>Value</Form.Label>
                     <Form.Control
                         type="number"
-                        min={0 }
+                        min={0}
                         step={0.0000000001}
                         name="const_val"
                         onChange={this.handleChange}

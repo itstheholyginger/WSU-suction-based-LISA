@@ -99,8 +99,8 @@ class TruncatedLognormalVariable():
         self.name = str(name)
         self.mean = float(mean)
         self.stdev = float(stdev)
-        self.low = low
-        self.high = high
+        self.low = float(low)
+        self.high = float(high)
         self.num_vars = int(num_vars)
         self.vals = self.calc_vals()
         self.mean = self.vals.mean()

@@ -192,7 +192,7 @@ def create_dists(data, num_vars):
         elif val['dist'] == "lognormal":
             print("calc lognorm")
             new_var = LognormalVariable(
-                key, val['mean'], val['stdev'], num_vars)
+                key, val['logmean'], val['logstdev'], num_vars)
 
         elif val['dist'] == 'constant':
             print("calc const var")
@@ -201,7 +201,7 @@ def create_dists(data, num_vars):
         elif val['dist'] == "trunclognormal":
             print("calc trunc lognormal")
             new_var = TruncatedLognormalVariable(
-                key, val['mean'], val['stdev'], val['low'], val['high'], num_vars)
+                key, val['logmean'], val['logstdev'], val['low'], val['high'], num_vars)
 
         rand_vars.append(new_var)
 
@@ -322,22 +322,22 @@ def round_results(data):
     rand_vars = data['randVars']
     for key, value in rand_vars.items():
         if key == 'c' or key == 'c_r' or key == 'phi':
-            value['high'] = round(value['high'], 1)
-            value['low'] = round(value['low'], 1)
-            value['stdev'] = round(value['stdev'], 1)
-            value['mean'] = round(value['mean'], 1)
+            value['high'] = round(float(value['high']), 1)
+            value['low'] = round(float(value['low']), 1)
+            value['stdev'] = round(float(value['stdev']), 1)
+            value['mean'] = round(float(value['mean']), 1)
 
             for i in range(len(value['vals'])):
-                value['vals'][i] = round(value['vals'][i], 1)
+                value['vals'][i] = round(float(value['vals'][i]), 1)
 
         elif key == 'a' or key == 'n':
-            value['high'] = round(value['high'], 3)
-            value['low'] = round(value['low'], 3)
-            value['stdev'] = round(value['stdev'], 3)
-            value['mean'] = round(value['mean'], 3)
+            value['high'] = round(float(value['high']), 3)
+            value['low'] = round(float(value['low']), 3)
+            value['stdev'] = round(float(value['stdev']), 3)
+            value['mean'] = round(float(value['mean']), 3)
 
             for i in range(len(value['vals'])):
-                value['vals'][i] = round(value['vals'][i], 3)
+                value['vals'][i] = round(float(value['vals'][i]), 3)
 
     data['randVars'] = rand_vars
 

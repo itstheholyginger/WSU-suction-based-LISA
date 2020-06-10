@@ -178,10 +178,10 @@ class RandVarRowDisplayNondet extends React.Component {
                     <td>
                         <b>{this.props.label}</b>
                     </td>
-                    <td>{this.props.data.low.toExponential(2)}</td>
-                    <td>{this.props.data.high.toExponential(2)}</td>
-                    <td>{this.props.data.mean.toExponential(2)}</td>
-                    <td>{this.props.data.stdev.toExponential(2)}</td>
+                    <td>{Number(this.props.data.low).toExponential(2)}</td>
+                    <td>{Number(this.props.data.high).toExponential(2)}</td>
+                    <td>{Number(this.props.data.mean).toExponential(2)}</td>
+                    <td>{Number(this.props.data.stdev).toExponential(2)}</td>
                 </tr>
             );
         } else {
