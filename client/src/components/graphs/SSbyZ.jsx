@@ -27,18 +27,15 @@ class SSbyZ extends Component {
             var dp = [];
             if (this.props.conf === 'nondet') {
                 for (const z in vals) {
-                    // console.log('for z: ', z);
-                    // console.log(vals[z].ss_vals);
-                    for (const ss in vals[z].ss_vals) {
-                        // console.log('z = ', z);
-                        // console.log('ss = ', ss);
 
-                        dp.push({ x: vals[z].ss_vals[ss], y: z });
-                    }
+                    dp.push({ x: vals[z].ss, y: z })
+                    // for (const ss in vals[z].ss_vals) {
+                    //     dp.push({ x: vals[z].ss_vals[ss], y: z });
+                    // }
                 }
             } else if (this.props.conf === 'det') {
                 for (const z in vals) {
-                    dp.push({ x: vals[z].ss_vals, y: z });
+                    dp.push({ x: vals[z].ss, y: z });
                 }
             }
 
@@ -75,8 +72,17 @@ class SSbyZ extends Component {
                     <V.VictoryChart
                         domainPadding={20}
                         theme={V.VictoryTheme.material}
+                        containerComponent={
+                            <V.VictoryVoronoiContainer
+                                labels={({ datum }) => `${datum.x} ${datum.y}`}
+                            />
+                        }
                     >
-                        <V.VictoryScatter data={dp} />
+                        <V.VictoryScatter
+                            data={dp}
+                            // get x min with func
+                            domain={{ x: [-10, 0], y: [0, this.props.H_wt] }}
+                        />
                         <V.VictoryAxis
                             label="Suction Stress"
                             style={{
@@ -87,8 +93,8 @@ class SSbyZ extends Component {
                         <V.VictoryAxis
                             dependentAxis
                             label="Z: Soil Depth from Surface (m)"
-                            tickCount={ticks.length}
-                            tickFormat={t => Math.round(t)}
+                            tickCount={this.props.H_wt + 1}
+                            tickFormat={t => t}
                             style={{
                                 axisLabel: { padding: 40 },
                             }}

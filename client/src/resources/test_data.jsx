@@ -110,8 +110,8 @@ var testing = {
                 dist: 'truncnormal',
                 low: 0,
                 high: 4,
-                mean: 1.529,
-                stdev: 1.457,
+                mean: 1.058,
+                stdev: 0.647,
             },
             c_r: {
                 dist: 'constant',
@@ -122,11 +122,11 @@ var testing = {
                 const_val: 0,
             },
             phi: {
-                dist: 'trunclognormal',
-                low: 20,
-                high: 40,
-                mean: 3.4941,
-                stdev: 1.33,
+                dist: 'truncnormal',
+                low: 30,
+                high: 48.9,
+                mean: 36.055,
+                stdev: 3.058,
 
             },
             k_s: {
@@ -139,27 +139,26 @@ var testing = {
             },
             a: {
                 dist: 'truncnormal',
-                low: 0.025,
-                high: 0.837,
-                mean: 0.434,
-                stdev: 0.228,
-                s: 0.228
+                low: 0.002,
+                high: 0.45,
+                mean: 0.112,
+                stdev: 0.073,
             },
             n: {
-                dist: 'truncnormal',
+                dist: 'lognormal',
                 low: 1.672,
                 high: 7.78,
-                mean: 3.918,
-                stdev: 1.505,
+                logmean: 2.670,
+                logstdev: 0.270,
             },
         },
         constVars: {
             gamma: 18,
             gamma_w: 9.81,
             slope: 45,
-            q: -2.5e-07,
+            q: 0,
             H_wt: 5,
-            z_step: 0.1
+            z_step: 0.5
         },
 
     },
