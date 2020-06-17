@@ -78,8 +78,8 @@ class FOSFreq extends Component {
                         />
                     </>
                 ) : (
-                    <></>
-                )}
+                        <></>
+                    )}
             </div>
         );
     }
@@ -193,7 +193,7 @@ class FreqHistFOS extends Component {
                     <V.VictoryBar data={this.state.datapoints} />
                     <V.VictoryAxis
                         label="Factor of Safety"
-                        tickValues={[0.5, 0.75, 1]}
+                        tickValues={[1]}
                         tickFormat={t => t}
                         style={{
                             axisLabel: { padding: 30 },

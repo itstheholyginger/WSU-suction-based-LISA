@@ -85,17 +85,15 @@ class FSUnsat(FS):
         H_ss = self.H_wt - self.z
         first = self.tan(self.phi) / self.tan(self.slope)
 
-        second = (2 * (self.c + self.c_r)) /\
+        second = (2 * (self.c + self.c_r)) / \
             (self.gamma * H_ss * self.sin(2 * self.slope))
-
-        # print(self.ss)
 
         third = (self.ss / (self.gamma * H_ss))
 
         last = (self.tan(self.slope) + self.cot(self.slope)) * \
             self.tan(self.phi)
 
-        fs = first + second - third * last
+        fs = first + second - (third * last)
         return fs
 
     ''' Description:
@@ -106,11 +104,19 @@ class FSUnsat(FS):
     '''
 
     def suction_stress(self):
-        msuc = self.matric_suction()
-        if msuc <= 0:
-            return -msuc
-        else:
-            try:
+        # msuc = self.matric_suction()
+        # if msuc <= 0:
+        #     return -msuc
+        # else:
+        try:
+            if self.q == 0:
+                print("q = 0")
+                first = 1 / self.alpha
+                second_top = math.log(
+                    math.exp(-self.gamma_w * self.alpha * self.z))
+                second_bottom = pow((1 + pow((-second_top), self.n)),
+                                    (self.n - 1) / self.n)
+            else:
                 temp = self.q / self.k_s
                 first = 1/self.alpha
                 second_top = math.log(
@@ -118,10 +124,12 @@ class FSUnsat(FS):
 
                 second_bottom = pow((1 + pow((-second_top), self.n)),
                                     (self.n - 1) / self.n)
-                ss = first * (second_top / second_bottom)
-            except ValueError as e:
-                # print(e)
-                ss = 0
+            ss = first * (second_top / second_bottom)
+        except ValueError as e:
+            import pdb
+            pdb.set_trace()
+            print(e)
+            # ss = 0
         return ss
 
     def matric_suction(self):
@@ -145,10 +153,10 @@ class FSUnsat(FS):
             #     math.log((1 + temp) * math.exp(-self.gamma *
             #                                    self.alpha * self.z) - temp)
         except ValueError as e:
-            # import pdb
-            # pdb.set_trace()
+            import pdb
+            pdb.set_trace()
             print(e)
-            ms = 0
+            # ms = 0
         return ms
 
 

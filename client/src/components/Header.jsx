@@ -7,7 +7,7 @@ class Header extends Component {
         title: PropTypes.string
     }
 
-    render () {
+    render() {
         return (
             <>
                 <Navbar className="navbar" bg="dark" variant="dark">
@@ -15,7 +15,7 @@ class Header extends Component {
                     <Navbar.Toggle />
                     <Navbar.Collapse >
                         <Navbar.Text>
-                            {this.props.title}
+                            WSU Suction-Based LISA
                         </Navbar.Text>
                     </Navbar.Collapse>
                 </Navbar>

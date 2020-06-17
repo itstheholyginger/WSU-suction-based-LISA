@@ -7,6 +7,7 @@ class PFbyZ extends Component {
         super(props);
         this.state = {
             datapoints: [],
+            tickValues: []
         };
     }
 
@@ -31,7 +32,6 @@ class PFbyZ extends Component {
 
     componentDidMount = () => {
         const vals = this.props.data;
-        // console.log(vals);
         var dp = [];
         if (this.props.conf === 'nondet') {
             for (const key in vals) {
@@ -40,10 +40,32 @@ class PFbyZ extends Component {
         } else if (this.props.conf === 'det') {
             dp = this.detGetDatapoints();
         }
-
-        // console.log(dp);
-        this.setState({ datapoints: dp });
+        const ticks = this.getTickVals()
+        this.setState({ datapoints: dp, tickValues: ticks });
     };
+
+    getTickVals = () => {
+        const max = this.props.H_wt
+        const ticks = []
+        var cur = 0
+        while (cur <= max) {
+            ticks.push(cur)
+            cur += 0.5
+        }
+        console.log("TICKS!!    ")
+        console.log(ticks)
+        return ticks
+    }
+    printTicks(t) {
+        console.log("cur t: ", t)
+        if (Number(t) % 1 === 0) {
+            console.log("tick IS whole num: ", t)
+            return Number(t)
+        } else {
+            console.log("tick is not whole number:  ", t)
+            return null
+        }
+    }
 
     render() {
         console.log('~~~~ PFbyZ GRAPH ~~~~');
@@ -51,6 +73,20 @@ class PFbyZ extends Component {
         const dp = this.state.datapoints;
         console.log('current datapoints: ');
         console.log(dp);
+        // const ticks = Array.from(this.getTickVals())
+        // console.log("What the ticks should be: ")
+
+
+        const sharedAxisStyles = {
+            tickLabels: {
+                fontSize: 12
+            },
+            axisLabel: {
+                padding: 39,
+                fontSize: 12,
+                fontStyle: "bold"
+            }
+        }
         if (dp.length > 0) {
             // if (this.props.conf === 'nondet') {
             return (
@@ -65,7 +101,7 @@ class PFbyZ extends Component {
                             />
                         }
                     >
-                        <V.VictoryLine
+                        <V.VictoryScatter
                             style={{
                                 data: { stroke: "#c43a31" },
                                 parent: { border: "1px solid #ccc" }
@@ -73,23 +109,23 @@ class PFbyZ extends Component {
                             data={dp} />
                         <V.VictoryAxis
                             label="Probability of Failure"
-                            style={{
-                                axisLabel: { padding: 30 },
-                            }}
+                            style={sharedAxisStyles}
                             orientation="top"
+                            tickValues={[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]}
                         />
                         <V.VictoryAxis
                             dependentAxis
                             label="Z: Soil Depth from Surface (m)"
-                            tickCount={
-                                this.props.H_wt * 2
-                                // this.state.datapoints.length > 10
-                                //     ? this.state.datapoints.length / 2
-                                //     : this.state.datapoints.length
-                            }
-                            style={{
-                                axisLabel: { padding: 40 },
-                            }}
+                            tickCount={this.props.H_wt + 1}
+                            tickFormat={t => t}
+
+                            // tickCount={
+                            //     this.props.H_wt * 2
+                            //     // this.state.datapoints.length > 10
+                            //     //     ? this.state.datapoints.length / 2
+                            //     //     : this.state.datapoints.length
+                            // }
+                            style={sharedAxisStyles}
                             invertAxis={true}
                         />
                     </V.VictoryChart>

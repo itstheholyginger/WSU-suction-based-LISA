@@ -108,12 +108,6 @@ class TruncatedLognormalVariable():
         self.dist = "Truncated Lognormal Distribution"
 
     def calc_vals(self):
-        # vals = lognorm(self.s, loc=0, scale=1).rvs(size=self.num_vars)
-        # for i in range(self.num_vars):
-        #     if self.low <= vals[i] <= self.high:
-        #         break
-        #     vals[i] = lognorm(self.s, loc=0, scale=1).rvs(size=1)
-        # return np.array(vals)
         vals = np.random.lognormal(self.mean, self.stdev, size=self.num_vars)
         for i in range(len(vals)):
             while True:
@@ -132,7 +126,7 @@ class ConstantVariable():
         self.vals = self.calc_vals()
         self.low = val
         self.high = val
-        self.mean = val
+        self.mean = 0
         self.stdev = val
         self.dist = "Constant"
 
