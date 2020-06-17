@@ -240,15 +240,7 @@ def get_FS_data(rand_vars, const_vars, H_wt, z_step, num_vars, sat):
         res[H_ss]['stdev'] = round(statistics.stdev(FS_list), 2)
         res[H_ss]['probFail'] = probFail
 
-        # res[z] = {}
-        # res[z]['ss'] = Average(SS_list)
-        # res[z]['fs_vals'] = FS_list
-        # res[z]['low'] = round(min(FS_list), 2)
-        # res[z]['high'] = round(max(FS_list), 2)
-        # res[z]['mean'] = round(statistics.mean(FS_list), 2)
-        # res[z]['stdev'] = round(statistics.stdev(FS_list), 2)
-        # res[z]['probFail'] = probFail
-
+ 
     return res
 
 
