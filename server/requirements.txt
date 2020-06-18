@@ -1,6 +1,0 @@
-flask
-matplotlib
-numpy
-flask_socketio
-scipy
-flask-cors
