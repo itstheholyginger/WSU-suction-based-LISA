@@ -3,10 +3,8 @@
 **.md
 
 # client
-/client/node_modules/
-/client/.vscode
+/node_modules/
 
 # server
-/server/.vscode
-/server/venv/
-/server/api/__pycache__/
+/venv/
+/api/__pycache__/
