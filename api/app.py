@@ -240,7 +240,6 @@ def get_FS_data(rand_vars, const_vars, H_wt, z_step, num_vars, sat):
         res[H_ss]['stdev'] = round(statistics.stdev(FS_list), 2)
         res[H_ss]['probFail'] = probFail
 
- 
     return res
 
 
