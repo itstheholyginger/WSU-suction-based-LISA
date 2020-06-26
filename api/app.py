@@ -3,6 +3,8 @@ from flask_cors import CORS
 from .lisa_backend import handleSubmit
 
 app = Flask(__name__, static_folder='../build', static_url_path='/')
+app.config['DEBUG'] = True
+
 CORS(app)
 
 data = {
