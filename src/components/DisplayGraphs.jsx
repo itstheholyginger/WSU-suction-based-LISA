@@ -35,7 +35,7 @@ class DisplayGraphs extends Component {
 
                     <Tab
                         eventKey="probFail/z"
-                        title="Probablity of Failure by Depth"
+                        title="Depth vs. Probability of Failure"
                     >
                         <Graphs.PFbyZ
                             data={this.props.data.z}
@@ -43,8 +43,16 @@ class DisplayGraphs extends Component {
                             H_wt={this.props.data.H_wt}
                         />
                     </Tab>
-                    <Tab eventKey="ss/z" title="Suction Stress by Depth">
+                    <Tab eventKey="ss/z" title="Depth vs. Suction Stress">
                         <Graphs.SSbyZ
+                            data={this.props.data.z}
+                            conf={this.props.data.conf}
+                            sat={this.props.data.sat}
+                            H_wt={this.props.data.H_wt}
+                        />
+                    </Tab>
+                    <Tab eventKey="ss/Se" title="Suction Stress vs. Se">
+                        <Graphs.SSbySe
                             data={this.props.data.z}
                             conf={this.props.data.conf}
                             sat={this.props.data.sat}

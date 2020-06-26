@@ -46,6 +46,9 @@ class TruncNormalVariable():
             import pdb
             pdb.set_trace()
             print("something is wrong here")
+
+        # import pdb
+        # pdb.set_trace()
         return vals
 
 
@@ -72,6 +75,8 @@ class UniformVariable():
         vals = np.zeros(self.num_vars)
         for i in range(self.num_vars):
             vals[i] = (scipy.stats.uniform(self.low, self.high).rvs())
+        # import pdb
+        # pdb.set_trace()
         return vals
 
 
@@ -89,8 +94,11 @@ class LognormalVariable():
         self.dist = "Lognormal Distribution"
 
     def calc_vals(self):
-        vals = np.random.lognormal(self.mean, self.stdev, size=self.num_vars)
+        vals = np.random.lognormal(
+            math.log(self.mean), self.stdev, size=self.num_vars)
         # vals = lognorm(self.s, loc=0, scale=1).rvs(size=self.num_vars)
+        # import pdb
+        # pdb.set_trace()
         return vals
 
 
@@ -114,6 +122,8 @@ class TruncatedLognormalVariable():
                 if self.low <= vals[i] <= self.high:
                     break
                 vals[i] = random.lognormvariate(self.mean, self.stdev)
+        import pdb
+        pdb.set_trace()
         return vals
 
 
@@ -135,6 +145,8 @@ class ConstantVariable():
               .format(self.const_val))
 
     def calc_vals(self):
+        # import pdb
+        # pdb.set_trace()
         return [self.const_val] * self.num_vars
 
 
