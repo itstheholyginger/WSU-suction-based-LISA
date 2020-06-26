@@ -47,8 +47,10 @@ class FSUnsat(FS):
         self.alpha = float(alpha)
         self.n = float(n)
         self.q = float(q)
+        self.matric_suction = self.matric_suction()
         self.ss = self.suction_stress()
-        self.fs = self.calc_fs()
+        self.Se = self.Se()
+        self.fs = self.fs()
         self.round_vals()
 
     def __str__(self):
@@ -80,7 +82,7 @@ class FSUnsat(FS):
 
     # Calculate the factor of safety value for unsaturated soil
 
-    def calc_fs(self):
+    def fs(self):
         # print("Calculating the fs of unsaturated soil")
         H_ss = self.H_wt - self.z
         first = self.tan(self.phi) / self.tan(self.slope)
@@ -104,32 +106,32 @@ class FSUnsat(FS):
     '''
 
     def suction_stress(self):
-        # msuc = self.matric_suction()
-        # if msuc <= 0:
-        #     return -msuc
-        # else:
-        try:
-            if self.q == 0:
-                print("q = 0")
-                first = 1 / self.alpha
-                second_top = math.log(
-                    math.exp(-self.gamma_w * self.alpha * self.z))
-                second_bottom = pow((1 + pow((-second_top), self.n)),
-                                    (self.n - 1) / self.n)
-            else:
+        msuc = self.matric_suction
+        if msuc <= 0:
+            # print("matric suction is negative : {}".format(msuc))
+            return -msuc
+        else:
+            # print("matric suction is positive : {}".format(msuc))
+            try:
                 temp = self.q / self.k_s
-                first = 1/self.alpha
-                second_top = math.log(
-                    (1 + temp) * math.exp(-self.gamma_w * self.alpha * self.z) - temp)
 
-                second_bottom = pow((1 + pow((-second_top), self.n)),
-                                    (self.n - 1) / self.n)
-            ss = first * (second_top / second_bottom)
-        except ValueError as e:
-            import pdb
-            pdb.set_trace()
-            print(e)
-            # ss = 0
+                # first = 1/self.alpha
+                # second_top = math.log(
+                #     (1 + temp) * math.exp(-self.gamma_w * self.alpha * self.z) - temp)
+
+                top = -self.matric_suction
+                inside = pow(-top * self.alpha, self.n)
+                bottom = pow(1 + inside, (self.n - 1) / self.n)
+
+                # second_bottom = pow((1 + pow((-second_top), self.n)),
+                #                     (self.n - 1) / self.n)
+                # ss = first * (second_top / second_bottom)
+                ss = top / bottom
+            except ValueError as e:
+                import pdb
+                pdb.set_trace()
+                print(e)
+                # ss = 0
         return ss
 
     def matric_suction(self):
@@ -142,7 +144,7 @@ class FSUnsat(FS):
 
             inside_first = (1+temp)
 
-            inside_second = math.exp(-self.gamma * self.alpha * self.z)
+            inside_second = math.exp(-self.gamma_w * self.alpha * self.z)
 
             inside = inside_first * inside_second - temp
 
@@ -157,7 +159,15 @@ class FSUnsat(FS):
             pdb.set_trace()
             print(e)
             # ms = 0
+        if ms == 0:
+            print("matric stress = 0")
         return ms
+
+    # Effective Degree of Saturation. Used to test if Suction Stress function is correct
+    def Se(self):
+        inside = 1 / (1 + pow(self.alpha * self.matric_suction, self.n))
+        s_e = pow(inside, (self.n - 1) / self.n)
+        return s_e
 
 
 class FSSat(FS):

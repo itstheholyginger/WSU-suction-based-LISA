@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import * as V from 'victory'
 
-class SSbyZ extends Component {
+class SSbySe extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -11,40 +11,31 @@ class SSbyZ extends Component {
     }
 
     static propTypes = {
-        data: PropTypes.object,
-        conf: PropTypes.string,
         sat: PropTypes.bool,
-        H_wt: PropTypes.number
-    };
+        H_wt: PropTypes.number,
+        conf: PropTypes.string,
+        data: PropTypes.object
+    }
 
     componentDidMount = () => {
-        console.log('SSbyZ mounted!')
+        console.log('SSbySe mounted!')
         console.log('sat = ', this.props.sat)
         if (this.props.sat === false) {
-            console.log('SSbyZ Mounting component with unsaturated soil')
+            console.log('SSbySe Mounting component with unsaturated soil')
             const vals = this.props.data
             console.log(vals)
             var dp = []
-            if (this.props.conf === 'nondet') {
-                for (const z in vals) {
-                    dp.push({ x: -vals[z].ss, y: z })
-                    // for (const ss in vals[z].ss_vals) {
-                    //     dp.push({ x: vals[z].ss_vals[ss], y: z });
-                    // }
-                }
-            } else if (this.props.conf === 'det') {
-                for (const z in vals) {
-                    dp.push({ x: -vals[z].ss, y: z })
-                }
+            for (const z in vals) {
+                dp.push({ x: vals[z].Se, y: -vals[z].ss })
             }
-
-            console.log(dp)
-            this.setState({ datapoints: dp })
         }
+
+        console.log(dp)
+        this.setState({ datapoints: dp })
     };
 
     render() {
-        console.log('~~~~ SSbyZ GRAPH ~~~~')
+        console.log('~~~~ SSbySe GRAPH ~~~~')
 
         const sat = this.props.sat
 
@@ -67,7 +58,7 @@ class SSbyZ extends Component {
 
             return (
                 <div className="graph">
-                    <h4>Depth vs. Suction Stress</h4>
+                    <h4>Suction Stress vs Se</h4>
                     <V.VictoryChart
                         domainPadding={20}
                         theme={V.VictoryTheme.material}
@@ -84,20 +75,20 @@ class SSbyZ extends Component {
                             }}
                             data={dp}
                             // get x min with func
-                            domain={{ x: [0, 10], y: [0, this.props.H_wt] }}
+                            domain={{ x: [0, 1], y: [0, 10] }}
                             interpolation="natural"
                         />
                         <V.VictoryAxis
-                            label="Suction Stress (-kPa)"
+                            label="Se"
+                            tickCount={10}
                             style={{
                                 axisLabel: { padding: 30 }
                             }}
-                            orientation="top"
                         />
                         <V.VictoryAxis
                             dependentAxis
-                            label="Soil Depth from Surface H_ss (m)"
-                            tickCount={this.props.H_wt}
+                            label="Suction Stress (-kPa)"
+                            tickCount={this.props.H_wt + 1}
                             tickFormat={t => t}
                             style={{
                                 axisLabel: { padding: 40 }
@@ -113,4 +104,4 @@ class SSbyZ extends Component {
     }
 }
 
-export default SSbyZ
+export default SSbySe

@@ -16,7 +16,7 @@ FAILSTATE = 1
 
 
 def handleSubmit(data):
-    print("received data: " + str(data))
+    # print("received data: " + str(data))
     # separate received data into categories
     to_return = {}
     rand_vars = data["randVars"]
@@ -25,7 +25,6 @@ def handleSubmit(data):
     const_vars = data['constVars']
     H_wt = float(const_vars['H_wt'])
     z_step = float(const_vars['z_step'])
-    print(H_wt, z_step)
 
     const_vars.pop('H_wt')
     const_vars.pop('z_step')
@@ -38,15 +37,10 @@ def handleSubmit(data):
         rand_vars.pop('n', None)
         const_vars.pop('q', None)
 
-    print(
-        "RVs and CVs after popping with sat {0} and conf {1}".format(sat, conf))
-    print(rand_vars, const_vars)
-
     ''' 
         create a list of Random Variable objects by given distribution.
         Dists are either truncated normal, lognormal, uniform, or constant.
         Bivariate dist is partially implemented by is put on the side for now.
-        TODO: truncated Lognormal 
     '''
 
     # If deterministic, don't create dist. calc only one fs
@@ -108,7 +102,7 @@ def calc_det(rand_vars, const_vars, H_wt, z_step, sat, conf):
             phi = phi_0 + (delta_phi / (1 + z_w / H_ss))
 
             FS = FSSat(c, c_r, phi, gamma, gamma_w, slope, H_wt, z)
-            z_data[z]['fs_vals'] = FS.fs
+            z_data[H_ss]['fs_vals'] = FS.fs
     elif sat is False:
         print("Soil is unsaturated")
         k_s = rand_vars['k_s']['val']
@@ -128,14 +122,10 @@ def calc_det(rand_vars, const_vars, H_wt, z_step, sat, conf):
             print("z = {}".format(z))
             FS = FSUnsat(c, c_r, phi, k_s, alpha, n,
                          gamma, gamma_w, slope, q, H_wt, z)
-            print(FS)
             H_ss = H_wt - z
             print("z: {0}, H_ss: {1}".format(z, H_ss))
-            z_data[z]['fs_vals'] = FS.fs
-            z_data[z]['ss_vals'] = FS.ss
-
-            # z_data[z] = FS.fs
-            # z_data[z]['ss'] = FS.ss
+            z_data[H_ss]['fs_vals'] = FS.fs
+            z_data[H_ss]['ss'] = FS.ss
 
     to_return['z'] = z_data
     to_return['randVars'] = rvs
@@ -151,19 +141,15 @@ def calc_det(rand_vars, const_vars, H_wt, z_step, sat, conf):
 
 
 def calc_nondet(rand_vars, const_vars, H_wt, z_step, num_vars, sat, conf):
-    to_return = {}
-    to_return['conf'] = conf
+    to_return = {'conf': conf}
 
     # calculate random variable objects using given dist
     rand_var_objs = create_dists(rand_vars, num_vars)
-    print("\nrand var objs:")
-    print(rand_var_objs)
 
     # serialize rand_var_objs back into a dictionary to be used
     # with the rest of the program and the frontend
     rand_vars = {}
     for item in rand_var_objs:
-        print("cur item being serialized: ", item.name)
         rand_vars[item.name] = serialize_obj(item)
 
     to_return['z'] = get_FS_data(
@@ -214,25 +200,27 @@ def get_FS_data(rand_vars, const_vars, H_wt, z_step, num_vars, sat):
     probFail = 0.0
     z_arr = get_z_vals(H_wt, z_step)
     for z in z_arr:
-        # print("z = {}".format(z))
         # collect list of FS
         FS_list = []
         SS_list = []
+        Se_list = []
+        Ms_list = []
+        H_ss = round(H_wt - z, 2)
+
         if sat == False:
-            # print("soil is unsaturated")
-            FS_list, SS_list, probFail = calc_FS_unsat(
+            FS_list, SS_list, Se_list, Ms_list, probFail = calc_FS_unsat(
                 rand_vars, const_vars['gamma'], const_vars['gamma_w'],
                 const_vars['slope'], const_vars['q'], H_wt, z, num_vars)
+
         elif sat == True:
-            # print("soil is saturated")
             FS_list, probFail = calc_FS_sat(
                 rand_vars, const_vars['gamma'], const_vars['gamma_w'],
                 const_vars['slope'], H_wt, z, num_vars)
 
-        H_ss = round(H_wt - z, 2)
-        H_ss = H_wt - z
         res[H_ss] = {}
-        res[H_ss]['ss'] = Average(SS_list)
+        res[H_ss]['ss'] = statistics.mean(SS_list)
+        res[H_ss]['Se'] = statistics.mean(Se_list)
+        res[H_ss]['ms'] = statistics.mean(Ms_list)
         res[H_ss]['fs_vals'] = FS_list
         res[H_ss]['low'] = round(min(FS_list), 2)
         res[H_ss]['high'] = round(max(FS_list), 2)
@@ -269,6 +257,8 @@ def calc_FS_sat(rand_vars, gamma, gamma_w, slope, H_wt, z, num_vars):
 def calc_FS_unsat(rand_vars, gamma, gamma_w, slope, q, H_wt, z, num_vars):
     FS_list = []
     SS_list = []
+    Se_list = []
+    Ms_list = []
     failed = 0
 
     for i in range(int(num_vars)):
@@ -287,11 +277,13 @@ def calc_FS_unsat(rand_vars, gamma, gamma_w, slope, q, H_wt, z, num_vars):
             failed += 1
 
         SS_list.append(FS.ss)
+        Se_list.append(FS.Se)
+        Ms_list.append(FS.matric_suction)
         FS_list.append(FS.fs)
     print("number of failed for z= ", z)
     print(failed)
 
-    return FS_list, SS_list, failed / num_vars
+    return FS_list, SS_list, Se_list, Ms_list, failed / num_vars
 
 
 # doing this manually ig
@@ -351,7 +343,9 @@ def round_results(data):
             value['fs_vals'][i] = round(value['fs_vals'][i], 3)
 
         # print("rounding ss_vals")
-        value['ss'] = round(value['ss'], 3)
+        value['ss'] = round(value['ss'], 5)
+        value['Se'] = round(value['Se'], 5)
+        value['ms'] = round(value['ms'], 5)
         # for i in range(len(value['ss_vals'])):
         #     value['ss_vals'][i] = round(value['ss_vals'][i], 3)
 
