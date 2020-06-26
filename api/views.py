@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from datetime import datetime
-from .app import handleSubmit
+from .lisa_backend import handleSubmit
 
 main = Blueprint('main', __name__)
 
