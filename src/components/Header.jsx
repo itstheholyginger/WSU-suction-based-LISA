@@ -11,11 +11,11 @@ class Header extends Component {
         return (
             <>
                 <Navbar className="navbar" bg="dark" variant="dark">
-                    <Navbar.Brand className="navbar-brand" href="#">LISA</Navbar.Brand>
+                    <Navbar.Brand className="navbar-brand" href="#">WSU Suction-Based LISA</Navbar.Brand>
                     <Navbar.Toggle />
                     <Navbar.Collapse >
                         <Navbar.Text>
-                            WSU Suction-Based LISA
+                            {this.props.title}
                         </Navbar.Text>
                     </Navbar.Collapse>
                 </Navbar>
