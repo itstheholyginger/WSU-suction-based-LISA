@@ -1,16 +1,36 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Tab, Tabs } from 'react-bootstrap';
-import * as Graphs from './graphs';
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { Tab, Tabs } from 'react-bootstrap'
+import * as Graphs from './graphs'
+import { CSVLink } from 'react-csv'
 
 class DisplayGraphs extends Component {
     static propTypes = {
         data: PropTypes.object,
-        apiClient: PropTypes.object,
+        apiClient: PropTypes.object
     };
 
+    getGraphDownloadData = () => {
+        const data = this.props.data
+        var csvData = []
+        if (data !== null) {
+            const headers = ['z: soil depth from surface (m)', 'probability of failure', 'suction stress (kPa)', 'Se']
+            const curZ = data.z
+            csvData.push(headers)
+
+            for (const key in curZ) {
+                var row = [key, curZ[key].probFail, curZ[key].ss, curZ[key].Se]
+                console.log(row)
+                csvData.push(row)
+            }
+        } else {
+            csvData = ['Error saving data']
+        }
+        return csvData
+    }
+
     render() {
-        console.log('~~~~! DisplayGraphs data: ', this.props.data);
+        console.log('~~~~! DisplayGraphs data: ', this.props.data)
         return (
             <div>
                 <Tabs defaultActiveKey="probFail/z" id="visualizations">
@@ -61,9 +81,10 @@ class DisplayGraphs extends Component {
                     </Tab>
                 </Tabs>
                 <ul></ul>
+                <CSVLink data={this.getGraphDownloadData()} >Download all graph data</CSVLink>
             </div>
-        );
+        )
     }
 }
 
-export default DisplayGraphs;
+export default DisplayGraphs

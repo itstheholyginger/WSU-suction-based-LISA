@@ -218,9 +218,10 @@ def get_FS_data(rand_vars, const_vars, H_wt, z_step, num_vars, sat):
                 const_vars['slope'], H_wt, z, num_vars)
 
         res[H_ss] = {}
-        res[H_ss]['ss'] = statistics.mean(SS_list)
-        res[H_ss]['Se'] = statistics.mean(Se_list)
-        res[H_ss]['ms'] = statistics.mean(Ms_list)
+        if sat == False:
+            res[H_ss]['ss'] = statistics.mean(SS_list)
+            res[H_ss]['Se'] = statistics.mean(Se_list)
+            res[H_ss]['ms'] = statistics.mean(Ms_list)
         res[H_ss]['fs_vals'] = FS_list
         res[H_ss]['low'] = round(min(FS_list), 2)
         res[H_ss]['high'] = round(max(FS_list), 2)
@@ -319,7 +320,7 @@ def round_results(data):
 
             for i in range(len(value['vals'])):
                 value['vals'][i] = round(float(value['vals'][i]), 1)
-
+                
         elif key == 'a' or key == 'n':
             value['high'] = round(float(value['high']), 3)
             value['low'] = round(float(value['low']), 3)
@@ -343,9 +344,11 @@ def round_results(data):
             value['fs_vals'][i] = round(value['fs_vals'][i], 3)
 
         # print("rounding ss_vals")
-        value['ss'] = round(value['ss'], 5)
-        value['Se'] = round(value['Se'], 5)
-        value['ms'] = round(value['ms'], 5)
+        # only for unsaturated
+        if data['sat'] == False:
+            value['ss'] = round(value['ss'], 5)
+            value['Se'] = round(value['Se'], 5)
+            value['ms'] = round(value['ms'], 5)
         # for i in range(len(value['ss_vals'])):
         #     value['ss_vals'][i] = round(value['ss_vals'][i], 3)
 

@@ -1,12 +1,30 @@
 import React, { Component } from 'react'
 import PropType from 'prop-types'
 import { Table } from 'react-bootstrap'
+import { CSVLink } from 'react-csv';
 
 class FOSTable extends Component {
     static propTypes = {
         data: PropType.object,
         conf: PropType.string
     };
+
+    getFSDownloadData = () => {
+        const data = this.props.data
+        var csvData = []
+        if (data !== {} && data !== undefined) {
+            const headers = ['z', 'FS low', 'FS high', 'mean', 'stdev', 'probability of failure']
+            csvData.push(headers)
+            for (const key in data) {
+                const fs = data[key]
+                const row = [key, fs.low, fs.high, fs.mean, fs.stdev, fs.probFail]
+                csvData.push(row)
+            }
+        } else {
+            csvData = ['Error downloading Factor of Safety data!']
+        }
+        return csvData
+    }
 
     getRows = conf => {
         var list = []
@@ -45,6 +63,7 @@ class FOSTable extends Component {
 
     render() {
         const conf = this.props.conf
+        const csvData = this.getFSDownloadData()
         console.log('in FOSTable. conf = ', conf)
 
         if (conf === 'nondet') {
@@ -63,6 +82,7 @@ class FOSTable extends Component {
                         </thead>
                         <tbody>{this.getRows(conf)}</tbody>
                     </Table>
+                    <CSVLink data={csvData} >Download Factor of Safety data</CSVLink>
                 </div>
             )
         } else if (conf === 'det') {
@@ -117,7 +137,7 @@ class FSRowDisplay extends React.Component {
                         <b>{this.props.z}</b>
                     </td>
                     <td>{this.props.val}</td>
-            <td>{this.props.val < 1 ? 0 : 1}</td>
+                    <td>{this.props.val < 1 ? 0 : 1}</td>
                 </tr>
             )
         } else {

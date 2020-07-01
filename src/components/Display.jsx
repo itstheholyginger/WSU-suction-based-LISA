@@ -7,6 +7,7 @@ import DisplayGraphs from './DisplayGraphs'
 import API from './apiClient'
 import * as Tables from './tables'
 import Loading from './Loading'
+import { CSVLink } from 'react-csv'
 
 class DisplayPage extends Component {
     constructor(props) {
@@ -23,79 +24,24 @@ class DisplayPage extends Component {
         apiClient: PropType.object
     };
 
-    // componentDidMount = () => {
-    //     console.log('getting results...')
-    //     API.get('/api/display').then(res => {
-    //         console.log(res)
-    //         console.log(res.data)
-    //         const results = res.data.results[1]
+    getGraphDownloadData = () => {
+        const data = this.state.data
+        var csvData = []
+        if (data !== null) {
+            const headers = ['z: soil depth from surface (m)', 'probability of failure', 'suction stress (kPa)', 'Se']
+            const curZ = data.z
+            csvData.push(headers)
 
-    //         console.log('rounding results to appropriate significant figures')
-
-    //         this.roundResults(results)
-    //         console.log('setting results as state: ', results)
-    //         this.setState({ data: results })
-    //     })
-    // };
-
-    // roundResults = res => {
-    //     console.log('In roundResults. res = ', res)
-    //     // rounding randVars correctly
-    //     // arrs for each significant figure
-    //     const one = ['c', 'c_r', 'phi']
-    //     const three = ['a', 'n']
-    //     const enTwo = ['k_s']
-    //     // collect keys from randVar obj
-    //     const keys = []
-    //     for (const key in res.randVars) {
-    //         // eslint-disable-next-line no-prototype-builtins
-    //         if (res.randVars.hasOwnProperty(key)) keys.push(key)
-    //     }
-    //     console.log('keys: ', keys)
-    //     let sig = 0
-
-    //     keys.forEach(e => {
-    //         console.log('current key = ', e)
-    //         if (one.includes(e)) {
-    //             sig = 1
-    //         } else if (three.includes(e)) {
-    //             sig = 3
-    //         } else if (enTwo.includes(e)) {
-    //             sig = -1
-    //         }
-    //         res.randVars[e] = this.roundRandVar(res.randVars[e], sig)
-    //     })
-    // };
-
-    // roundRandVar = (rv, sig) => {
-    //     console.log('rounding rv: ', rv)
-    //     const newRv = rv
-    //     if (sig === -1) {
-    //         console.log('k_s')
-    //         newRv.high = isNaN(rv.high) ? rv.high : rv.high.toExponential(2)
-    //         newRv.low = isNaN(rv.low) ? rv.low : rv.low.toExponential(2)
-    //         newRv.mean = isNaN(rv.mean) ? rv.mean : rv.mean.toExponential(2)
-    //         newRv.stdev = isNaN(rv.stdev)
-    //             ? rv.stdev
-    //             : rv.stdev.toExponential(2)
-    //         for (let i = 0; i < rv.vals.length; i++) {
-    //             newRv.vals[i] = rv.vals[i].toExponential(2)
-    //         }
-    //     } else {
-    //         const mult = Math.pow(10, sig)
-    //         console.log('mult = ', mult)
-    //         newRv.high = Math.round((rv.high + Number.EPSILON) * mult) / mult
-    //         newRv.low = Math.round((rv.low + Number.EPSILON) * mult) / mult
-    //         newRv.mean = Math.round((rv.mean + Number.EPSILON) * mult) / mult
-    //         newRv.stdev = Math.round((rv.stdev + Number.EPSILON) * mult) / mult
-    //         for (let i = 0; i < rv.vals.length; i++) {
-    //             newRv.vals[i] =
-    //                 Math.round((rv.vals[i] + Number.EPSILON) * mult) / mult
-    //         }
-    //     }
-
-    //     return newRv
-    // };
+            for (const key in curZ) {
+                var row = [key, curZ[key].probFail, curZ[key].ss, curZ[key].Se]
+                console.log(row)
+                csvData.push(row)
+            }
+        } else {
+            csvData = ['Error saving data']
+        }
+        return csvData
+    }
 
     componentDidMount = () => {
         setTimeout(() => {
@@ -106,6 +52,7 @@ class DisplayPage extends Component {
                 }, 1000)
             })
         }, 1200)
+        // this.getDownloadData()
     };
 
     getResults = async () => {
@@ -150,6 +97,8 @@ class DisplayPage extends Component {
                                 <DisplayGraphs data={this.state.data} />
                             </Tab>
                         </Tabs>
+                        {/* download button */}
+                        {/* <CSVLink data={this.getDownloadData()} >Download data</CSVLink> */}
                     </div>
                 </Fragment>
             )

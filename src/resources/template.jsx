@@ -51,10 +51,6 @@ var data = {
         gamma_w: 0,
         slope: 0,
         flux: 0
-    },
-    z: {
-        max: 1,
-        step: 0.1
     }
 }
 // use this normally
