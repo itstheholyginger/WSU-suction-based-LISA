@@ -95,7 +95,7 @@ class LognormalVariable():
 
     def calc_vals(self):
         vals = np.random.lognormal(
-            math.log(self.mean), self.stdev, size=self.num_vars)
+            self.mean, self.stdev, size=self.num_vars)
         # vals = lognorm(self.s, loc=0, scale=1).rvs(size=self.num_vars)
         # import pdb
         # pdb.set_trace()

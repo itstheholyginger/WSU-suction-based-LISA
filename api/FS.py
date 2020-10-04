@@ -47,10 +47,10 @@ class FSUnsat(FS):
         self.alpha = float(alpha)
         self.n = float(n)
         self.q = float(q)
-        self.matric_suction = self.matric_suction()
-        self.ss = self.suction_stress()
-        self.Se = self.Se()
-        self.fs = self.fs()
+        self.matric_suction = self.calc_matric_suction()
+        self.ss = self.calc_suction_stress()
+        self.Se = self.calc_Se()
+        self.fs = self.calc_factor_of_safety()
         self.round_vals()
 
     def __str__(self):
@@ -81,8 +81,7 @@ class FSUnsat(FS):
         self.phi = round(self.phi, 1)
 
     # Calculate the factor of safety value for unsaturated soil
-
-    def fs(self):
+    def calc_factor_of_safety(self):
         # print("Calculating the fs of unsaturated soil")
         H_ss = self.H_wt - self.z
         first = self.tan(self.phi) / self.tan(self.slope)
@@ -105,7 +104,7 @@ class FSUnsat(FS):
             else if suction stress > 0, calculate new magin_suction
     '''
 
-    def suction_stress(self):
+    def calc_suction_stress(self):
         msuc = self.matric_suction
         if msuc <= 0:
             # print("matric suction is negative : {}".format(msuc))
@@ -134,7 +133,7 @@ class FSUnsat(FS):
                 # ss = 0
         return ss
 
-    def matric_suction(self):
+    def calc_matric_suction(self):
         # import pdb
         # pdb.set_trace()
         temp = self.q / self.k_s
@@ -164,7 +163,7 @@ class FSUnsat(FS):
         return ms
 
     # Effective Degree of Saturation. Used to test if Suction Stress function is correct
-    def Se(self):
+    def calc_Se(self):
         inside = 1 / (1 + pow(self.alpha * self.matric_suction, self.n))
         s_e = pow(inside, (self.n - 1) / self.n)
         return s_e
