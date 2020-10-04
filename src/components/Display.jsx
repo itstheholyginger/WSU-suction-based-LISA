@@ -45,13 +45,14 @@ class DisplayPage extends Component {
 
     componentDidMount = () => {
         setTimeout(() => {
-            this.getResults().then(res => {
-                const newData = res.results
+            this.getResults().then(r => {
+                console.log(r)
+                const newData = r.results
                 setTimeout(() => {
                     this.setState({ data: newData, done: true })
                 }, 1000)
             })
-        }, 1200)
+        }, 2000)
         // this.getDownloadData()
     };
 
@@ -59,9 +60,8 @@ class DisplayPage extends Component {
         this.setState({ loading: true })
         try {
             const res = await API.get('/api/display')
-            if (res.status === 200) {
-                console.log(res.status)
-            }
+            console.log(res.status)
+
             return res.data
         } catch (err) {
             console.log(err)
