@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import FadeIn from 'react-fade-in'
 import Lottie from 'react-lottie'
 import ReactLoading from 'react-loading'
-import * as animationData from '../resources/24817-tiktok-loader.json'
-import * as doneData from '../resources/24847-confirmation.json'
+import * as animationData from '../resources/animations/24817-tiktok-loader.json'
+import * as doneData from '../resources/animations/24847-confirmation.json'
 
 class Loading extends Component {
     constructor(props) {

@@ -22,7 +22,7 @@ import pytest
 #     assert (rv == {}), "initial database is not empty"
 
 
-def test_fs_unsat():
+def test_log():
     fs_list = []
     ss_list = []
     se_list = []
@@ -40,11 +40,11 @@ def test_fs_unsat():
     import csv
     from api.FS import FSUnsat
 
-    with open('./src/resources/testing_data.csv') as f:
+    with open('./src/resources/testing/lognormal.csv') as f:
         reader = csv.reader(f, delimiter='\t')
         i = 0
         for row in reader:
-            print("\nRow Number: {}".format(i))
+            # print("\nRow Number: {}".format(i))
             # get random variables
             c = row[4]
             phi = row[5]
@@ -58,7 +58,7 @@ def test_fs_unsat():
             expected['Se'] = float(row[3])
             expected['fs'] = float(row[8])
 
-            print("Expected results: {}".format(expected))
+            # print("Expected results: {}".format(expected))
 
             fs = FSUnsat(c, c_r, phi, k_s, a, n, gamma,
                          gamma_w, slope,  q, H_wt, z)
@@ -67,11 +67,11 @@ def test_fs_unsat():
             ss_list.append(fs.ss)
             se_list.append(fs.Se)
 
-            print("Matric Suction =  {}".format(
-                round(fs.matric_suction, 2)))
-            print("Suction Stress = {}".format(round(fs.ss, 3)))
-            print("Se = {}".format(round(fs.Se, 3)))
-            print("Factor of Safety =  {}".format(round(fs.fs, 3)))
+            # print("Matric Suction =  {}".format(
+            #     round(fs.matric_suction, 2)))
+            # print("Suction Stress = {}".format(round(fs.ss, 3)))
+            # print("Se = {}".format(round(fs.Se, 3)))
+            # print("Factor of Safety =  {}".format(round(fs.fs, 3)))
 
             assert(round(fs.matric_suction, 2) == expected['matric'])
             assert(round(fs.ss, 1) == round(expected['ss'], 1))
@@ -86,9 +86,9 @@ def test_fs_unsat():
     print(statistics.mean(se_list))
     print(statistics.mean(fs_list))
 
-    assert((failed / 1000) == 0.559), "incorrect probability of failure"
-    assert(round(statistics.mean(ss_list), 2) == -6.18)
-    assert(round(statistics.mean(se_list), 2) == 0.21), "incorrect se average"
+    assert((failed / 1000) == 0.968), "incorrect probability of failure"
+    assert(round(statistics.mean(ss_list), 2) == -0.32)
+    assert(round(statistics.mean(se_list), 2) == 0.01), "incorrect se average"
 
 
 def Average(l):
@@ -110,3 +110,6 @@ def Average(l):
 #     fs = FSSat(c, c_r, phi, gamma, gamma_w, slope, H_wt, z)
 
 #     assert (fs == 0)
+
+if __name__ == "__main__":
+    test_log()
