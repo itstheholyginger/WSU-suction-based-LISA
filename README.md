@@ -1,2 +1,2 @@
-# WSU suciton based LISA
+# WSU Suction Based LISA
 
