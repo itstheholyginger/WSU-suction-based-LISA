@@ -18,12 +18,8 @@ class SSbyZ extends Component {
     };
 
     componentDidMount = () => {
-        console.log('SSbyZ mounted!')
-        console.log('sat = ', this.props.sat)
         if (this.props.sat === false) {
-            console.log('SSbyZ Mounting component with unsaturated soil')
             const vals = this.props.data
-            console.log(vals)
             var dp = []
             if (this.props.conf === 'nondet') {
                 for (const z in vals) {
@@ -38,14 +34,22 @@ class SSbyZ extends Component {
                 }
             }
 
-            console.log(dp)
             this.setState({ datapoints: dp })
         }
     };
 
-    render() {
-        console.log('~~~~ SSbyZ GRAPH ~~~~')
 
+    getMaxSS = dp => {
+        let max = 0
+        dp.map(key => {
+            if (key.x > max) {
+                max = key.x
+            }
+        })
+        return max
+    }
+
+    render() {
         const sat = this.props.sat
 
         if (sat === true) {
@@ -56,14 +60,11 @@ class SSbyZ extends Component {
             )
         }
 
-        // console.log('data: ', this.props.data);
+
         const dp = this.state.datapoints
-        console.log('current datapoints: ')
-        console.log(dp)
-        console.log(dp.length)
         if (dp.length > 0) {
             const ticks = [...Array(Math.ceil(this.props.H_wt)).keys()]
-            console.log(ticks)
+            const maxSS = this.getMaxSS(dp)
 
             return (
                 <div className="graph">
@@ -77,14 +78,14 @@ class SSbyZ extends Component {
                             />
                         }
                     >
-                        <V.VictoryLine
+                        <V.VictoryScatter
                             style={{
                                 data: { stroke: '#c43a31' },
                                 parent: { border: '1px solid #ccc' }
                             }}
                             data={dp}
                             // get x min with func
-                            domain={{ x: [0, 10], y: [0, this.props.H_wt] }}
+                            domain={{ x: [0, maxSS], y: [0, this.props.H_wt] }}
                             interpolation="natural"
                         />
                         <V.VictoryAxis
@@ -102,7 +103,7 @@ class SSbyZ extends Component {
                             style={{
                                 axisLabel: { padding: 40 }
                             }}
-                        // invertAxis={true}
+                            invertAxis={true}
                         />
                     </V.VictoryChart>
                 </div>

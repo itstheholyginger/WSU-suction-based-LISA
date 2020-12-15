@@ -35,8 +35,6 @@ class PFbyZ extends Component {
         var dp = []
         if (this.props.conf === 'nondet') {
             for (const key in vals) {
-                console.log('H_ss val = ', key)
-                console.log('probFail = ', vals[key].probFail)
                 dp.push({ x: vals[key].probFail, y: key })
             }
         } else if (this.props.conf === 'det') {
@@ -54,31 +52,19 @@ class PFbyZ extends Component {
             ticks.push(cur)
             cur += 0.5
         }
-        console.log('TICKS!!    ')
-        console.log(ticks)
         return ticks
     }
 
     printTicks(t) {
-        console.log('cur t: ', t)
         if (Number(t) % 1 === 0) {
-            console.log('tick IS whole num: ', t)
             return Number(t)
         } else {
-            console.log('tick is not whole number:  ', t)
             return null
         }
     }
 
     render() {
-        console.log('~~~~ PFbyZ GRAPH ~~~~')
-        // console.log('data: ', this.props.data);
         const dp = this.state.datapoints
-        console.log('current datapoints: ')
-        console.log(dp)
-        // const ticks = Array.from(this.getTickVals())
-        // console.log("What the ticks should be: ")
-
         const sharedAxisStyles = {
             tickLabels: {
                 fontSize: 12
@@ -90,7 +76,6 @@ class PFbyZ extends Component {
             }
         }
         if (dp.length > 0) {
-            // if (this.props.conf === 'nondet') {
             return (
                 <div className="graph">
                     <h4>Depth vs. Probability of Failure</h4>
@@ -103,7 +88,7 @@ class PFbyZ extends Component {
                             />
                         }
                     >
-                        <V.VictoryLine
+                        <V.VictoryScatter
                             style={{
                                 data: { stroke: '#c43a31' },
                                 parent: { border: '1px solid #ccc' }
@@ -133,37 +118,7 @@ class PFbyZ extends Component {
                     </V.VictoryChart>
                 </div>
             )
-            // } else if (this.props.conf === 'det') {
-            //     return (
-            //         <V.VictoryChart
-            //             domainPadding={20}
-            //             theme={V.VictoryTheme.material}
-            //             containerComponent={
-            //                 <V.VictoryVoronoiContainer
-            //                     labels={({ datum }) => `${datum.x} ${datum.y}`}
-            //                 />
-            //             }
-            //         >
-            //             <V.VictoryScatter data={dp} horizontal />
-            //             <V.VictoryAxis
-            //                 label="Z:Depth (m)"
-            //                 tickCount={
-            //                     this.state.datapoints.length > 10
-            //                         ? this.state.datapoints.length / 2
-            //                         : this.state.datapoints.length
-            //                 }
-            //                 style={{ axisLabel: { padding: 40 } }}
-            //             />
-            //             <V.VictoryAxis
-            //                 dependentAxis
-            //                 label="Probability of Failure"
-            //                 style={{
-            //                     axisLabel: { padding: 30 },
-            //                 }}
-            //             />
-            //         </V.VictoryChart>
-            //     );
-            // }
+
         } else {
             return <h2>no datapoints</h2>
         }

@@ -127,26 +127,27 @@ var testing = {
             },
             a: {
                 dist: 'truncnormal',
-                low: 0.002,
-                high: 0.45,
-                mean: 0.112,
-                stdev: 0.073
+                low: 0.025,
+                high: 0.7,
+                mean: 0.323,
+                stdev: 0.093
             },
             n: {
                 dist: 'lognormal',
                 low: 1.672,
                 high: 7.78,
-                logmean: 2.670,
-                logstdev: 0.270
+                logmean: 1.302,
+                logstdev: 0.22
             }
         },
         constVars: {
             gamma: 18,
             gamma_w: 9.81,
             slope: 45,
+            // q: -6.5e-7,
             q: 0,
             H_wt: 5,
-            z_step: 0.5
+            z_step: 0.2
         }
     }
 }

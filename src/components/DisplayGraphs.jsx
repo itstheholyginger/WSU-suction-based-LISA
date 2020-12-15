@@ -20,7 +20,6 @@ class DisplayGraphs extends Component {
 
             for (const key in curZ) {
                 var row = [key, curZ[key].probFail, curZ[key].ss, curZ[key].Se]
-                console.log(row)
                 csvData.push(row)
             }
         } else {
@@ -30,10 +29,9 @@ class DisplayGraphs extends Component {
     }
 
     render() {
-        console.log('~~~~! DisplayGraphs data: ', this.props.data)
         return (
             <div>
-                <Tabs defaultActiveKey="probFail/z" id="visualizations">
+                <Tabs defaultActiveKey="freqHistFos" id="visualizations">
                     <Tab
                         eventKey="freqHistFos"
                         title="Factor of Safety Frequency Histograms"

@@ -23,11 +23,9 @@ class FOSFreq extends Component {
     };
 
     setOptions = () => {
-        // console.log('~~~~ FreqFrequency setOptions ~~~~');
         const options = []
 
         // sort options
-
         var sorted = []
         for (const key in this.props.data) {
             sorted.push(key)
@@ -42,26 +40,15 @@ class FOSFreq extends Component {
     };
 
     handleChange = e => {
-        // e.preventDefault()
-        // console.log(e)
         this.setState({
             selected: e.value
         })
     };
 
     render() {
-        // console.log(this.props.data)
-        console.log('~~~~ FOSFreq ~~~~')
-        // console.log('current configuration: ', this.props.conf);
         const options = this.setOptions()
-        // console.log(options);
-
-        // console.log('currently selected z = ', this.state.selected);
-        // console.log('current data in FOSFrequency: ', this.state.data);
-
         return (
             <div>
-                {/* <h4> Frequency histogram of the factor of safety values </h4> */}
                 <div className="dropdown">
                     <Select
                         selectedOption={this.state.selected}
@@ -92,7 +79,6 @@ class FreqHistFOS extends Component {
             datapoints: [],
             z: ''
         }
-        // this.getData = this.getData.bind(this)
     }
 
     static propTypes = {
@@ -102,24 +88,11 @@ class FreqHistFOS extends Component {
     };
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        // console.log('~~~~FreqHistFOS getDerivedStateFromProps~~~~');
-        // console.log('next state: ', nextProps);
-        // console.log('prex z: ', prevState.z);
-        // console.log('next z: ', nextProps.z);
         if (nextProps.z !== prevState.z) {
             const z = nextProps.z
-            // we need to make frequency array
-            // for current Z, get fos counts
-            // console.log(
-            //     'in getDerivedStateFromProps()  current data= ',
-            //     nextProps.data
-            // );
             if (nextProps.conf === 'nondet') {
-                // console.log('non-deterministic');
                 const valsArr = nextProps.data[z].fs_vals
 
-                // console.log('vals array: ');
-                // console.log(valsArr);
                 const freqObj = {}
                 valsArr.forEach(x => {
                     const rounded = x.toFixed(2)
@@ -134,18 +107,14 @@ class FreqHistFOS extends Component {
                 for (const key in freqObj) {
                     datapoints.push({ x: Number(key), y: freqObj[key] })
                 }
-                // this.setState({ datapoints: datapoints })
                 return { datapoints: datapoints, z: nextProps.z }
             } else if (nextProps.conf === 'det') {
-                // console.log('deterministic');
                 const val = nextProps.data[z].toFixed(2)
 
-                // console.log('value = ', val);
                 const datapoint = [{ x: Number(z), y: val }]
-                // console.log('new datapoint: ', datapoint);
                 return { datapoints: datapoint, z: nextProps.z }
             } else {
-                console.log(
+                console.error(
                     'ERROR: incorrect configuration type: ',
                     nextProps.conf
                 )
@@ -158,7 +127,6 @@ class FreqHistFOS extends Component {
         const dp = this.state.datapoints
         dp.forEach(x => {
             if (x.y > max) {
-                console.log('new max: ', x.y)
                 max = x.y
             }
         })
@@ -175,12 +143,6 @@ class FreqHistFOS extends Component {
     };
 
     render() {
-        // const width = this.props.data[Number(this.props.z)].high
-        // const dp = this.getData()
-        // console.log('rendering child!');
-
-        // console.log(this.state.datapoints);
-
         return (
             <div className="graph">
                 <V.VictoryChart

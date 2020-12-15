@@ -60,14 +60,11 @@ class RVTable extends Component {
 
     getRows = (vars, conf) => {
         const list = []
-        console.log('data: ', this.props.data)
         for (let key in vars) {
             key = vars[key]
             var i = this.props.data[key]
-            console.log('key: ', key)
 
             if (conf === 'det') {
-                console.log('i: ', i)
                 list.push(
                     <RandVarRowDisplayDet
                         key={key}
@@ -77,7 +74,6 @@ class RVTable extends Component {
                     />
                 )
             } else if (conf === 'nondet') {
-                console.log('my key here is ', key)
                 list.push(
                     <RandVarRowDisplayNondet
                         key={key}
@@ -135,7 +131,6 @@ class RVTable extends Component {
     };
 
     render() {
-        console.log('IN RVTABLE. data = ', this.props.data)
         const sat = this.props.sat
         const conf = this.props.conf
 
@@ -192,7 +187,6 @@ class RandVarRowDisplayNondet extends React.Component {
     };
 
     render() {
-        console.log('rv is ', this.props.rv)
         if (this.props.rv === 'k_s') {
             return (
                 <tr>

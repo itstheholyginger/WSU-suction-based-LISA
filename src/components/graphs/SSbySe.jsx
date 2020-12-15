@@ -18,24 +18,29 @@ class SSbySe extends Component {
     }
 
     componentDidMount = () => {
-        console.log('SSbySe mounted!')
-        console.log('sat = ', this.props.sat)
         if (this.props.sat === false) {
-            console.log('SSbySe Mounting component with unsaturated soil')
             const vals = this.props.data
-            console.log(vals)
             var dp = []
             for (const z in vals) {
                 dp.push({ x: vals[z].Se, y: -vals[z].ss })
             }
         }
 
-        console.log(dp)
         this.setState({ datapoints: dp })
     };
 
+
+    getMaxSS = dp => {
+        let max = 0
+        dp.map(key => {
+            if (key.y > max) {
+                max = key.y
+            }
+        })
+        return max
+    }
+
     render() {
-        console.log('~~~~ SSbySe GRAPH ~~~~')
 
         const sat = this.props.sat
 
@@ -47,14 +52,10 @@ class SSbySe extends Component {
             )
         }
 
-        // console.log('data: ', this.props.data);
         const dp = this.state.datapoints
-        console.log('current datapoints: ')
-        console.log(dp)
-        console.log(dp.length)
+        const maxSS = Math.ceil(this.getMaxSS(dp))
         if (dp.length > 0) {
             const ticks = [...Array(Math.ceil(this.props.H_wt)).keys()]
-            console.log(ticks)
 
             return (
                 <div className="graph">
@@ -68,14 +69,14 @@ class SSbySe extends Component {
                             />
                         }
                     >
-                        <V.VictoryLine
+                        <V.VictoryScatter
                             style={{
                                 data: { stroke: '#c43a31' },
                                 parent: { border: '1px solid #ccc' }
                             }}
                             data={dp}
                             // get x min with func
-                            domain={{ x: [0, 1], y: [0, 10] }}
+                            domain={{ x: [0, 1], y: [0, maxSS] }}
                             interpolation="natural"
                         />
                         <V.VictoryAxis

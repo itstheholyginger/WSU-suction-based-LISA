@@ -31,13 +31,11 @@ class FOSTable extends Component {
         var sortedZ = []
 
         for (const key in this.props.data) {
-            // console.log(key)
             sortedZ.push(key)
         }
         sortedZ.sort()
         for (var key in sortedZ) {
             var i = sortedZ[key]
-            // console.log(i)
             if (conf === 'nondet') {
                 list.push(
                     <FSRowDisplay
@@ -64,7 +62,6 @@ class FOSTable extends Component {
     render() {
         const conf = this.props.conf
         const csvData = this.getFSDownloadData()
-        console.log('in FOSTable. conf = ', conf)
 
         if (conf === 'nondet') {
             return (

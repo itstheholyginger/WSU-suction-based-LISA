@@ -82,8 +82,11 @@ class FSUnsat(FS):
 
     # Calculate the factor of safety value for unsaturated soil
     def calc_factor_of_safety(self):
-        # print("Calculating the fs of unsaturated soil")
         H_ss = self.H_wt - self.z
+        
+        if (H_ss == 0):
+            return 1
+
         first = self.tan(self.phi) / self.tan(self.slope)
 
         second = (2 * (self.c + self.c_r)) / \
@@ -107,25 +110,26 @@ class FSUnsat(FS):
     def calc_suction_stress(self):
         msuc = self.matric_suction
         if msuc <= 0:
-            # print("matric suction is negative : {}".format(msuc))
             return -msuc
         else:
-            # print("matric suction is positive : {}".format(msuc))
             try:
                 temp = self.q / self.k_s
 
-                # first = 1/self.alpha
-                # second_top = math.log(
-                #     (1 + temp) * math.exp(-self.gamma_w * self.alpha * self.z) - temp)
+                first = (1 / self.alpha)
 
-                top = -self.matric_suction
-                inside = pow(-top * self.alpha, self.n)
+                inside_first = (1+temp)
+
+                inside_second = math.exp(-self.gamma_w * self.alpha * self.z)
+
+                inside = inside_first * inside_second - temp
+
+                top = math.log(inside)
+
+                # top = -self.matric_suction
+                inside = pow(-top, self.n)
                 bottom = pow(1 + inside, (self.n - 1) / self.n)
 
-                # second_bottom = pow((1 + pow((-second_top), self.n)),
-                #                     (self.n - 1) / self.n)
-                # ss = first * (second_top / second_bottom)
-                ss = top / bottom
+                ss = first * top / bottom
             except ValueError as e:
                 import pdb
                 pdb.set_trace()
@@ -158,8 +162,6 @@ class FSUnsat(FS):
             pdb.set_trace()
             print(e)
             # ms = 0
-        if ms == 0:
-            print("matric stress = 0")
         return ms
 
     # Effective Degree of Saturation. Used to test if Suction Stress function is correct
@@ -201,14 +203,14 @@ class FSSat(FS):
             math.tan(math.radians(self.phi))
 
         if math.isnan(float(third)):
-            import pdb
-            pdb.set_trace()
+            # import pdb
+            # pdb.set_trace()
             print("third is not a number")
 
         fs = first + second - third
         if fs < 0:
-            import pdb
-            pdb.set_trace()
+            # import pdb
+            # pdb.set_trace()
             print("fs shouldn't be negative returning 0")
             return 0
         return fs

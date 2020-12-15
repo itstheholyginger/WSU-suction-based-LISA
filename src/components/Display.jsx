@@ -16,7 +16,6 @@ class DisplayPage extends Component {
             data: null,
             loading: undefined,
             done: undefined
-            // data: testing.results
         }
     }
 
@@ -34,7 +33,6 @@ class DisplayPage extends Component {
 
             for (const key in curZ) {
                 var row = [key, curZ[key].probFail, curZ[key].ss, curZ[key].Se]
-                console.log(row)
                 csvData.push(row)
             }
         } else {
@@ -46,21 +44,18 @@ class DisplayPage extends Component {
     componentDidMount = () => {
         setTimeout(() => {
             this.getResults().then(r => {
-                console.log(r)
                 const newData = r.results
                 setTimeout(() => {
                     this.setState({ data: newData, done: true })
                 }, 1000)
             })
         }, 2000)
-        // this.getDownloadData()
     };
 
     getResults = async () => {
         this.setState({ loading: true })
         try {
             const res = await API.get('/api/display')
-            console.log(res.status)
 
             return res.data
         } catch (err) {
@@ -74,12 +69,11 @@ class DisplayPage extends Component {
                 <Loading loading={this.state.loading} />
             )
         } else {
-            console.log("what's our data? here it is!", this.state.data)
             return (
                 <Fragment>
                     <Header title="Display" />
                     <div className="paddedPage">
-                        <Tabs defaultActiveKey="graphs" id="display-tabs">
+                        <Tabs defaultActiveKey="randVars" id="display-tabs">
                             <Tab eventKey="randVars" title="Random Variables">
                                 <Tables.RVTable
                                     data={this.state.data.randVars}
@@ -97,8 +91,6 @@ class DisplayPage extends Component {
                                 <DisplayGraphs data={this.state.data} />
                             </Tab>
                         </Tabs>
-                        {/* download button */}
-                        {/* <CSVLink data={this.getDownloadData()} >Download data</CSVLink> */}
                     </div>
                 </Fragment>
             )

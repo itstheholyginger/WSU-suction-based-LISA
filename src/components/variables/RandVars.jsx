@@ -25,7 +25,6 @@ class RandVar extends Component {
     handleDistChange = selectedOption => {
         var selected = selectedOption.target.value
         this.props.handleDistChange(this.props.name, selected)
-        console.log('selected: ', selected)
     };
 
     render() {
@@ -187,7 +186,6 @@ class TruncNormalVar extends Component {
     };
 
     handleChange = e => {
-        console.log('in normal rand var change')
         this.props.handleChange(this.props.name, e.target.name, e.target.value)
     };
 
@@ -266,36 +264,38 @@ class UniformVar extends Component {
     };
 
     handleChange = e => {
-        console.log('in uniform rand var change')
         this.props.handleChange(this.props.name, e.target.name, e.target.value)
     };
 
     render() {
         return (
             <Fragment>
-                <Form.Group as={Col} className="input" controlId="formInput">
-                    <Form.Label>Low</Form.Label>
-                    <Form.Control
-                        type="number"
-                        min={0}
-                        step={0.0000000001}
-                        name="low"
-                        onChange={this.handleChange}
-                        placeholder="Enter low"
-                    />
-                </Form.Group>
+                <Form.Row>
 
-                <Form.Group as={Col} className="input" controlId="formInput">
-                    <Form.Label>High</Form.Label>
-                    <Form.Control
-                        type="number"
-                        min={this.props.data.low}
-                        step={0.000000001}
-                        name="high"
-                        onChange={this.handleChange}
-                        placeholder="Enter high"
-                    />
-                </Form.Group>
+                    <Form.Group as={Col} className="input" controlId="formInput">
+                        <Form.Label>Low</Form.Label>
+                        <Form.Control
+                            type="number"
+                            min={0}
+                            step={0.0000000001}
+                            name="low"
+                            onChange={this.handleChange}
+                            placeholder="Enter low"
+                        />
+                    </Form.Group>
+
+                    <Form.Group as={Col} className="input" controlId="formInput">
+                        <Form.Label>High</Form.Label>
+                        <Form.Control
+                            type="number"
+                            min={this.props.data.low}
+                            step={0.000000001}
+                            name="high"
+                            onChange={this.handleChange}
+                            placeholder="Enter high"
+                        />
+                    </Form.Group>
+                </Form.Row>
             </Fragment>
         )
     }
@@ -309,23 +309,24 @@ class LognormalVar extends Component {
     };
 
     handleChange = e => {
-        console.log('in lognormal rand var change')
         this.props.handleChange(this.props.name, e.target.name, e.target.value)
     };
 
     render() {
         return (
             <Fragment>
-                <Form.Group as={Col} className="input" controlId="formInput">
-                    <Form.Label>Logmean</Form.Label>
-                    <Form.Control
-                        type="number"
-                        min={0}
-                        step={0.0000000001}
-                        name="logmean"
-                        onChange={this.handleChange}
-                        placeholder="Enter logmean"
-                    />
+                <Form.Row>
+                    <Form.Group as={Col} className="input" controlId="formInput">
+                        <Form.Label>Logmean</Form.Label>
+                        <Form.Control
+                            type="number"
+                            min={0}
+                            step={0.0000000001}
+                            name="logmean"
+                            onChange={this.handleChange}
+                            placeholder="Enter logmean"
+                        />
+                    </Form.Group>
                     <Form.Group as={Col} className="input" controlId="formInput">
                         <Form.Label>Logstdev</Form.Label>
                         <Form.Control
@@ -337,7 +338,7 @@ class LognormalVar extends Component {
                             placeholder="Enter logstdev"
                         />
                     </Form.Group>
-                </Form.Group>
+                </Form.Row>
             </Fragment>
         )
     }
@@ -356,7 +357,6 @@ class TruncLognormalVar extends Component {
     };
 
     handleChange = e => {
-        console.log('in trunc lognormal rand var change')
         this.props.handleChange(this.props.name, e.target.name, e.target.value)
     };
 
@@ -435,7 +435,6 @@ class ConstantVar extends Component {
     };
 
     handleChange = e => {
-        console.log('in lognormal rand var change')
         this.props.handleChange(this.props.name, e.target.name, e.target.value)
     };
 
@@ -457,6 +456,5 @@ class ConstantVar extends Component {
         )
     }
 }
-
 
 export default RandVar

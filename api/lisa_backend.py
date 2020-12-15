@@ -16,7 +16,6 @@ FAILSTATE = 1
 
 
 def handleSubmit(data):
-    # print("received data: " + str(data))
     # separate received data into categories
     to_return = {}
     rand_vars = data["randVars"]
@@ -31,7 +30,6 @@ def handleSubmit(data):
 
     # remove vars if soil is saturated conf can be nondetSat, nondetUnsat, detSat, detUnsat
     if sat == True:
-        print("removing unused vars")
         rand_vars.pop('k_s', None)
         rand_vars.pop('a', None)
         rand_vars.pop('n', None)
@@ -46,13 +44,11 @@ def handleSubmit(data):
     # If deterministic, don't create dist. calc only one fs
 
     if conf == 'nondet':
-        print("non-deterministic analysis")
         num_vars = int(data["numVars"])
         to_return = calc_nondet(rand_vars, const_vars,
                                 H_wt, z_step, num_vars, sat, conf)
 
     elif conf == 'det':
-        print("deterministic analysis")
         to_return = calc_det(rand_vars, const_vars, H_wt, z_step, sat, conf)
 
     to_return['conf'] = conf
@@ -61,15 +57,13 @@ def handleSubmit(data):
 
     to_return = round_results(to_return)
 
-    print("sending data rn:")
-    # print(to_return)
     return to_return
 
 
 # z is given with a max value and steps. We need to return all the values between
 # 0 and max by the given step
 def get_z_vals(H_wt, z_step):
-    num_z_vals = math.floor(H_wt / z_step)
+    num_z_vals = math.floor(H_wt / z_step) + 1
     l = [round(x * z_step, 4) for x in range(0, num_z_vals)]
     return l
 
@@ -93,7 +87,6 @@ def calc_det(rand_vars, const_vars, H_wt, z_step, sat, conf):
     rvs['phi'] = const_vars['phi_0']
 
     if sat is True:
-        print("Soil is saturated")
         phi_0 = const_vars['phi_0']
         delta_phi = const_vars['delta_phi']
         z_w = const_vars['z_w']
@@ -104,7 +97,6 @@ def calc_det(rand_vars, const_vars, H_wt, z_step, sat, conf):
             FS = FSSat(c, c_r, phi, gamma, gamma_w, slope, H_wt, z)
             z_data[H_ss]['fs_vals'] = FS.fs
     elif sat is False:
-        print("Soil is unsaturated")
         k_s = rand_vars['k_s']['val']
         alpha = rand_vars['a']['val']
         n = rand_vars['n']['val']
@@ -119,11 +111,9 @@ def calc_det(rand_vars, const_vars, H_wt, z_step, sat, conf):
         for z in z_arr:
             H_ss = H_wt - z
             phi = phi_0 + (delta_phi / (1 + z_w / H_ss))
-            print("z = {}".format(z))
             FS = FSUnsat(c, c_r, phi, k_s, alpha, n,
                          gamma, gamma_w, slope, q, H_wt, z)
             H_ss = H_wt - z
-            print("z: {0}, H_ss: {1}".format(z, H_ss))
             z_data[H_ss]['fs_vals'] = FS.fs
             z_data[H_ss]['ss'] = FS.ss
 
@@ -176,16 +166,13 @@ def create_dists(data, num_vars):
             new_var = UniformVariable(key, val["low"], val["high"], num_vars)
 
         elif val['dist'] == "lognormal":
-            print("calc lognorm")
             new_var = LognormalVariable(
                 key, val['logmean'], val['logstdev'], num_vars)
 
         elif val['dist'] == 'constant':
-            print("calc const var")
             new_var = ConstantVariable(key, val['const_val'], num_vars)
 
         elif val['dist'] == "trunclognormal":
-            print("calc trunc lognormal")
             new_var = TruncatedLognormalVariable(
                 key, val['logmean'], val['logstdev'], val['low'], val['high'], num_vars)
 
@@ -246,12 +233,10 @@ def calc_FS_sat(rand_vars, gamma, gamma_w, slope, H_wt, z, num_vars):
         phi = rand_vars['phi']['vals'][i]
         FS = FSSat(c, c_r, phi, gamma, gamma_w, slope, H_wt, z)
 
-        if FS.fs >= FAILSTATE:
-            # if FS.fs < FAILSTATE:
+        if FS.fs < FAILSTATE:
             failed += 1
 
         FS_list.append(FS.fs)
-    print("probFail = {0} / {1}".format(failed, num_vars))
     return FS_list, failed / num_vars
 
 
@@ -273,7 +258,6 @@ def calc_FS_unsat(rand_vars, gamma, gamma_w, slope, q, H_wt, z, num_vars):
         FS = FSUnsat(c, c_r, phi, k_s, alpha, n,  gamma,
                      gamma_w, slope, q, H_wt, z)
 
-        # if FS.fs >= FAILSTATE:
         if FS.fs < FAILSTATE:
             failed += 1
 
@@ -281,8 +265,6 @@ def calc_FS_unsat(rand_vars, gamma, gamma_w, slope, q, H_wt, z, num_vars):
         Se_list.append(FS.Se)
         Ms_list.append(FS.matric_suction)
         FS_list.append(FS.fs)
-    print("number of failed for z= ", z)
-    print(failed)
 
     return FS_list, SS_list, Se_list, Ms_list, failed / num_vars
 
@@ -309,7 +291,6 @@ def serialize_obj(obj):
 
 
 def round_results(data):
-    # print("in round_results")
     rand_vars = data['randVars']
     for key, value in rand_vars.items():
         if key == 'c' or key == 'c_r' or key == 'phi':
@@ -343,7 +324,6 @@ def round_results(data):
         for i in range(len(value['fs_vals'])):
             value['fs_vals'][i] = round(value['fs_vals'][i], 3)
 
-        # print("rounding ss_vals")
         # only for unsaturated
         if data['sat'] == False:
             value['ss'] = round(value['ss'], 5)

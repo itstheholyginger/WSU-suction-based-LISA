@@ -166,10 +166,6 @@ class BivariateVariable():
         return cov
 
     def calc_vals(self):
-        # import pdb; pdb.set_trace()
-        # print(self.means)
-        # print(self.cov)
         vals = np.random.default_rng().multivariate_normal(
             self.means, self.cov, size=self.num_vars)
-        # print(vals)
         return vals

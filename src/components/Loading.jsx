@@ -1,10 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import FadeIn from 'react-fade-in'
-import Lottie from 'react-lottie'
-import ReactLoading from 'react-loading'
-import * as animationData from '../resources/animations/24817-tiktok-loader.json'
-import * as doneData from '../resources/animations/24847-confirmation.json'
+
+import { Spinner, Card } from "@blueprintjs/core"
 
 class Loading extends Component {
     constructor(props) {
@@ -20,34 +18,17 @@ class Loading extends Component {
     }
 
     render() {
-        const defaultOptions = {
-            loop: true,
-            autoplay: true,
-            animationData: animationData.default,
-            rendererSettings: {
-                preserveAspectRatio: 'xMidYMid slice'
-            }
-        }
-
-        const defaultOptions2 = {
-            loop: false,
-            autoplay: true,
-            animationData: doneData.default,
-            rendererSettings: {
-                preserveAspectRatio: 'xMidYMid slice'
-            }
-        }
         return (
-            <FadeIn>
-                <div className="d-flex justify-content'-center align-items-center">
-                    <h1>fetching results</h1>
-                    {!this.props.loading ? (
-                        <Lottie options={defaultOptions} height={120} width={120} />
-                    ) : (
-                            <Lottie options={defaultOptions2} height={120} width={120} />
+            <Card className="loading-card bp3-elevation-2">
+                <FadeIn>
+                    <div className="d-flex justify-content'-center align-items-center">
+                        <h4>Fetching Results</h4>
+                        {!this.props.loading && (
+                            <Spinner className="styledSpinner" intent="primary" size={Spinner.SIZE_STANDARD} />
                         )}
-                </div>
-            </FadeIn>
+                    </div>
+                </FadeIn>
+            </Card>
         )
     }
 }

@@ -5,8 +5,8 @@ import { Form, Button } from 'react-bootstrap'
 import * as Vars from './variables'
 import PropTypes from 'prop-types'
 import Header from './Header'
-// import { testing } from '../resources/template'
-import { data } from '../resources/template'
+import { testing } from '../resources/template'
+// import { data } from '../resources/template'
 import AppMode from '../AppMode'
 import API from './apiClient'
 import LABELS from '../resources/labels'
@@ -21,8 +21,8 @@ class DataFormPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            data: data
-            // data: testing.data
+            // data: data
+            data: testing.data
         }
     }
 
@@ -41,17 +41,12 @@ class DataFormPage extends Component {
 
     //  handling variable changes in data form when configuration
     handleNondetChange = (varName, key, value) => {
-        // console.log(varName, key, value);
         var newData = this.state.data
-        // console.log('old data:\t', newData);
         newData.randVars[varName][key] = value
-        // console.log('var:\t', varName);
-        // console.log('\tnew data:\t', newData);
         this.setState({ newData })
     };
 
     handleDetChange = (varName, val) => {
-        // console.log('handling Deterministic Change');
         var newData = this.state.data
         newData.randVars[varName].detVal = val
         this.setState({ newData })
@@ -67,7 +62,6 @@ class DataFormPage extends Component {
             stdev: 0
         }
         this.setState(newData)
-        // console.log(varName, 'new dist is: ', selected);
     };
 
     handleConstVarChange = (varName, value) => {
@@ -190,8 +184,6 @@ class DataFormSelector extends Component {
     render() {
         const sat = this.props.data.sat
         const conf = this.props.data.conf
-        console.log('sat=', sat)
-        console.log('conf=', conf)
         if (sat === false) {
             return (
                 <Fragment>

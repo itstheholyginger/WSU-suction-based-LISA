@@ -67,11 +67,11 @@ def test_log():
             ss_list.append(fs.ss)
             se_list.append(fs.Se)
 
-            # print("Matric Suction =  {}".format(
-            #     round(fs.matric_suction, 2)))
-            # print("Suction Stress = {}".format(round(fs.ss, 3)))
-            # print("Se = {}".format(round(fs.Se, 3)))
-            # print("Factor of Safety =  {}".format(round(fs.fs, 3)))
+            print("Matric Suction =  {}".format(
+                round(fs.matric_suction, 2)))
+            print("Suction Stress = {}".format(round(fs.ss, 3)))
+            print("Se = {}".format(round(fs.Se, 3)))
+            print("Factor of Safety =  {}".format(round(fs.fs, 3)))
 
             assert(round(fs.matric_suction, 2) == expected['matric'])
             assert(round(fs.ss, 1) == round(expected['ss'], 1))
