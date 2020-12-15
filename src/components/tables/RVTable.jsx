@@ -1,14 +1,32 @@
-import React, { Component, Fragment } from 'react';
-import PropType from 'prop-types';
-import { Table } from 'react-bootstrap';
-import LABELS from '../../resources/labels';
+import React, { Component, Fragment } from 'react'
+import PropType from 'prop-types'
+import { Table } from 'react-bootstrap'
+import LABELS from '../../resources/labels'
+import { CSVLink } from 'react-csv';
 
 class RVTable extends Component {
     static propTypes = {
         data: PropType.object,
         sat: PropType.bool,
-        conf: PropType.string,
+        conf: PropType.string
     };
+
+    getRVDownloadData = () => {
+        const data = this.props.data
+        var csvData = []
+        if (data !== {} && data !== undefined) {
+            const headers = ['variable name', 'low', 'high', 'mean', 'stdev']
+            csvData.push(headers)
+            for (const key in data) {
+                const rv = data[key]
+                const row = [key, rv.low, rv.high, rv.mean, rv.stdev]
+                csvData.push(row)
+            }
+        } else {
+            csvData = ['Error saving random variable data']
+        }
+        return csvData
+    }
 
     detRows = sat => {
         if (sat === true) {
@@ -27,7 +45,7 @@ class RVTable extends Component {
                         label={LABELS.phi}
                     />
                 </Fragment>
-            );
+            )
         } else if (sat === false) {
             return (
                 <Fragment>
@@ -36,20 +54,17 @@ class RVTable extends Component {
                         label={LABELS.c}
                     />
                 </Fragment>
-            );
+            )
         }
     };
 
     getRows = (vars, conf) => {
-        const list = [];
-        console.log('data: ', this.props.data);
+        const list = []
         for (let key in vars) {
-            key = vars[key];
-            var i = this.props.data[key];
-            console.log('key: ', key);
+            key = vars[key]
+            var i = this.props.data[key]
 
             if (conf === 'det') {
-                console.log('i: ', i);
                 list.push(
                     <RandVarRowDisplayDet
                         key={key}
@@ -57,9 +72,8 @@ class RVTable extends Component {
                         value={this.props.data[key]}
                         label={LABELS[key]}
                     />
-                );
+                )
             } else if (conf === 'nondet') {
-                console.log('my key here is ', key);
                 list.push(
                     <RandVarRowDisplayNondet
                         key={key}
@@ -67,20 +81,20 @@ class RVTable extends Component {
                         data={this.props.data[key]}
                         label={LABELS[key]}
                     />
-                );
+                )
             } else {
-                list.push(<p>Error: invalid Analysis Type</p>);
+                list.push(<p>Error: invalid Analysis Type</p>)
             }
         }
-        return list;
+        return list
     };
 
     getTable = (sat, conf) => {
-        var vars = [];
+        var vars = []
 
         sat === true
             ? (vars = ['c', 'c_r', 'phi'])
-            : (vars = ['c', 'c_r', 'phi', 'k_s', 'a', 'n']);
+            : (vars = ['c', 'c_r', 'phi', 'k_s', 'a', 'n'])
 
         if (conf === 'det') {
             return (
@@ -95,7 +109,7 @@ class RVTable extends Component {
                         <tbody>{this.getRows(vars, conf)}</tbody>
                     </Table>
                 </Fragment>
-            );
+            )
         } else if (conf === 'nondet') {
             return (
                 <Fragment>
@@ -112,24 +126,26 @@ class RVTable extends Component {
                         <tbody>{this.getRows(vars, conf)}</tbody>
                     </Table>
                 </Fragment>
-            );
+            )
         }
     };
 
     render() {
-        console.log('IN RVTABLE. data = ', this.props.data);
-        const sat = this.props.sat;
-        const conf = this.props.conf;
-        console.log('sat: ', sat);
-        console.log('conf: ', conf);
-        const table = this.getTable(sat, conf);
+        const sat = this.props.sat
+        const conf = this.props.conf
+
+        const table = this.getTable(sat, conf)
+
+        const csvData = this.getRVDownloadData()
+
         return (
             <Fragment>
                 <div className="paddedPage">
                     <div className="displayTable">{table}</div>
+                    <CSVLink data={csvData} >Download Variable Data</CSVLink>
                 </div>
             </Fragment>
-        );
+        )
     }
 }
 
@@ -137,7 +153,7 @@ class RandVarRowDisplayDet extends Component {
     static propTypes = {
         value: PropType.number,
         label: PropType.string,
-        key: PropType.string,
+        key: PropType.string
     };
 
     render() {
@@ -149,7 +165,7 @@ class RandVarRowDisplayDet extends Component {
                     </td>
                     <td>{this.props.value.toExponential(2)}</td>
                 </tr>
-            );
+            )
         } else {
             return (
                 <tr>
@@ -158,7 +174,7 @@ class RandVarRowDisplayDet extends Component {
                     </td>
                     <td>{this.props.value}</td>
                 </tr>
-            );
+            )
         }
     }
 }
@@ -167,11 +183,10 @@ class RandVarRowDisplayNondet extends React.Component {
     static propTypes = {
         data: PropType.object,
         label: PropType.string,
-        rv: PropType.string,
+        rv: PropType.string
     };
 
     render() {
-        console.log('rv is ', this.props.rv);
         if (this.props.rv === 'k_s') {
             return (
                 <tr>
@@ -183,7 +198,7 @@ class RandVarRowDisplayNondet extends React.Component {
                     <td>{Number(this.props.data.mean).toExponential(2)}</td>
                     <td>{Number(this.props.data.stdev).toExponential(2)}</td>
                 </tr>
-            );
+            )
         } else {
             return (
                 <tr>
@@ -195,9 +210,9 @@ class RandVarRowDisplayNondet extends React.Component {
                     <td>{this.props.data.mean}</td>
                     <td>{this.props.data.stdev}</td>
                 </tr>
-            );
+            )
         }
     }
 }
 
-export default RVTable;
+export default RVTable

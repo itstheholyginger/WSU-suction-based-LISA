@@ -47,8 +47,10 @@ class FSUnsat(FS):
         self.alpha = float(alpha)
         self.n = float(n)
         self.q = float(q)
-        self.ss = self.suction_stress()
-        self.fs = self.calc_fs()
+        self.matric_suction = self.calc_matric_suction()
+        self.ss = self.calc_suction_stress()
+        self.Se = self.calc_Se()
+        self.fs = self.calc_factor_of_safety()
         self.round_vals()
 
     def __str__(self):
@@ -79,10 +81,12 @@ class FSUnsat(FS):
         self.phi = round(self.phi, 1)
 
     # Calculate the factor of safety value for unsaturated soil
-
-    def calc_fs(self):
-        # print("Calculating the fs of unsaturated soil")
+    def calc_factor_of_safety(self):
         H_ss = self.H_wt - self.z
+        
+        if (H_ss == 0):
+            return 1
+
         first = self.tan(self.phi) / self.tan(self.slope)
 
         second = (2 * (self.c + self.c_r)) / \
@@ -103,36 +107,37 @@ class FSUnsat(FS):
             else if suction stress > 0, calculate new magin_suction
     '''
 
-    def suction_stress(self):
-        # msuc = self.matric_suction()
-        # if msuc <= 0:
-        #     return -msuc
-        # else:
-        try:
-            if self.q == 0:
-                print("q = 0")
-                first = 1 / self.alpha
-                second_top = math.log(
-                    math.exp(-self.gamma_w * self.alpha * self.z))
-                second_bottom = pow((1 + pow((-second_top), self.n)),
-                                    (self.n - 1) / self.n)
-            else:
+    def calc_suction_stress(self):
+        msuc = self.matric_suction
+        if msuc <= 0:
+            return -msuc
+        else:
+            try:
                 temp = self.q / self.k_s
-                first = 1/self.alpha
-                second_top = math.log(
-                    (1 + temp) * math.exp(-self.gamma_w * self.alpha * self.z) - temp)
 
-                second_bottom = pow((1 + pow((-second_top), self.n)),
-                                    (self.n - 1) / self.n)
-            ss = first * (second_top / second_bottom)
-        except ValueError as e:
-            import pdb
-            pdb.set_trace()
-            print(e)
-            # ss = 0
+                first = (1 / self.alpha)
+
+                inside_first = (1+temp)
+
+                inside_second = math.exp(-self.gamma_w * self.alpha * self.z)
+
+                inside = inside_first * inside_second - temp
+
+                top = math.log(inside)
+
+                # top = -self.matric_suction
+                inside = pow(-top, self.n)
+                bottom = pow(1 + inside, (self.n - 1) / self.n)
+
+                ss = first * top / bottom
+            except ValueError as e:
+                import pdb
+                pdb.set_trace()
+                print(e)
+                # ss = 0
         return ss
 
-    def matric_suction(self):
+    def calc_matric_suction(self):
         # import pdb
         # pdb.set_trace()
         temp = self.q / self.k_s
@@ -142,7 +147,7 @@ class FSUnsat(FS):
 
             inside_first = (1+temp)
 
-            inside_second = math.exp(-self.gamma * self.alpha * self.z)
+            inside_second = math.exp(-self.gamma_w * self.alpha * self.z)
 
             inside = inside_first * inside_second - temp
 
@@ -158,6 +163,12 @@ class FSUnsat(FS):
             print(e)
             # ms = 0
         return ms
+
+    # Effective Degree of Saturation. Used to test if Suction Stress function is correct
+    def calc_Se(self):
+        inside = 1 / (1 + pow(self.alpha * self.matric_suction, self.n))
+        s_e = pow(inside, (self.n - 1) / self.n)
+        return s_e
 
 
 class FSSat(FS):
@@ -192,14 +203,14 @@ class FSSat(FS):
             math.tan(math.radians(self.phi))
 
         if math.isnan(float(third)):
-            import pdb
-            pdb.set_trace()
+            # import pdb
+            # pdb.set_trace()
             print("third is not a number")
 
         fs = first + second - third
         if fs < 0:
-            import pdb
-            pdb.set_trace()
+            # import pdb
+            # pdb.set_trace()
             print("fs shouldn't be negative returning 0")
             return 0
         return fs

@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
+        "@blueprintjs/core": "^3.36.0",
         "@testing-library/jest-dom": "^4.2.4",
         "@testing-library/react": "^9.4.0",
         "@testing-library/user-event": "^7.2.1",
@@ -14,7 +15,9 @@
         "prop-types": "^15.7.2",
         "react": "^16.13.1",
         "react-bootstrap": "^1.0.0-beta.16",
+        "react-csv": "^2.0.3",
         "react-dom": "^16.13.1",
+        "react-fade-in": "^1.1.0",
         "react-router-dom": "^5.1.2",
         "react-scripts": "3.4.0",
         "react-select": "^3.1.0",
@@ -35,7 +38,7 @@
         "@babel/preset-env",
         "@babel/preset-react"
     ],
-    "proxy": "http://localhost:5000",
+    "proxy": "http://localhost:8000",
     "browserslist": {
         "production": [
             ">0.2%",

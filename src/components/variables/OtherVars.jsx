@@ -18,7 +18,6 @@ class ConstVar extends React.Component {
 
     handleChange = e => {
         this.props.handleChange(this.props.name, e.target.value);
-        console.log('in const var change');
     };
 
     render() {
@@ -62,7 +61,6 @@ class NumRandVars extends React.Component {
     handleChange = e => {
         var val = e.target.value;
         this.props.handleChange(val);
-        console.log('in numvar change');
     };
 
     render() {
@@ -89,7 +87,6 @@ class Saturation extends React.Component {
 
     handleChange = selectedOption => {
         var selected = selectedOption.target.value;
-        console.log('selected option: ', selected);
         if (selected === 'true') {
             this.props.handleChange(true);
         } else if (selected === 'false') {
@@ -125,7 +122,6 @@ class Analysis extends Component {
 
     handleChange = selectedOption => {
         var selected = selectedOption.target.value;
-        console.log('selected option: ', selected);
         this.props.handleChange(selected);
     };
 

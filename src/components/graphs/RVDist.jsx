@@ -54,10 +54,7 @@ class RVDistGraph extends Component {
     };
 
     handleChange = e => {
-        // console.log('in handlechange');
-        // console.log(e);
         const selected = e.value
-        // console.log('selected: ', selected);
         this.setState({
             selected: selected
         })
@@ -65,12 +62,9 @@ class RVDistGraph extends Component {
 
     render() {
         const selectedOption = this.state.selected
-        // console.log('selected: ', selectedOption)
         const options = this.setOptions()
-        // console.log(options);
 
         const curData = this.props.data[selectedOption]
-        console.log('RVDistGraph curdata: ', curData)
         return (
             <Fragment>
                 <div className="dropdown">
@@ -90,8 +84,8 @@ class RVDistGraph extends Component {
                         />
                     </>
                 ) : (
-                    <></>
-                )}
+                        <></>
+                    )}
             </Fragment>
         )
     }
@@ -141,19 +135,13 @@ class RVBar extends Component {
     };
 
     static getDerivedStateFromProps(nextProps, prevState) {
-        // console.log('\t--RVBar getDerivedStateFromProps');
-        // console.log('parent changed, updating state');
         if (nextProps.rv !== prevState.rv) {
             if (nextProps.conf === 'nondet') {
                 const valsArr = nextProps.data[nextProps.rv].vals
-                // console.log('\nvalsArr: ');
-                // console.log(valsArr);
                 const freqObj = {}
                 valsArr.forEach(x => {
                     if (nextProps.rv === 'k_s') {
-                        // console.log('special case for k_s');
                         const rounded = x.toExponential(2)
-                        console.log('rounded = ', rounded)
                         if (!freqObj[rounded]) {
                             freqObj[rounded] = 1
                         } else {
@@ -186,7 +174,7 @@ class RVBar extends Component {
                 const datapoints = [{ x: Number(val), y: 1 }]
                 return { datapoints: datapoints, rv: nextProps.rv }
             } else {
-                console.log('ERROR: invalid conf: ', nextProps.conf)
+                console.error('ERROR: invalid conf: ', nextProps.conf)
             }
         } else return null
     }
@@ -204,7 +192,6 @@ class RVBar extends Component {
 
     render() {
         // const l = `${this.state.rv} Distribution`;
-        // console.log(l);
         var dist = null
         if (this.props.conf === 'nondet') {
             dist = <h5>{this.props.data[this.state.rv].dist}</h5>

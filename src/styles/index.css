@@ -163,3 +163,11 @@ code {
     width: 200px;
     margin-bottom: 30px;
 }
+
+@import '~normalize.css';
+@import '~@blueprintjs/core/lib/css/blueprint.css';
+@import '~@blueprintjs/icons/lib/css/blueprint-icons.css';
+
+.styledSpinner {
+    padding-left: 20px;
+}
