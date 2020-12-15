@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const DEBUG = 1;
+const DEBUG = 0;
 
 var BASE_URL = 'https://wsu-suction-based-lisa.herokuapp.com';
 if (DEBUG) {
