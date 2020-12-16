@@ -1,2 +1,1 @@
-# LISA
-Project for my Research Assistant position at WSU.
+# WSU Suction Based LISA
