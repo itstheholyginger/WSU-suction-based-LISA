@@ -7,7 +7,6 @@ import DisplayGraphs from './DisplayGraphs'
 import API from './apiClient'
 import * as Tables from './tables'
 import Loading from './Loading'
-import { CSVLink } from 'react-csv'
 
 class DisplayPage extends Component {
     constructor(props) {

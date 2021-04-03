@@ -38,7 +38,6 @@ class SSbyZ extends Component {
         }
     };
 
-
     getMaxSS = dp => {
         let max = 0
         dp.map(key => {
@@ -59,7 +58,6 @@ class SSbyZ extends Component {
                 </h2>
             )
         }
-
 
         const dp = this.state.datapoints
         if (dp.length > 0) {
@@ -97,7 +95,7 @@ class SSbyZ extends Component {
                         />
                         <V.VictoryAxis
                             dependentAxis
-                            label="Soil Depth from Surface H_ss (m)"
+                            label="Soil Depth from Surface Z (m)"
                             tickCount={this.props.H_wt}
                             tickFormat={t => t}
                             style={{

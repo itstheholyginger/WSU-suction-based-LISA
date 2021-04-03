@@ -5,8 +5,7 @@ import { Form, Button } from 'react-bootstrap'
 import * as Vars from './variables'
 import PropTypes from 'prop-types'
 import Header from './Header'
-import { testing } from '../resources/template'
-// import { data } from '../resources/template'
+import { data, testing } from '../resources/template'
 import AppMode from '../AppMode'
 import API from './apiClient'
 import LABELS from '../resources/labels'
@@ -21,8 +20,8 @@ class DataFormPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            // data: data
-            data: testing.data
+            data: data
+            // data: testing.data
         }
     }
 

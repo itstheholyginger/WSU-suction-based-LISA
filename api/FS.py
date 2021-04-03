@@ -192,6 +192,9 @@ class FSSat(FS):
 
     def calc_fs(self):
         H_ss = self.H_wt - self.z
+
+        if (H_ss == 0):
+            return 1
         first = math.tan(math.radians(self.phi)) / \
             math.tan(math.radians(self.slope))
 
