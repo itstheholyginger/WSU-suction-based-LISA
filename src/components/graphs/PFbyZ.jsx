@@ -102,7 +102,7 @@ class PFbyZ extends Component {
                         />
                         <V.VictoryAxis
                             dependentAxis
-                            label="Soil Depth from surface, H_ss (m)"
+                            label="Soil Depth from surface, Z (m)"
                             tickCount={this.props.H_wt + 1}
                             tickFormat={t => t}
 
@@ -118,7 +118,6 @@ class PFbyZ extends Component {
                     </V.VictoryChart>
                 </div>
             )
-
         } else {
             return <h2>no datapoints</h2>
         }

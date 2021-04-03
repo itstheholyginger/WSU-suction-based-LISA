@@ -1,16 +1,16 @@
-import axios from 'axios';
+import axios from 'axios'
 
-const DEBUG = 0;
+const DEBUG = 0
 
-var BASE_URL = 'https://wsu-suction-based-lisa.herokuapp.com';
+var BASE_URL = 'https://wsu-suction-based-lisa.herokuapp.com'
 if (DEBUG) {
-    BASE_URL = 'http://127.0.0.1:5000';
+  BASE_URL = 'http://127.0.0.1:5000'
 }
 
 export default axios.create({
-    baseURL: BASE_URL,
-    timeout: 20000,
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
+  baseURL: BASE_URL,
+  timeout: 20000,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
